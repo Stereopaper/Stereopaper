@@ -99,11 +99,11 @@ The basic algorithm is as follows:
 \\ 1) Find the local support region for each pixel at (x,y) and each depth (d) by using an image intensity comparison function \(\delta\).  We chose to use normalized correlation for \(\delta\).
 \[L_0(x,y,d) = \delta(I_{Left}(y,x),I_{Right}(y,x+d))\]
 \\ 2) Copy the values from the 3D array \(L_0\) into a new 3D array \(L_n\).
-\\ 3) Assume that, \(\Phi\)(x,y,d) is the 3D support region around the pixel (x,y), and that 
-\(\Psi\)(x,y,d) is the set of all pixels that map to (x,y) in the left image and (x+d,y) in the right image.  
+\\ 3) Assume that, \(\Phi\)(x,y,d) is the 3D support region around the pixel (x,y).
 Let: \[S_n(x,y,d) = \sum_{(x',y',d') \in \Phi} L_n (x+x', y+y', d+d') \]
-Then interate through the values in \(L_n\) updating each using: 
-\[L_{n+1}(r,c,d) = L_n(r,c,d)*\left(  \frac{S_n(r,c,d)}{\sum_{(r'',c'',d'') \in \Psi(r,c,d)} S_n(r'',c'',d'')} \right)^\alpha \]
+Now, assume that \(\Psi\)(x,y,d) is the set of all pixels that map to (x,y) in the left image and (x+d,y) in the right image, and that \(\alpha\) is a convergance constant that controls how quickly the values in \(L_n\)(x,y,d) will converge.  
+Then interate through the values in \(L_n\) updating each value using: 
+\[L_{n+1}(x,y,d) = L_n(x,y,d)*\left(  \frac{S_n(x,y,d)}{\sum_{(x'',y'',d'') \in \Psi(x,y,d)} S_n(x'',y'',d'')} \right)^\alpha \]
 \\ 4) To build the final disparity map: for each pixel position (x,y) award the depth value with the heighest weight \(L_n\)(x,y,d).  If the best weight for all depths (d) for a certain pixel (x,y) is below a threshold, assume the pixel was occluded.
 
 
