@@ -69,7 +69,10 @@ We present a preliminary solution towards the reintroduction of fine details omi
   \label{fig:ROV}
  \end{figure}
 
-While the ROV is navigating a cistern, two high-definition (HD) cameras mounted to the bow in a waterproof casing are triggered to synchronously capture images every one second. The cameras are vertically aligned so as to minimize image disparity in the vertical direction. Due to occlusions from sediment and drifting objects uplifted by the ROV's thrusters, the camera images are often obscured, making conventional scan matching algorithms insufficient for disparity map generation (maybe this detail goes in Tim's section? possibly even in intro and/or abstract).
+While the ROV is navigating a cistern, two high-definition (HD) cameras mounted to the bow in a waterproof casing are triggered to synchronously capture images every second. The cameras are vertically aligned so as to minimize image disparity in the vertical direction. 
+This enviornment and setup presents a number of challenges for disparity mapping.  
+Most importantly, the ROV's thrusters disturb sediment and other small objects in the enviornment, which then bespeckles the captured images.
+Simple, single pass disparity algorithms were unable to produce good disparity maps from these images.  Instead we chose a more complex, multi-pass algorithm, as is detailed below. 
 
 \section{\uppercase{Gross sonar Model Reconstruction}}
 \label{sec:reconstruction}
