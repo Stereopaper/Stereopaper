@@ -94,27 +94,41 @@ While the ROV is navigating a cistern, two high-definition (HD) cameras mounted 
 %Discuss why this is necessary. Discuss a system level overview of the process (more in depth than in introduction).
 
 \subsection{Disparity Map Generation}
-Our disparity maps were generated using the cooperative, iterative approach described by Zitnick and Kanade (Include Reference?).  
+\subsubsection{Image Correction}
+\label{subsec:image_correction}
+The GoPro cameras that we used were limited to recording images in the lossy .jpeg format.
+This presents a problem for pixel matching stereo algorithms that require pixel accuracy.  
+To solve this issue we simply smoothed and shrunk the high resolution images taken by the GoPro.  
+The images were reduced in size by approximately one sixth.  
+
+
+\subsubsection{Disparity Mapping}
+\label{subsec:disparity_mapping}
+Our disparity maps were generated using the cooperative, iterative approach described by Zitnick and Kanade (Include Reference).  
 The basic algorithm is as follows:
 \\ 1) Find the local support region for each pixel at (x,y) and each depth (d) by using an image intensity comparison function \(\delta\).  We chose to use normalized correlation for \(\delta\).
 \[L_0(x,y,d) = \delta(I_{Left}(y,x),I_{Right}(y,x+d))\]
 \\ 2) Copy the values from the 3D array \(L_0\) into a new 3D array \(L_n\).
 \\ 3) Assume that, \(\Phi\)(x,y,d) is the 3D support region around the pixel (x,y).
 Let: \[S_n(x,y,d) = \sum_{(x',y',d') \in \Phi} L_n (x+x', y+y', d+d') \]
-Now, assume that \(\Psi\)(x,y,d) is the set of all pixels that map to (x,y) in the left image and (x+d,y) in the right image, and that \(\alpha\) is a convergance constant that controls how quickly the values in \(L_n\)(x,y,d) will converge.  
+Furthermore, assume that \(\Psi\)(x,y,d) is the set of all pixels that map to (x,y) in the left image and (x+d,y) in the right image, and that \(\alpha\) is a constant that controls how quickly the values in \(L_n\)(x,y,d) will converge.  
 Then interate through the values in \(L_n\) updating each value using: 
 \[L_{n+1}(x,y,d) = L_n(x,y,d)*\left(  \frac{S_n(x,y,d)}{\sum_{(x'',y'',d'') \in \Psi(x,y,d)} S_n(x'',y'',d'')} \right)^\alpha \]
-\\ 4) To build the final disparity map: for each pixel position (x,y) award the depth value with the heighest weight \(L_n\)(x,y,d).  If the best weight for all depths (d) for a certain pixel (x,y) is below a threshold, assume the pixel was occluded.
+\\ 4) To build the final disparity map loop through each pixel position (x,y) and award the depth value with the heighest weight \(L_n\)(x,y,d) as the final value.
+If the best weight for all depths (d) for a certain pixel (x,y) is below a predefined threshold, assume the pixel was occluded.
 
-
+% possibly move to future works section?
 \subsubsection{HSL Color Correction}
-\label{subsec:calibration}
+\label{subsec:hsl_color_correction}
 Unfortunately, the paired GoPro cameras that we choose for data collection lacked the ability to sync exposure times.  
 The cameras independntly calculated the correct exposure for their image only, which resulted in a lack of light intensity matching between left and right images.
-A potential solution to this problem lies in using a color comparision function instead of an intensity comparison function.  By converting the images from an RGB color space to an HSL color space, the hue and the saturation of a pixel may be compared without consideration of the intensity of light.  
-The only difference between two images with different exposure times, should be the intensity of the captured light, and not the actual colors.  
-As a result, color correlation functions and the HSL color space could be an ideal solution to create better disparity maps from images captured by GoPro cameras.
-  
+A potential solution to this problem lies in using a color comparision function instead of an intensity comparison function (Insert paper reference).  
+The solution proposed by (author names) suggests converting the image into HSL color space and looking only at the hue and saturation values.  
+\\ 
+For our purposes, however, this method failed.  
+Many of the surfaces that we imaged were gray in color producing uniform hue and saturation values.
+For future experiments, introducing a light with a distinct color, perhaps blue, could prove useful for gray surfaces.  
+This blue light would provide definate hue and saturation values that could be compared regardless of exposure times.
 
 \noindent
 
