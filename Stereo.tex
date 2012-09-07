@@ -146,16 +146,15 @@ This blue light would provide definate hue and saturation values that could be c
 \subsubsection{Calibration}
 \label{subsec:calibration}
 
-%Never really got resolved. In my shaders I am still using an arbitrary scale factor. The calibration is possible... but I don't think it would get us anything that looks better than changing that scale factor by eye. This is because we were so inaccurate with our lasers/calibration on site. Perhaps we can discuss how to calibrate, but mention that we did not do it because guessing looks better.
-
-\begin{figure}[!h]
-	\centering
-		\subfigure[Left camera image]{\label{left}\epsfig{file = pics/calibrateL.jpg, width = 3.5cm}}
-		\quad %space between images
-		\subfigure[Right camera image]{\label{right}\epsfig{file = pics/calibrateR.jpg, width = 3.5cm}}
-		\caption{calibration pics. Probably won't include but just in case.}
-		\label{calibrate}
-\end{figure}
+An important step in any meaningful disparity mapping is calibration.
+This is the creation of a tuned mapping from an (r,g,b) pixel value to the appropriate vertex offset in the virtual world. 
+We were able to cheat slightly on this calibration because we were tuning for a very short field of view, 0.2m - 1.2m.
+This allowed us to approximate a linear relationship between a disparity value and its physical depth. 
+\\
+The images and values for the calibration were taken in a controlled pool environment.  
+Pictures of a patterned surface were taken at a number of measured distances from that surface. 
+Those images were then disparity mapped, and the average disparity at the center of the picture was used as the disparity data point for that physical depth.
+Using this set of points we were able to create a linear mapping between disparity and depth.
 
 \noindent 
 
