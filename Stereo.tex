@@ -70,8 +70,8 @@ We present a preliminary solution towards the reintroduction of fine details omi
  \end{figure}
 
 While the ROV is navigating a cistern, two high-definition (HD) cameras mounted to the bow in a waterproof casing are triggered to synchronously capture images every second. The cameras are vertically aligned so as to minimize image disparity in the vertical direction. 
-This enviornment and setup presents a number of challenges for disparity mapping.  
-Most importantly, the ROV's thrusters disturb sediment and other small objects in the enviornment, which then bespeckles the captured images.
+This environment and setup presents a number of challenges for disparity mapping.  
+Most importantly, the ROV's thrusters disturb sediment and other small objects in the environment, which then bespeckles the captured images.
 Simple, single pass disparity algorithms were unable to produce good disparity maps from these images.  Instead we chose a more complex, multi-pass algorithm, as is detailed below. 
 
 \section{\uppercase{Gross sonar Model Reconstruction}}
@@ -94,31 +94,65 @@ Simple, single pass disparity algorithms were unable to produce good disparity m
 
 \noindent In this section we describe our approach towards the addition of fine details to the gross sonar models produced in Section~\ref{sec:reconstruction}. 
 
+% Rough stub, delete/edit/use for inspiration!
+The first step towards building fine details into a planar mesh is extracting those details. 
+This is done by building disparity maps from the captured images.
+The second step is taking those disparity and image pairs and using them to deform and texture, respectively, the basic sonar mesh. 
+
 %Discuss why this is necessary. Discuss a system level overview of the process (more in depth than in introduction).
 
 \subsection{Disparity Map Generation}
+
+A number of algorithms currently exist to take two images, compare their features, and determine which points were closer and which were further from the camera. 
+Unfortunately, few of these algorithms were robust enough to handle compressed underwater images of rock walls.
+We eventually chose the stereo mapping algorithm described by Zitnick and Kanade in "A Cooperative Algorithm for Stereo Matching and Occlusion Detection".
+\\
+The main problem with our images is that we are dealing with a very dull landscape.  
+Rocks and especially bricks have highly repetitive patterns and colors which produces a feature-scarce image.
+Most stereo-matching algorithms, including Zitnic and Kanade, rely on those features to determine disparity.  
+The algorithm proposed by Zitnick and Kanade uses a scanning, sliding comparison window to build an initial disparity map.  
+To mitigate the dull landscape, we choose a large initial disparity window with a radius of five. 
+Obviously, this reduces the level of fine details that can be resolved from the image and adds a smoothing effect to the disparity map, but these drawbacks are acceptable in the given environment.  
+Instead, a large window gave us a more reliable matching between rocks faces because it can encompass more features for each pixel.  
+\\
+One of the strengths of the Zitnick and Kanade algorithm is its ability to detect occlusions.  
+A common problem feature in our images is dirt particles, which are agitated by the ROV's positioning thrusters.
+Usually the particles are small enough to be detected and removed from the final disparity map.
+\\
+Another issue with underwater enviornments is lighting.
+  Disparities in lighting between images, and as a result pixel intensities, is not handled by the Zitnick and Kanade algorithm.
+This is discussed in more depth in Section~\ref{subsec:hsl_color_correction}.
+
+
 \subsubsection{Image Correction}
 \label{subsec:image_correction}
-The GoPro cameras that we used were limited to recording images in the lossy .jpeg format.
-This presents a problem for pixel matching stereo algorithms that require pixel accuracy.  
-To solve this issue we simply smoothed and shrunk the high resolution images taken by the GoPro.  
-The images were reduced in size by approximately one sixth.  
+
+In all stereo mapping algorithms it is expected that both images are accurate down to the pixel level.
+Regrettably, the GoPro cameras that we used were limited to recording images in the lossy .jpeg format only.
+To solve this issue we simply smoothed and shrunk the high resolution images taken by the GoPros in order to get left and right images that were comparable at the pixel level.
 
 
 \subsubsection{Disparity Mapping}
 \label{subsec:disparity_mapping}
+
 Our disparity maps were generated using the cooperative, iterative approach described by Zitnick and Kanade (Include Reference).  
 The basic algorithm is as follows:
-\\ 1) Find the local support region for each pixel at (x,y) and each depth (d) by using an image intensity comparison function \(\delta\).  We chose to use normalized correlation for \(\delta\).
+\\ \\
+1) Find the local support region for each pixel at (x,y) and each depth (d) by using an image intensity comparison function \(\delta\).  We chose \(\delta\) to be a normalized correlation function.
 \[L_0(x,y,d) = \delta(I_{Left}(y,x),I_{Right}(y,x+d))\]
-\\ 2) Copy the values from the 3D array \(L_0\) into a new 3D array \(L_n\).
-\\ 3) Assume that, \(\Phi\)(x,y,d) is the 3D support region around the pixel (x,y).
-Let: \[S_n(x,y,d) = \sum_{(x',y',d') \in \Phi} L_n (x+x', y+y', d+d') \]
-Furthermore, assume that \(\Psi\)(x,y,d) is the set of all pixels that map to (x,y) in the left image and (x+d,y) in the right image, and that \(\alpha\) is a constant that controls how quickly the values in \(L_n\)(x,y,d) will converge.  
-Then interate through the values in \(L_n\) updating each value using: 
-\[L_{n+1}(x,y,d) = L_n(x,y,d)*\left(  \frac{S_n(x,y,d)}{\sum_{(x'',y'',d'') \in \Psi(x,y,d)} S_n(x'',y'',d'')} \right)^\alpha \]
-\\ 4) To build the final disparity map loop through each pixel position (x,y) and award the depth value with the heighest weight \(L_n\)(x,y,d) as the final value.
-If the best weight for all depths (d) for a certain pixel (x,y) is below a predefined threshold, assume the pixel was occluded.
+\\ \\
+2) Copy the values from the 3D array \(L_0\) into a new 3D array \(L_n\).
+\\ \\
+3) Assume that, \(\Phi\)(x,y,d) is the 3D support region around the pixel (x,y), and suppose:
+\[S_n(x,y,d) = \sum_{(x',y',d') \in \Phi} L_n (x+x', y+y', d+d') \]
+Furthermore, assume that \(\Psi\)(x,y,d) is the set of all pixels that map to (x,y) in the left image and (x+d,y) in the right image. 
+Let \(\alpha\) be a constant that controls how quickly the values in \(L_n\)(x,y,d) will converge.  
+Then iterate through the values in \(L_n\) updating each value using: 
+\[L_{n+1}(x,y,d) = \]
+\[L_n(x,y,d)*\left(  \frac{S_n(x,y,d)}{\sum_{(x'',y'',d'') \in \Psi(x,y,d)} S_n(x'',y'',d'')} \right)^\alpha \]
+\\ \\
+4) To build the final disparity map loop through each pixel position (x,y) and award the depth value (d) with the highest weight from \(L_n\)(x,y,d) as the final value.
+If the best weight for all depths for a certain pixel (x,y) is below a predefined threshold, assume the pixel was occluded.
 
 % possibly move to future works section?
 \subsubsection{HSL Color Correction}
@@ -254,6 +288,9 @@ where $\mathbf{p}_{m}'$ is the displaced vertex position and $S$ is the scale fa
 
 \section{\uppercase{Results}}
 \label{sec:results}
+
+\t To demonstrate our complete stereo mapping system we deployed our VideoRay robot in a rock-walled well.
+This well provided both a simple cylindrical structure and a detailed bumpy surface.  
 
 \noindent Description and noticeable features in the output, with pictures/screen caps. 
 
