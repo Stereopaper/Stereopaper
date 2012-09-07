@@ -99,6 +99,16 @@ The first step towards building fine details into a planar mesh is extracting th
 This is done by building disparity maps from the captured images.
 The second step is taking those disparity and image pairs and using them to deform and texture, respectively, the basic sonar mesh. 
 
+\noindent
+
+\begin{figure*}[!ht]
+   \vspace{-0.2cm}
+   \centering{
+      \epsfig{file = pics/2.png, width = 0.9\textwidth}}
+   \caption{How we generate disparity maps from images.}
+  \label{fig:dispgen}
+ \end{figure*}
+
 %Discuss why this is necessary. Discuss a system level overview of the process (more in depth than in introduction).
 
 \subsection{Disparity Map Generation}
@@ -106,22 +116,22 @@ The second step is taking those disparity and image pairs and using them to defo
 A number of algorithms currently exist to take two images, compare their features, and determine which points were closer and which were further from the camera. 
 Unfortunately, few of these algorithms were robust enough to handle compressed underwater images of rock walls.
 We eventually chose the stereo mapping algorithm described by Zitnick and Kanade in "A Cooperative Algorithm for Stereo Matching and Occlusion Detection".
-\\
+
 The main problem with our images is that we are dealing with a very dull landscape.  
-Rocks and especially bricks have highly repetitive patterns and colors which produces a feature-scarce image.
+Rocks, and especially bricks, have highly repetitive patterns and colors which produce feature-scarce images.
 Most stereo-matching algorithms, including Zitnic and Kanade, rely on those features to determine disparity.  
 The algorithm proposed by Zitnick and Kanade uses a scanning, sliding comparison window to build an initial disparity map.  
 To mitigate the dull landscape, we choose a large initial disparity window with a radius of five. 
 Obviously, this reduces the level of fine details that can be resolved from the image and adds a smoothing effect to the disparity map, but these drawbacks are acceptable in the given environment.  
-Instead, a large window gave us a more reliable matching between rocks faces because it can encompass more features for each pixel.  
-\\
+Instead, a large window gives us a more reliable matching between rocks faces because it can encompass more features for each pixel.  
+
 One of the strengths of the Zitnick and Kanade algorithm is its ability to detect occlusions.  
 A common problem feature in our images is dirt particles, which are agitated by the ROV's positioning thrusters.
 Usually the particles are small enough to be detected and removed from the final disparity map.
-\\
+
 Another issue with underwater enviornments is lighting.
-  Disparities in lighting between images, and as a result pixel intensities, is not handled by the Zitnick and Kanade algorithm.
-This is discussed in more depth in Section~\ref{subsec:hsl_color_correction}.
+  Disparities in lighting between images, and as a result pixel intensities, is a common problem in our images.  
+This is not handled by the Zitnick and Kanade algorithm and is discussed in greater depth in Section~\ref{subsec:hsl_color_correction}.
 
 
 \subsubsection{Image Correction}
@@ -129,7 +139,8 @@ This is discussed in more depth in Section~\ref{subsec:hsl_color_correction}.
 
 In all stereo mapping algorithms it is expected that both images are accurate down to the pixel level.
 Regrettably, the GoPro cameras that we used were limited to recording images in the lossy .jpeg format only.
-To solve this issue we simply smoothed and shrunk the high resolution images taken by the GoPros in order to get left and right images that were comparable at the pixel level.
+To solve this issue we simply smoothed and shrunk the high resolution .jpeg images taken by the GoPros. 
+This produced smaller left and right images that were comparable at the pixel level.
 
 
 \subsubsection{Disparity Mapping}
@@ -159,23 +170,14 @@ If the best weight for all depths for a certain pixel (x,y) is below a predefine
 \label{subsec:hsl_color_correction}
 Unfortunately, the paired GoPro cameras that we choose for data collection lacked the ability to sync exposure times.  
 The cameras independntly calculated the correct exposure for their image only, which resulted in a lack of light intensity matching between left and right images.
-A potential solution to this problem lies in using a color comparision function instead of an intensity comparison function (Insert paper reference).  
-The solution proposed by (author names) suggests converting the image into HSL color space and looking only at the hue and saturation values.  
-\\ 
+A potential solution to this problem lies in using a color comparision function instead of an intensity comparison function (reference: "Stereo vision for robotic applications in the presence of non-ideal lighting conditions").
+The solution proposed by Nalpandtidis and Gasteratos suggests converting the images into the HSL color space and looking at only the hue and saturation values.  
+ 
 For our purposes, however, this method failed.  
 Many of the surfaces that we imaged were gray in color producing uniform hue and saturation values.
 For future experiments, introducing a light with a distinct color, perhaps blue, could prove useful for gray surfaces.  
 This blue light would provide definate hue and saturation values that could be compared regardless of exposure times.
 
-\noindent
-
-\begin{figure*}[!ht]
-   \vspace{-0.2cm}
-   \centering{
-      \epsfig{file = pics/2.png, width = 0.9\textwidth}}
-   \caption{How we generate disparity maps from images.}
-  \label{fig:dispgen}
- \end{figure*}
 
 \subsubsection{Calibration}
 \label{subsec:calibration}
@@ -184,7 +186,7 @@ An important step in any meaningful disparity mapping is calibration.
 This is the creation of a tuned mapping from an (r,g,b) pixel value to the appropriate vertex offset in the virtual world. 
 We were able to cheat slightly on this calibration because we were tuning for a very short field of view, 0.2m - 1.2m.
 This allowed us to approximate a linear relationship between a disparity value and its physical depth. 
-\\
+
 The images and values for the calibration were taken in a controlled pool environment.  
 Pictures of a patterned surface were taken at a number of measured distances from that surface. 
 Those images were then disparity mapped, and the average disparity at the center of the picture was used as the disparity data point for that physical depth.
