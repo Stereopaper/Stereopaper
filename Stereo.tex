@@ -329,15 +329,7 @@ p_{m} & \text{otherwise}
 \label{eq:displace}
 \end{equation}
 
-where $p_{m}'$ is the displaced vertex position and $S$ and $O$ are a scale and offset factor. $S$ grants the ability to fit a function to the displacement distance.$O$ is generally negative, ensuring that vertices belonging to $P^{*}$ are both pushed and pulled from the model surface. In the current version of the software, both $S$ and $O$ are user-controlled. However, the world space coordinates of the sonar mesh are computed such that one unit in world space is equal to one meter in the cistern, so a true value for $S$ and $O$ can be calculated through calibration. (this will be in future work... do I say that we didn't do this yet?)
-
-\begin{figure*}[!ht]
-   \vspace{-0.2cm}
-   \centering{
-      \epsfig{file = pics/3.png, width = 0.9\textwidth}}
-   \caption{How we project textures and displace vertices yo.}
-  \label{fig:projtex}
- \end{figure*}
+where $p_{m}'$ is the displaced vertex position and $S$ and $O$ are a scale and offset factor. $S$ grants the ability to fit a function to the displacement distance.$O$ is generally negative, ensuring that vertices belonging to $P^{*}$ are both pushed and pulled from the model surface. In the current version of the software, both $S$ and $O$ are user-controlled. However, the world space coordinates of the sonar mesh are computed such that one unit in world space is equal to one meter in the cistern, so a true value for $S$ and $O$ can be calculated through calibration.
  
  \subsubsection{Blending}
  ...
