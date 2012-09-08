@@ -206,6 +206,7 @@ If the best weight for all depths for a certain pixel (x,y) is below a predefine
 \label{subsec:hsl_color_correction}
 Unfortunately, the paired GoPro cameras that we choose for data collection lacked the ability to sync exposure times.  
 The cameras independntly calculated the correct exposure for their image only, which resulted in a lack of light intensity matching between left and right images.
+Note the difference in light between the left (a) and right (b) images in Figure ~\ref{fig:disparity}.
 A potential solution to this problem lies in using a color comparision function instead of an intensity comparison function ~\cite{stereo:nalGast}.
 The solution proposed by Nalpandtidis and Gasteratos suggests converting the images into the HSL color space and looking at only the hue and saturation values.  
  
@@ -370,7 +371,7 @@ Note that this image has lighting differences between left and right image.
 		\quad %space between images
 		\subfigure[Right camera image]{\label{right}\epsfig{file = pics/372R.jpg, width = 3cm}}\\%new line
 		\medskip
-		\subfigure[Generated Disparity]{\label{disparitymap}\epsfig{file = pics/372disp.png, width = 5cm}}
+		\subfigure[Generated Disparity Map]{\label{disparitymap}\epsfig{file = pics/372disp.png, width = 5cm}}
 		\caption{An example disparity map generated with initial local support region of (13,13,5), and an iterative support region of (11,11,5).}
 		\label{fig:disparity}
 \end{figure}
