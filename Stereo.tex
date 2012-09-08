@@ -311,11 +311,11 @@ The fragment shader recieves $P$ and $P^{*}$, as well as the camera image textur
 
 \subsubsection{Vertex Displacement}
 
-Vertices belonging to $P^{*}$ are displaced along the vector $\vec{b} = j_{n} - p_{m}$ a distance proportional to the magnitude of the RGB color value, $C = \langle C_{r}, C_{b}, C_{g} \rangle$, of the disparity map at the corresponding texture-mapped coordinates, $t_m$. Since the modelview projection matrix of each projector is accessible from the vertex shader, the texture-mapped coordinates of $p_m$, and thus, $C$ can be calculated per-vertex.
+Vertices belonging to $P^{*}$ are displaced along the vector $\vec{b} = j_{n} - p_{m}$ a distance proportional to the magnitude of the RGB color value, $\vec{C} = \langle C_{r}, C_{b}, C_{g} \rangle$, of the disparity map at the corresponding texture-mapped coordinates, $t_m$. Since the modelview projection matrix of each projector is accessible from the vertex shader, the texture-mapped coordinates of $p_m$, and thus, $\vec{C}$ can be calculated per-vertex.
 
 \begin{align}
 t_{m} &= p_{m}\lbrack MVP \rbrack _{j_{n}} \\
-C &= \langle t_{m\_red}, t_{m\_blue}, t_{m\_green} \rangle
+\vec{C} &= \langle t_{m\_red}, t_{m\_blue}, t_{m\_green} \rangle
 \end{align}
 
 Vertex displacement then proceeds as follows:
@@ -323,25 +323,41 @@ Vertex displacement then proceeds as follows:
 \begin{equation}
 p_{m}' = \left \{ 
 \begin{array}{ll}
-p_{m} + \vec{b} (\begin{Vmatrix}C\end{Vmatrix} S + O) & \text{if} \quad p_{m} \in P^{*}\\
+p_{m} + \vec{b} (\begin{Vmatrix}\vec{C}\end{Vmatrix} S + O) & \text{if} \quad p_{m} \in P^{*}\\
 p_{m} & \text{otherwise}
 \end{array},\right.
 \label{eq:displace}
 \end{equation}
 
-where $p_{m}'$ is the displaced vertex position and $S$ and $O$ are a scale and offset factor. $S$ grants the ability to fit a function to the displacement distance.$O$ is generally negative, ensuring that vertices belonging to $P^{*}$ are both pushed and pulled from the model surface. In the current version of the software, both $S$ and $O$ are user-controlled. However, the world space coordinates of the sonar mesh are computed such that one unit in world space is equal to one meter in the cistern, so a true value for $S$ and $O$ can be calculated through calibration.
+where $p_{m}'$ is the displaced vertex position and $S$ and $O$ are a scale and offset factor. $S$ grants the ability to fit a function to the displacement distance.$O$ is generally negative, ensuring that vertices belonging to $P^{*}$ are both pushed and pulled from the model surface rather than only being pulled towards the projector. In the current version of the software, both $S$ and $O$ are user-controlled. However, the world space coordinates of the sonar mesh are computed such that one unit in world space is equal to one meter in the cistern, so a true value for $S$ and $O$ can be calculated through calibration.
  
- \subsubsection{Blending}
- ...
+ \subsubsection{Texture Blending}
  
- \subsubsection{Lighting}
- ...
+ 
+ \subsubsection{Post-Displacement Lighting Recalculation}
+ 
+ The displacement of vertices necessitates a normal vector recalcuation within the vertex shader. Unfortunately, neighboring vertex information is not available in the vertex shader, making true Phong shading calculations difficult. Instead a crude approximation is used for the new normals which does not require information regarding neighboring vertices.
+
+Assuming vertices in a close vicinity to each other are displaced roughly the same amount, as a vertex is displaced towards a projector, the true normal vectors of the surrounding faces begin to grow towards the displacement vector. While this assumption is imperfect near edges and crevices present in the disparity maps, it has been found to work well in practice. Given this information, we require a lighting calculation such that normals are equal to the negative of the displacement vector at an infinite displacement from the projector, normals are equal to their original values if vertices are not displaced, and normals grow towards the displacement vector as vertices are displaced towards the projector. Due to these constraints, the crude normal recomputation for diffuse shading is as follows:
+
+\begin{equation}
+n_m^* = \left \{ \begin{array}{ll}
+        n_m + \left(\hat{d} \exp\left(\begin{Vmatrix}\vec{d}\end{Vmatrix}\right) - \hat{d}\right) & \text{if} \quad \vec{b} \cdot \vec{d} > 0 \\
+        n_m + \left(\hat{d} \exp\left(-\begin{Vmatrix}\vec{d}\end{Vmatrix}\right) - \hat{d}\right) & \text{otherwise}
+        \end{array},\right.
+        \label{eq:lighting}
+\end{equation}
+
+
+where $n_m$ is the vertex's normal, $n_m^*$ is the updated normal vector, and $\vec{d} = \begin{Vmatrix}\vec{C}\end{Vmatrix} S + O$ is the dsplacement vector from~\eqref{eq:displace}.
+
+Couple more sentences of explanation here...
 
 \section{\uppercase{Results}}
 \label{sec:results}
 
 To demonstrate our complete stereo mapping system we deployed our VideoRay robot in a rock-walled well.
-This well provided both a large simple cylindrical structure and a detailed bumpy surface.  
+This well provided both a large simple cylindrical structure and a detailed bumpy surface.
 
 Using the Sonar data from the well we built the 3D figure shown in Figure~\ref{fig:result1}. 
 
@@ -419,7 +435,7 @@ With better cameras the output images would not need to be processed down to rem
 Similarly, with better cameras there would be no need to compensate for different exposure times between images.
 Alternatively, better lighting, including blue lighting, would allow pixel values to be compared in the HSL color space.  
 Such hardware would reduce the need for a different camera setup.
-
+With regards to the shader calculations, a proper calibration would allow for the true disparity scales and offsets. Additionally, a second vertex shader could be implemented in order to compute Phong shading on the displaced vertex positions.
 In the future it would be interesting to explore the possibility of integrating this algorithm with a SLAM algorithm and more computing power to allow a robot to autonomously image each surface of a cistern. 
 Unfortunately, that would require a far more complex setup that what we had available at the time of writing.
 
