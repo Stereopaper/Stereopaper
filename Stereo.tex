@@ -132,7 +132,7 @@ One of the strengths of the Zitnick and Kanade algorithm is its ability to detec
 A common problem feature in our images is dirt particles, which are agitated by the ROV's positioning thrusters.
 Usually the particles are small enough to be detected and removed from the final disparity map.
 
-Another issue with underwater enviornments is lighting.
+Another issue with underwater environments is lighting.
   Disparities in lighting between images, and as a result pixel intensities, is a common problem in our images.  
 This is not handled by the Zitnick and Kanade algorithm and is discussed in greater depth in Section~\ref{subsec:hsl_color_correction}.
 
@@ -329,14 +329,89 @@ where $\mathbf{p}_{m}'$ is the displaced vertex position and $S$ is the scale fa
 To demonstrate our complete stereo mapping system we deployed our VideoRay robot in a rock-walled well.
 This well provided both a large simple cylindrical structure and a detailed bumpy surface.  
 
+Using the Sonar data from the well we built the 3D figure shown in Figure~\ref{fig:result1}. 
+
+\begin{figure}[!h]
+	\centering
+		\subfigure[Well Top View]{\label{left}\epsfig{file = pics/blankWell1.png, width = 3.5cm}}
+		\quad %space between images
+		\subfigure[Well Side View]{\label{right}\epsfig{file = pics/blankWell2.png, width = 3.5cm}}\\%new line
+		\caption{Views of Plain Well Geometry}
+		\label{fig:result1}
+\end{figure}
+
+Inside that geometry we used virtual point projectors to display the rock textures that were taken at those locations (Figure~\ref{fig:result2}).
+
+\begin{figure}[!h]
+	\centering
+		\subfigure[Projected Images]{\label{left}\epsfig{file = pics/noDisparity.png, width = 3.5cm}}
+		\quad %space between images
+		\subfigure[Images on Wireframe]{\label{right}\epsfig{file = pics/noDisparityWire.png, width = 3.5cm}}\\%new line
+		\caption{Well With Rock Textures}
+		\label{fig:result2}
+\end{figure}
+
+  The disparity maps calculated at each of those points were then applied to deform the well geometry (Figure ~\ref{fig:result3}).
+
+\begin{figure}[!h]
+	\centering
+		\subfigure[Projected Disparity Maps]{\label{left}\epsfig{file = pics/mapsDisparity.png, width = 3.5cm}}
+		\quad %space between images
+		\subfigure[Wireframe Disparity Maps]{\label{right}\epsfig{file = pics/disparityWire.png, width = 3.5cm}}\\%new line
+		\caption{Well Deformed by Disparity Maps}
+		\label{fig:result3}
+\end{figure}
+
+Finally, the disparity maps combined with the images were mapped into the well geometry to produce the final detailed mesh (Figures~\ref{fig:result4},~\ref{fig:resultFull}).  The only factor that is keeping us from filling the well with textures is the Glew texture limit. 
+
+\begin{figure}[!h]
+	\centering
+		\subfigure[Well Wide Shot]{\label{left}\epsfig{file = pics/disparity.png, width = 3.5cm}}
+		\quad %space between images
+		\subfigure[Rocks Closeup]{\label{right}\epsfig{file = pics/mappedWell1.png, width = 3.5cm}}\\%new line
+		\medskip
+		\subfigure[Rocks Closeup Wireframe]{\label{center}\epsfig{file = pics/mappedWell2.png, width = 6cm}}
+		\caption{Fully Mapped Well}
+		\label{fig:result4}
+\end{figure}
+
+\begin{figure*}[!ht]
+   \vspace{-0.2cm}
+   \centering{
+      \epsfig{file = pics/disparity.png, width = .9\textwidth}}
+   \caption{Full Displaced Well}
+  \label{fig:resultFull}
+ \end{figure*}
+
+%\begin{figure*}[!ht]
+%   \vspace{-0.2cm}
+%   \centering{
+%      \epsfig{file = pics/disparityWire.png, width = .9\textwidth}}
+%   \caption{Full Displaced Well, Wireframe}
+%  \label{fig:resultFullWire}
+% \end{figure*}
+
 \section{\uppercase{Conclusion and Future Work}}
 \label{sec:conclusion}
 
-\noindent Summary and future work.
+\noindent 
+This paper presented a novel way to recreate detailed underwater environments.
+It is motivated by the desire to better map underwater caverns and cisterns using robotic tools.  
+In future experiments there are a few things that could be done to obtain better results.
+The creation of more detailed disparity maps could be achieved by upgrading the cameras and the lights on the robot.  
+GoPro cameras were a simple, cost-effective, solution to acquire underwater stereo images.  
+The quality of those images, however, could be greatly increased with more professional hardware.  
+With better cameras the output images would not need to be processed down to remove jpeg compression artifacts, which would allow much larger disparity images.  
+Similarly, with better cameras there would be no need to compensate for different exposure times between images.
+Alternatively, better lighting, including blue lighting, would allow pixel values to be compared in the HSL color space.  
+Such hardware would reduce the need for a different camera setup.
+
+In the future it would be interesting to explore the possibility of integrating this algorithm with a SLAM algorithm and more computing power to allow a robot to autonomously image each surface of a cistern. 
+Unfortunately, that would require a far more complex setup that what we had available at the time of writing.
 
 \bibliographystyle{apalike}
-{\small
-\bibliography{Stereo}}
+
+\bibliography{Stereo}
 
 \end{document}
 
