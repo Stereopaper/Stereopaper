@@ -98,11 +98,24 @@ Simple, single pass disparity algorithms were unable to produce good disparity m
 \noindent In this section we describe our approach towards the addition of fine details to the gross sonar models produced in Section~\ref{sec:reconstruction}. 
 
 % Rough stub, delete/edit/use for inspiration!
-The first step towards building fine details into a planar mesh is extracting those details. 
-This is done by building disparity maps from the captured images.
-The second step is taking those disparity and image pairs and using them to deform and texture, respectively, the basic sonar mesh. 
+The first step towards building fine details into a planar mesh is extracting those details from the original surface. 
+We chose to extract these details through stereo images.  
+Using a pair of stereo images, left and right, it is possible to determine which features were closer to the camera and which were further away.  
+The result of this comparison is stored in a disparity map.  
+This method is only accurate for determining the distance of objects up to at most two meters from the cameras.  
+For cistern walls, however, that is not a problem.  
+Disparity maps can be generated from this image information to accurately represent the internal features of a cistern. 
+The details of this process are described below.
 
-\noindent bla bla bla this produces a real-time 3D navigation interface for archaeologists to examine cisterns.
+The second step, is taking those disparity maps and image pairs and using them to deform and texture, respectively, the basic sonar mesh. 
+This is done by recording the location of the ROV when it takes a picture of the wall of the cistern.  
+Using that real-world location, the corresponding disparity map and image can be projected back onto the rough Sonar geometry from that same location in the virtual-world.
+The information in the disparity map is then used to deform the vertices onto which it was projected.
+Lighter patches of the disparity map pull vertices out towards the camera, away from the existing wall, and darker patches push those vertices into the wall.
+The images that were used to create the disparity map are then projected, or one of the two is projected, onto the newly deformed surface.  
+This creates a reasonable facsimile to the original wall when viewed from that location.  
+Repeating this procedure for each section of wall in a cistern will produce a finely detailed 3D model of that cistern.  
+Archaeologists can then use that model to examine every protruding stone and every nook and cranny of the original cistern without getting their feet wet.
 
 %Discuss why this is necessary. Discuss a system level overview of the process (more in depth than in introduction).
 
