@@ -132,7 +132,7 @@ Archaeologists can then use that model to examine every protruding stone and eve
 
 A number of algorithms currently exist to take two images, compare their features, and determine which points were closer and which were further from the camera (Figure~\ref{fig:dispgen}). 
 Unfortunately, few of these algorithms were robust enough to handle compressed underwater images of rock walls.
-We eventually chose the stereo mapping algorithm described by Zitnick and Kanade in "A Cooperative Algorithm for Stereo Matching and Occlusion Detection".
+We eventually chose the stereo mapping algorithm described by Zitnick and Kanade in ~\cite{stereo:zitKan}.
 
 The main problem with our images is that we are dealing with a very dull landscape.  
 Rocks, and especially bricks, have highly repetitive patterns and colors which produce feature-scarce images.
@@ -171,7 +171,7 @@ Shrinking was performed after smoothing to preserve the maximum amount of detail
 \subsubsection{Disparity Mapping}
 \label{subsec:disparity_mapping}
 
-Our disparity maps were generated using the cooperative, iterative approach described by Zitnick and Kanade (Include Reference).  
+Our disparity maps were generated using the cooperative, iterative approach described by Zitnick and Kanade ~\cite{stereo:zitKan}.  
 The basic algorithm is as follows:
 \\ \\
 1) Find the local support region for each pixel at (x,y) and each depth (d) by using an image intensity comparison function \(\delta\).  We chose \(\delta\) to be a normalized correlation function.
@@ -202,7 +202,7 @@ If the best weight for all depths for a certain pixel (x,y) is below a predefine
 \label{subsec:hsl_color_correction}
 Unfortunately, the paired GoPro cameras that we choose for data collection lacked the ability to sync exposure times.  
 The cameras independntly calculated the correct exposure for their image only, which resulted in a lack of light intensity matching between left and right images.
-A potential solution to this problem lies in using a color comparision function instead of an intensity comparison function (reference: "Stereo vision for robotic applications in the presence of non-ideal lighting conditions").
+A potential solution to this problem lies in using a color comparision function instead of an intensity comparison function ~\cite{stereo:nalGast}.
 The solution proposed by Nalpandtidis and Gasteratos suggests converting the images into the HSL color space and looking at only the hue and saturation values.  
  
 For our purposes, however, this method failed.  
@@ -338,7 +338,7 @@ where $p_{m}'$ is the displaced vertex position and $S$ and $O$ are a scale and 
 
 \subsection{Stereo Results}
 
-The Zitnick and Kanade algorithm was shown to perform well against the Univerisity of Tsukuba's Multiview Image Database.  
+The Zitnick and Kanade algorithm was shown to perform well against the Univerisity of Tsukuba's Multiview Image Database ~\cite{stereo:zitKan}.  
 In our tests, it performed similarly well with rocky underwater cystern images.  
 One such output image is show in Figure~\ref{fig:disparity}.
 This image was generated using an initial support region of size (11, 11, 5), and then an iterative local support region of size (13,13,5).
@@ -441,7 +441,7 @@ Unfortunately, that would require a far more complex setup that what we had avai
 
 \bibliographystyle{apalike}
 
-\bibliography{Stereo}
+\bibliography{stereo}
 
 \end{document}
 
