@@ -33,7 +33,7 @@
 
 \keywords{Keyword One: Keyword Two: Keyword Three}
 
-\abstract{We present a preliminary solution towards the accurate reconstruction of organic underwater surfaces by annexing true fine surface details obtained via stereoscopic imaging to gross sonar generated surface reconstructions.}
+\abstract{We present a preliminary solution towards the accurate reconstruction of organic underwater surfaces by annexing fine surface details from stereoscopic imaging and gross sonar generated surface reconstructions.}
 
 \onecolumn \maketitle \normalsize \vfill
 
@@ -63,7 +63,7 @@ Each disparity map is then projectively textured onto a pre-established gross so
 
 %Discuss the hardware mounted onto the ROV, and the process by which we collected data
 
-\noindent A small submersible Remotely Operated Vehicle (ROV) is utilized in the data acquisition process as a means of navigating the cistern and properly orienting the data collection hardware (Figure~\ref{fig:ROV}). The ROV is deployed into a cistern and guided from a control module above the surface. During deployment, the navigator repeatedly rests the ROV on the cistern floor and records a $360^{\circ}$ stationary scan, then lifts the ROV and repositions it elsewhere in the cistern for another scan until data for the entire horizontal scan plane has been collected. The scans must have some overlap to facilitate mosaicing and localization for surface reconstruction, which is taken into consideration when positioning the ROV on the cistern floor. A complete overview of the sonar data acquisition process can be found in [CHRIS'S PAPER HERE "Underwater Robots with Sonar and Smart Tether for Underground Cistern Mapping and Exploration"].
+\noindent A small submersible Remotely Operated Vehicle (ROV) is utilized in the data acquisition process as a means of navigating cisterns and properly orienting the data collection hardware (Figure~\ref{fig:ROV}). The ROV is deployed into a cistern and guided from a control module above the surface. During deployment, the navigator repeatedly rests the ROV on the cistern floor and records a $360^{\circ}$ stationary scan, then lifts the ROV and repositions it elsewhere in the cistern for another scan until data for the entire horizontal scan plane has been collected. The scans must have some overlap to facilitate mosaicing and localization for surface reconstruction, which is taken into consideration when positioning the ROV on the cistern floor. A complete overview of the sonar data acquisition process can be found in [CHRIS'S PAPER HERE "Underwater Robots with Sonar and Smart Tether for Underground Cistern Mapping and Exploration"].  This collection of scan planes is then used to build a rough 3D model of the cistern in question [Cite Jeff's work?].  
 \begin{figure}[!h]
    \vspace{-0.2cm}
    \centering{
@@ -72,10 +72,13 @@ Each disparity map is then projectively textured onto a pre-established gross so
   \label{fig:ROV}
  \end{figure}
 
-While the ROV is navigating a cistern, two high-definition (HD) cameras mounted to the bow in a waterproof casing are triggered to synchronously capture images every second. The cameras are vertically aligned so as to minimize image disparity in the vertical direction. 
-This environment and setup presents a number of challenges for disparity mapping.  
-Most importantly, the ROV's thrusters disturb sediment and other small objects in the environment, which then bespeckles the captured images.
-Simple, single pass disparity algorithms were unable to produce good disparity maps from these images.  Instead we chose a more complex, multi-pass algorithm, as is detailed below. 
+While the ROV is navigating a cistern, two high-definition (HD) cameras are mounted to the bow in a waterproof casing.
+These cameras are triggered to synchronously capture images.  
+Images from the pair of stereo cameras can then be used to build disparity maps, as described below.  
+At specific intervals along the cistern wall, the ROV is paused to take a few images.  
+The approximate position and heading of the ROV are recorded for those images.  
+That position in the physical cistern is then used again in the virtual cistern model created from the sonar data to correctly place the captured images and disparity maps and ultimately reconstruct that portion of the cistern. 
+
 
 \section{\uppercase{Gross sonar Model Reconstruction}}
 \label{sec:reconstruction}
@@ -160,7 +163,7 @@ To solve this issue we smoothed and shrunk the high resolution .jpeg images take
 This produced smaller left and right images that were comparable at the pixel level.
 
 The smoothing step was performed to remove .jpeg artifacts.
-  A simple Gaussian smooth was ineffective in this case because it blurred the edges of the rocks or bricks.
+  A simple Gaussian smooth was ineffective in this case because it blurred the edges of the rocks or bricks, removing valuable features from an already feature-scarce image.
   Instead Photoshop's "surface smooth" was used to preserve edges while still blurring similar color regions.
 
 The shrinking step was then performed on the image to further reduce the .jpeg artifacts and trim the size to something process-able.  
@@ -174,7 +177,8 @@ Shrinking was performed after smoothing to preserve the maximum amount of detail
 Our disparity maps were generated using the cooperative, iterative approach described by Zitnick and Kanade ~\cite{stereo:zitKan}.  
 The basic algorithm is as follows:
 \\ \\
-1) Find the local support region for each pixel at (x,y) and each depth (d) by using an image intensity comparison function \(\delta\).  We chose \(\delta\) to be a normalized correlation function.
+1) Find the local support for each pixel at (x,y) and each depth (d) by using an image intensity comparison function \(\delta\).  
+We chose \(\delta\) to be a normalized correlation function.
 \[L_0(x,y,d) = \delta(I_{Left}(y,x),I_{Right}(y,x+d))\]
 \\ \\
 2) Copy the values from the 3D array \(L_0\) into a new 3D array \(L_n\).
@@ -345,7 +349,7 @@ n_m^* = \left \{ \begin{array}{ll}
 \end{equation}
 
 
-where $n_m$ is the vertex's normal, $n_m^*$ is the updated normal vector, and $\vec{d} = \begin{Vmatrix}\vec{C}\end{Vmatrix} S + O$ is the dsplacement vector from~\eqref{eq:displace}.
+where $n_m$ is the vertex's normal, $n_m^*$ is the updated normal vector, and $\vec{d} = \begin{Vmatrix}\vec{C}\end{Vmatrix} S + O$ is the displacement vector from~\eqref{eq:displace}.
 
 Couple more sentences of explanation here...
 
@@ -367,7 +371,7 @@ Note that this image has lighting differences between left and right image.
 		\subfigure[Right camera image]{\label{right}\epsfig{file = pics/372R.jpg, width = 3cm}}\\%new line
 		\medskip
 		\subfigure[Generated Disparity]{\label{disparitymap}\epsfig{file = pics/372disp.png, width = 5cm}}
-		\caption{Disparity Map generated with initial local support (13,13,5), and an iterative support of (11,11,5)}
+		\caption{An example disparity map generated with initial local support region of (13,13,5), and an iterative support region of (11,11,5).}
 		\label{fig:disparity}
 \end{figure}
 
