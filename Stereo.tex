@@ -102,15 +102,7 @@ The first step towards building fine details into a planar mesh is extracting th
 This is done by building disparity maps from the captured images.
 The second step is taking those disparity and image pairs and using them to deform and texture, respectively, the basic sonar mesh. 
 
-\noindent
-
-\begin{figure*}[!ht]
-   \vspace{-0.2cm}
-   \centering{
-      \epsfig{file = pics/2.png, width = 0.9\textwidth}}
-   \caption{How we generate disparity maps from images.}
-  \label{fig:dispgen}
- \end{figure*}
+\noindent bla bla bla this produces a real-time 3D navigation interface for archaeologists to examine cisterns.
 
 %Discuss why this is necessary. Discuss a system level overview of the process (more in depth than in introduction).
 
@@ -210,6 +202,14 @@ Pictures of a patterned surface were taken at a number of measured distances fro
 Those images were then disparity mapped, and the average disparity at the center of the picture was used as the disparity data point for that physical depth.
 Using this set of points we were able to create a linear mapping between disparity and depth.
 
+\begin{figure*}[!ht]
+   \vspace{-0.2cm}
+   \centering{
+      \epsfig{file = pics/2.png, width = 0.9\textwidth}}
+   \caption{How we generate disparity maps from images.}
+  \label{fig:dispgen}
+ \end{figure*}
+
 \subsubsection{Stereo Results}
 
 The Zitnick and Kanade algorithm was shown to perform well against the Univerisity of Tsukuba's Multiview Image Database.  
@@ -237,11 +237,11 @@ Note that this image has lighting differences between left and right image.
 
 %Computation of plane eqs, acquire list of vertices contained within frustum, shader texturing. Explain why $\begin{Vmatrix}C\end{Vmatrix}$ is correct, talk about blending, explain how to determine whether vertex lies within frustum and how to texture map.
 
-\noindent In order to add fine details to the gross sonar generated mesh, we establish projective texturing. Rather than implementing (traditional? is there a better word?) texturing, projective texturing is utilized because of its ability to properly simulate an ROV as a point particle with the ROV's view frustum modeled as six implicit plane equations. This similarity enables a 'copy paste' method of texturing, where the ROV captures an image of an organic feature in a cistern, and a projector casts the image from the same relative position onto the a gross sonar reconstruction (Figures~\ref{fig:dispgen},~\ref{fig:projtex}). 
+\noindent In order to add fine details to the gross sonar generated mesh, we use projective texturing. Rather than implementing (traditional? is there a better word?) texturing, projective texturing is utilized because of its ability to properly simulate an ROV as a point particle with the ROV's view frustum modeled as six implicit plane equations. This similarity enables a 'copy paste' method of texturing, where the ROV captures an image of an organic feature in a cistern, and a projector casts the image from the same relative position onto the a gross sonar reconstruction (Figures~\ref{fig:dispgen},~\ref{fig:projtex}). 
 
-OpenGL and OpenGL Shading Language (GLSL) graphics libraries are utilized to establish projective texturing, the latter being used to create shaders - small programs run per-vertex directly on the GPU. The shaders are programmed to selectively alter rendered vertex information, such as position (vertex shader) and color (fragment shader). The combination of projective texturing and stereoscopic imaging enables us to project a disparity map onto a surface, and selectively displace vertices along the vector from the vertex to the projector according to the color value of the textured disparity map. 
+OpenGL and OpenGL Shading Language (GLSL) graphics libraries are utilized to aid in projective texturing, the latter being used to create shaders - small programs run per-vertex directly on the GPU. The shaders are programmed to selectively alter rendered vertex information, such as position (vertex shader) and color (fragment shader). The combination of projective texturing and stereoscopic imaging enables the ability to selectively displace vertices according to the color of a texture-mapped disparity map that is projected onto a surface. These vertices are displaced along the vector leading from their original 3D position in the mesh to the position of the projector, re-applying the geometry captured within the cistern to the model.
 
-A projector is simulated by establishing position and plane equations for a view frustum based on the position and orientation of the ROV when the projected images were captured in a cistern.  We define $\mathbf{J} = \{\mathbf{j}_{1},\dots,\mathbf{j}_{N}\}$ to be the set of projectors casting textures onto the gross surface reconstruction. Each projector, $\mathbf{j}_{n} = ((\mathbf{j}_{n_{x}}^{pos},\mathbf{j}_{n_{y}}^{pos},\mathbf{j}_{n_{z}}^{pos}), \langle \mathbf{j}_{n_{x}}^{look},\mathbf{j}_{n_{y}}^{look},\mathbf{j}_{n_{z}}^{look}\rangle ^{\mathrm{T}})$, is uniquely defined by its position in 3D space, and a look vector orthonormal to the projector's viewport (Figure~\ref{fig:frustum}). All projectors have a pre-calibrated Field Of View (FOV) mimicking the compound FOV produced by the GoPro camera and waterproof housing lenses. The ROV is not equipped with roll thrusters, allowing us to ignore the possibility of a tilted camera frustum (i.e. the projector's right facing vector will always lie in the horizontal plane). Implicit plane equations modeling the projector view frustums in the form $Ax + By + Cz + D = 0$ are resolved using the clip space approach in [CITATION NEEDED], where $\langle A, B, C\rangle ^ {\mathrm{T}}$ is the plane's normal vector and  $(x, y, z)$ is a point on the plane.
+A projector is simulated by establishing plane equations for a view frustum based on the position and orientation of the ROV when the projected images were captured in a cistern. We define $J = \{j_{1},\dots,j_{N}\}$ to be the set of projectors casting textures onto the gross surface reconstruction. Each projector, $j_{n} = ((j_{n_{x}}^{pos},j_{n_{y}}^{pos},j_{n_{z}}^{pos}), \langle j_{n_{x}}^{look},j_{n_{y}}^{look},j_{n_{z}}^{look}\rangle)$, is uniquely defined by its position in 3D space, and a look vector orthonormal to the projector's viewport (Figure~\ref{fig:frustum}). All projectors have a pre-calibrated Field Of View (FOV) mimicking the compound FOV produced by the GoPro camera and waterproof housing lenses. The ROV is not equipped with roll thrusters, allowing us to ignore the possibility of a tilted camera frustum (i.e. the projector's right facing vector will always lie in the horizontal plane). Implicit plane equations modeling the projector view frustums in the form $Ax + By + Cz + D = 0$ are resolved using the approach in [CITATION NEEDED], where $\langle A, B, C\rangle$ is the plane's normal vector and  $(x, y, z)$ is a point on the plane. In this approach, plane equations are computed in homogenous space using the composite $4x4$ modelview projection matrix of the projector, $\lbrack \chi \rbrack$.
 
 \begin{align}
 \nonumber %Left plane
@@ -272,7 +272,7 @@ A projector is simulated by establishing position and plane equations for a view
   \label{fig:frustum}
  \end{figure}
 
-Next, for each projector, all faces in the mesh are passed through a view frustum culling filter in order to produce a list of faces contained within the frustum. We define $\mathbf{P} = \{\mathbf{p}_{1},\dots,\mathbf{p}_{M}\}$ to be the set of vertices contributing to the gross sonar reconstructed mesh. Each vertex, $\mathbf{p}_{n} =  (\mathbf{p}_{m_{x}},\mathbf{p}_{m_{y}},\mathbf{p}_{m_{z}})$, is defined by its position in 3D space. Additionally, we define $\mathbf{F} = \{\mathbf{f}_{1},\dots,\mathbf{f}_{Q}\}$ as the set of faces in the mesh. Each face, $\mathbf{f}_{q} = (\mathbf{p}_{\alpha}, \mathbf{p}_{\beta}, \mathbf{p}_{\gamma})$, is comprised of three vertices. We begin with a (un-memory-intensive... find another way to phrase - perhaps list big O notation?) preliminary cull which discards faces if their bounding sphere is outside of the projector's view frustum. Since frustum planes are modeled implicitly with normal vectors pointing into the frustum, if the signed distance from the face's center to the frustum plane, $\delta_{center}$, is less than the negative of the face's bounding sphere's radius, then the face's bounding sphere is entirely outside of the view frustum. In this case the face is immediately culled. $\delta_{center}$ is computed as follows,
+Next, for each projector, all faces in the mesh are passed through a view frustum culling filter in order to produce a list of faces contained within the frustum. We define $P = \{p_{1},\dots,p_{M}\}$ to be the set of vertices contributing to the gross sonar reconstructed mesh. Each vertex, $p_{n} =  (p_{m_{x}},p_{m_{y}},p_{m_{z}})$, is defined by its position in 3D space. Additionally, we define $F = \{f_{1},\dots,f_{Q}\}$ as the set of faces in the mesh. Each face, $f_{q} = (p_{\alpha}, p_{\beta}, p_{\gamma})$, is comprised of three vertices. We begin with a (un-memory-intensive... find another way to phrase - perhaps list big O notation?) preliminary cull which discards faces if their bounding sphere is outside of the projector's view frustum. Since frustum planes are modeled implicitly with normal vectors pointing into the frustum, if the signed distance from the face's center to the frustum plane, $\delta_{center}$, is less than the negative of the face's bounding sphere's radius, then the face's bounding sphere is entirely outside of the view frustum. In this case the face is immediately culled. $\delta_{center}$ is computed as follows,
 %
 \begin{equation}
 \delta_{center} = \frac{Ax + By + Cz + D}{3 \begin{Vmatrix} \langle A, B, C \rangle \end{Vmatrix}},
@@ -280,7 +280,7 @@ Next, for each projector, all faces in the mesh are passed through a view frustu
 
 where
 \begin{equation}
-(x, y, z) = \left(\sum\limits_{\forall \mathbf{p}_{m} \in \mathbf{f}_{q}} \mathbf{p}_{m_{x}}, \sum\limits_{\forall \mathbf{p}_{m} \in \mathbf{f}_{q}} \mathbf{p}_{m_{y}}, \sum\limits_{\forall \mathbf{p}_{m} \in \mathbf{f}_{q}} \mathbf{p}_{m_{z}}\right)
+(x, y, z) = \left(\sum\limits_{\forall p_{m} \in f_{q}} p_{m_{x}}, \sum\limits_{\forall p_{m} \in f_{q}} p_{m_{y}}, \sum\limits_{\forall p_{m} \in f_{q}} p_{m_{z}}\right)
 \end{equation}
 
 Once faces are passed through the preliminary culling filter, a more memory-intensive (if you do list big O for prev cull, list it for this one too) thorough cull is executed in order to remove the small number of faces that lie entirely outside of the frustum, but whose bounding spheres are still intersected by the frustum plane.  To accomplish this, the signed distances from each vertex in the face to the frustum plane, $\delta_{\alpha}$, $\delta_{\beta}$, and $\delta_{\gamma}$, are individually computed. If $\delta_{\alpha}$, $\delta_{\beta}$, and $\delta_{\gamma}$ are all less than zero, the face is culled. $\delta_{\alpha}$, $\delta_{\beta}$, and $\delta_{\gamma}$ are computed as follows,
@@ -292,29 +292,45 @@ Once faces are passed through the preliminary culling filter, a more memory-inte
 where
 \begin{align}
 \nonumber
-(x, y, z)_{\alpha} &= (\mathbf{p}_{\alpha_{x}}, \mathbf{p}_{\alpha_{y}}, \mathbf{p}_{\alpha_{z}})\\
+(x, y, z)_{\alpha} &= (p_{\alpha_{x}}, p_{\alpha_{y}}, p_{\alpha_{z}})\\
 \nonumber
-(x, y, z)_{\beta} &= (\mathbf{p}_{\beta_{x}}, \mathbf{p}_{\beta_{y}}, \mathbf{p}_{\beta_{z}})\\
-(x, y, z)_{\gamma} &= (\mathbf{p}_{\gamma_{x}}, \mathbf{p}_{\gamma_{y}}, \mathbf{p}_{\gamma_{z}})
+(x, y, z)_{\beta} &= (p_{\beta_{x}}, p_{\beta_{y}}, p_{\beta_{z}})\\
+(x, y, z)_{\gamma} &= (p_{\gamma_{x}}, p_{\gamma_{y}}, p_{\gamma_{z}})
 \end{align}
 
 
-With faces lying outside of the projector view frustums culled, the vertices in the remaining faces are added to a trimmed set, $\mathbf{P}^{*}\subset \mathbf{P}$, whose members are sent to the vertex and fragment shaders (i.e. to the GPU) to be and displaced and textured in accordance with the generated disparity map and left camera image, respectively (Figure~\ref{fig:frustum}). $\mathbf{P}$ is also sent to the GPU so that the portions of the mesh that are not displaced or textured are still rendered.
+With faces lying outside of the projector view frustums culled, the vertices in the remaining faces are added to a trimmed set, $P^{*}\subset P$, whose members are sent to the vertex and fragment shaders (i.e. to the GPU) to be and displaced and textured in accordance with the generated disparity map and camera image, respectively (Figure~\ref{fig:frustum}). $P$ is also sent to the GPU so that the portions of the mesh that are not displaced or textured are still rendered.
 
-\subsection{Vertex Displacement}
+The implemented projective texturing method naturally produces a second projection facing in the direction negative to $j_{n}^{look}$. To remove the unwanted projections, a simple check was added to the vertex shader which ensures that the texture mapped vertex position has a positive $q$ component.
 
-NOT FINISHED FROM HERE ON
- Let $C = \langle C_{r},C_{g},C_{b}\rangle ^\mathrm{T}$ be a three component vector containing the RGB color value of the projected texture at $\mathbf{p}_{m}$, and $\vec{b} = \mathbf{j}_{n} - \mathbf{p}_{m}$ be the vector originating at the vertex $\mathbf{p}_{m}$ and pointing towards the projector $\mathbf{j}_{n}$. Then,
+\subsection{Per-Vertex Computations}
+
+A GLSL vertex and fragment shader are used to displace and texture vertices. The vertex shader recieves $P$ and $P^{*}$, as well as a modelview projection matrix for the camera and each projector, projector positions, texture primitives for the disparity maps, an offset and scale value for displacement magnitudes, and normal vectors used for lighting computations from the OpenGL program. The vertex shader displaces vertices one at a time in accordance with the color of the texture-mapped disparity map coordinates. Vertices vertices (those belonging to $P^{*}$ are updated and sent to the fragment shader for diffuse shading computations.
+
+The fragment shader recieves $P$ and $P^{*}$, as well as the camera image texture primitives and the revised normal vectors of the vertices in $P^{*}$. The fragment shader maps the camera images onto the vertices in the frustum of each projector. Again, vertices lying in the frustum of two or more projectors have their colors blended. Once an RGB color value has been computed for the vertex, diffuse shading is added to the model.
+
+\subsubsection{Vertex Displacement}
+
+Vertices belonging to $P^{*}$ are displaced along the vector $\vec{b} = j_{n} - p_{m}$ a distance proportional to the magnitude of the RGB color value, $C = \langle C_{r}, C_{b}, C_{g} \rangle$, of the disparity map at the corresponding texture-mapped coordinates, $t_m$. Since the modelview projection matrix of each projector is accessible from the vertex shader, the texture-mapped coordinates of $p_m$, and thus, $C$ can be calculated per-vertex.
+
+\begin{align}
+t_{m} &= p_{m}\lbrack MVP \rbrack _{j_{n}} \\
+C &= \langle t_{m\_red}, t_{m\_blue}, t_{m\_green} \rangle
+\end{align}
+
+Vertex displacement then proceeds as follows:
+
 \begin{equation}
-\mathbf{p}_{m}' = \left \{ 
+p_{m}' = \left \{ 
 \begin{array}{ll}
-\mathbf{p}_{m} + (\vec{b} \begin{Vmatrix}C\end{Vmatrix} S) & \text{if} \quad \mathbf{p}_{m} \in \mathbf{P}^{*}\\
-\mathbf{p}_{m} & \text{if} \quad \mathbf{p}_{m} \notin \mathbf{P}^{*}
-\end{array}\right.
+p_{m} + \vec{b} (\begin{Vmatrix}C\end{Vmatrix} S + O) & \text{if} \quad p_{m} \in P^{*}\\
+p_{m} & \text{otherwise}
+\end{array},\right.
 \label{eq:displace}
 \end{equation}
 
-where $\mathbf{p}_{m}'$ is the displaced vertex position and $S$ is the scale factor determined in Section~\ref{subsec:calibration}. 
+where $p_{m}'$ is the displaced vertex position and $S$ and $O$ are a scale and offset factor. $S$ grants the ability to fit a function to the displacement distance.$O$ is generally negative, ensuring that vertices belonging to $P^{*}$ are both pushed and pulled from the model surface. In the current version of the software, both $S$ and $O$ are user-controlled. However, the world space coordinates of the sonar mesh are computed such that one unit in world space is equal to one meter in the cistern, so a true value for $S$ and $O$ can be calculated through calibration. (this will be in future work... do I say that we didn't do this yet?)
+
 \begin{figure*}[!ht]
    \vspace{-0.2cm}
    \centering{
@@ -322,6 +338,12 @@ where $\mathbf{p}_{m}'$ is the displaced vertex position and $S$ is the scale fa
    \caption{How we project textures and displace vertices yo.}
   \label{fig:projtex}
  \end{figure*}
+ 
+ \subsubsection{Blending}
+ ...
+ 
+ \subsubsection{Lighting}
+ ...
 
 \section{\uppercase{Results}}
 \label{sec:results}
