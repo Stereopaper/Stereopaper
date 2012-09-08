@@ -108,7 +108,16 @@ The second step is taking those disparity and image pairs and using them to defo
 
 \subsection{Disparity Map Generation}
 
-A number of algorithms currently exist to take two images, compare their features, and determine which points were closer and which were further from the camera. 
+\begin{figure*}[!ht]
+   \vspace{-0.2cm}
+   \centering{
+      \epsfig{file = pics/2.png, width = 0.9\textwidth}}
+   \caption{How we generate disparity maps from images.}
+  \label{fig:dispgen}
+ \end{figure*}
+
+
+A number of algorithms currently exist to take two images, compare their features, and determine which points were closer and which were further from the camera (Figure~\ref{fig:dispgen}). 
 Unfortunately, few of these algorithms were robust enough to handle compressed underwater images of rock walls.
 We eventually chose the stereo mapping algorithm described by Zitnick and Kanade in "A Cooperative Algorithm for Stereo Matching and Occlusion Detection".
 
@@ -202,32 +211,6 @@ Pictures of a patterned surface were taken at a number of measured distances fro
 Those images were then disparity mapped, and the average disparity at the center of the picture was used as the disparity data point for that physical depth.
 Using this set of points we were able to create a linear mapping between disparity and depth.
 
-\begin{figure*}[!ht]
-   \vspace{-0.2cm}
-   \centering{
-      \epsfig{file = pics/2.png, width = 0.9\textwidth}}
-   \caption{How we generate disparity maps from images.}
-  \label{fig:dispgen}
- \end{figure*}
-
-\subsubsection{Stereo Results}
-
-The Zitnick and Kanade algorithm was shown to perform well against the Univerisity of Tsukuba's Multiview Image Database.  
-In our tests, it performed similarly well with rocky underwater cystern images.  
-One such output image is show in Figure~\ref{fig:disparity}.
-This image was generated using an initial support region of size (11, 11, 5), and then an iterative local support region of size (13,13,5).
-Note that this image has lighting differences between left and right image.
-
-\begin{figure}[!h]
-	\centering
-		\subfigure[Left camera image]{\label{left}\epsfig{file = pics/372L.jpg, width = 3cm}}
-		\quad %space between images
-		\subfigure[Right camera image]{\label{right}\epsfig{file = pics/372R.jpg, width = 3cm}}\\%new line
-		\medskip
-		\subfigure[Generated Disparity]{\label{disparitymap}\epsfig{file = pics/372disp.png, width = 5cm}}
-		\caption{Disparity Map generated with initial local support (13,13,5), and an iterative support of (11,11,5)}
-		\label{fig:disparity}
-\end{figure}
 
 \subsection{Projective Texturing}
 
@@ -348,6 +331,26 @@ where $p_{m}'$ is the displaced vertex position and $S$ and $O$ are a scale and 
 \section{\uppercase{Results}}
 \label{sec:results}
 
+\subsection{Stereo Results}
+
+The Zitnick and Kanade algorithm was shown to perform well against the Univerisity of Tsukuba's Multiview Image Database.  
+In our tests, it performed similarly well with rocky underwater cystern images.  
+One such output image is show in Figure~\ref{fig:disparity}.
+This image was generated using an initial support region of size (11, 11, 5), and then an iterative local support region of size (13,13,5).
+Note that this image has lighting differences between left and right image.
+
+\begin{figure}[!h]
+	\centering
+		\subfigure[Left camera image]{\label{left}\epsfig{file = pics/372L.jpg, width = 3cm}}
+		\quad %space between images
+		\subfigure[Right camera image]{\label{right}\epsfig{file = pics/372R.jpg, width = 3cm}}\\%new line
+		\medskip
+		\subfigure[Generated Disparity]{\label{disparitymap}\epsfig{file = pics/372disp.png, width = 5cm}}
+		\caption{Disparity Map generated with initial local support (13,13,5), and an iterative support of (11,11,5)}
+		\label{fig:disparity}
+\end{figure}
+
+\subsection{Projection Results}
 To demonstrate our complete stereo mapping system we deployed our VideoRay robot in a rock-walled well.
 This well provided both a large simple cylindrical structure and a detailed bumpy surface.  
 
