@@ -84,9 +84,27 @@ At specific intervals along the cistern wall, the ROV is paused to take a few im
 The approximate position and heading of the ROV are recorded for those images.  
 That position in the physical cistern is then used again in the virtual cistern model created from the sonar data to correctly place the captured images and disparity maps and ultimately reconstruct that portion of the cistern. 
 
+\subsection{Hardware Calibration}
+To facilitate the accurate virtual reconstruction of the world it was necessary to calibrate the GoPro cameras.
+  Both the aspect ratio and the vertical field of view (VFOV) needed to be calculated to accurately re-project the captured images and disparity maps in the virtual world.  
+The following equations were used:
+\[ \text{Aspect Ratio} = \frac{\text{width}}{\text{height}}\]
+\[ \text{VFOV} = 2 * tan^{-1}(\frac{\text{height}/2}{\text{depth}}) \]
+
+\begin{figure}[!h]
+   \vspace{-0.2cm}
+   \centering{
+      \epsfig{file = pics/CalibrationDimentions.png, width = 7cm}}
+   \caption{GoPro Calibration Measurements}
+  \label{fig:ROV}
+ \end{figure}
+
+These two values were used to specify the behavior of projectors that are discussed later in the Projective Texturing Section: ~\ref{subsec:projectiveTexturing}.
 
 \section{\uppercase{Gross sonar Model Reconstruction}}
 \label{sec:reconstruction}
+
+
 
 %Discuss sonar models/how they are generated in our situation. More focused on the robotics aspect, rather than the details of Jeff and Billy's projects.
 
@@ -236,6 +254,7 @@ Using this set of points we were able to create a linear mapping between dispari
 
 
 \subsection{Projective Texturing}
+\label{subsec:projectiveTexturing}
 
 %Describe how projective texturing works, describe how vertices are selected, describe phantom texture vs. displayed texture, then jump into math mode.
 
@@ -338,7 +357,8 @@ p_{m} & \text{otherwise}
 where $p_{m}'$ is the displaced vertex position and $S$ and $O$ are a scale and offset factor. $S$ grants the ability to fit a function to the displacement distance.$O$ is generally negative, ensuring that vertices belonging to $P^{*}$ are both pushed and pulled from the model surface rather than only being pulled towards the projector. In the current version of the software, both $S$ and $O$ are user-controlled. However, the world space coordinates of the sonar mesh are computed such that one unit in world space is equal to one meter in the cistern, so a true value for $S$ and $O$ can be calculated through calibration.
  
  \subsubsection{Texture Blending}
- 
+
+%Feel free to remove/edit/use for inspiration
  
  \subsubsection{Post-Displacement Lighting Recalculation}
  
@@ -368,7 +388,7 @@ The Zitnick and Kanade algorithm was shown to perform well against the Univerisi
 In our tests, it performed similarly well with rocky underwater cystern images.  
 One such output image is show in Figure~\ref{fig:disparity}.
 This image was generated using an initial support region of size (11, 11, 5), and then an iterative local support region of size (13,13,5).
-Note that this image has lighting differences between left and right image.
+Note that the left and right images have a slight difference in lighting.
 
 \begin{figure}[!h]
 	\centering
