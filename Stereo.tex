@@ -207,17 +207,25 @@ The basic algorithm is as follows:
 \\ \\
 1) Find the local support for each pixel at (x,y) and each depth (d) by using an image intensity comparison function \(\delta\).  
 We chose \(\delta\) to be a normalized correlation function.
-\[L_0(x,y,d) = \delta(I_{Left}(y,x),I_{Right}(y,x+d))\]
+\begin{equation}
+L_0(x,y,d) = \delta(I_{Left}(y,x),I_{Right}(y,x+d))
+\end{equation}
 \\ \\
 2) Copy the values from the 3D array \(L_0\) into a new 3D array \(L_n\).
 \\ \\
 3) Assume that, \(\Phi\)(x,y,d) is the 3D support region around the pixel (x,y), and suppose:
-\[S_n(x,y,d) = \sum_{(x',y',d') \in \Phi} L_n (x+x', y+y', d+d') \]
+\begin{equation}
+S_n(x,y,d) = \sum_{(x',y',d') \in \Phi} L_n (x+x', y+y', d+d') 
+\end{equation}
 Furthermore, assume that \(\Psi\)(x,y,d) is the set of all pixels that map to (x,y) in the left image and (x+d,y) in the right image. 
 Let \(\alpha\) be a constant that controls how quickly the values in \(L_n\)(x,y,d) will converge.  
 Then iterate through the values in \(L_n\) updating each value using: 
-\[L_{n+1}(x,y,d) = \]
-\[L_n(x,y,d)*\left(  \frac{S_n(x,y,d)}{\sum\limits_{(x'',y'',d'') \in \Psi(x,y,d)} S_n(x'',y'',d'')} \right)^\alpha \]
+\begin{equation}
+\begin{array}{ll}
+L_{n+1}(x,y,d) = \\ 
+L_n(x,y,d)*\left(  \frac{S_n(x,y,d)}{\sum\limits_{(x'',y'',d'') \in \Psi(x,y,d)} S_n(x'',y'',d'')} \right)^\alpha 
+\end{array}
+\end{equation}
 \\ \\
 4) To build the final disparity map loop through each pixel position (x,y) and award the depth value (d) with the highest weight from \(L_n\)(x,y,d) as the final value.
 If the best weight for all depths for a certain pixel (x,y) is below a predefined threshold, assume the pixel was occluded.
