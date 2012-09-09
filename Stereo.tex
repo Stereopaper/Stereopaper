@@ -356,9 +356,32 @@ p_{m} & \text{otherwise}
 
 where $p_{m}'$ is the displaced vertex position and $S$ and $O$ are a scale and offset factor. $S$ grants the ability to fit a function to the displacement distance.$O$ is generally negative, ensuring that vertices belonging to $P^{*}$ are both pushed and pulled from the model surface rather than only being pulled towards the projector. In the current version of the software, both $S$ and $O$ are user-controlled. However, the world space coordinates of the sonar mesh are computed such that one unit in world space is equal to one meter in the cistern, so a true value for $S$ and $O$ can be calculated through calibration.
  
- \subsubsection{Texture Blending}
+ \subsubsection{Projection Blending}
 
 %Feel free to remove/edit/use for inspiration
+The existence of multiple projections in the virtual cistern requires the ability to artfully and accurately overlap those projections.
+A projection consists of both a texture and a disparity map.
+Each single projection is just as likely of being the ground truth data for a vertex as any other projection that is applied to that vertex. 
+Thus, each projection that is applied to a vertex has equal weight upon that vertex's final color and position.
+Let us assume $J_1$ is the set of all projectors casting a disparity value onto this vertex and let $B = \{j \in J_1 : (j - p_m)\}$. 
+Then expanding on equation ~\ref{eq:displace} for q overlapping projections,
+
+\begin{equation}
+p_{m}' = \left \{ 
+\begin{array}{ll}
+p_{m} + \sum\limits_{\vec{b} \in B} \frac{(\vec{b} \begin{Vmatrix}\vec{C}\end{Vmatrix} S + O)}{q} & \text{if} \quad p_{m} \in P^{*}\\
+p_{m} & \text{otherwise}
+\end{array},\right.
+\label{eq:displaceBlend}
+\end{equation}
+
+Similarly, to determine the final color of the vertex, let $\vec{C_t}$ be the final color of a vertex and let $C_p$ be the set of all colors projected onto that vertex. 
+\begin{equation}
+\vec{C_t} = \sum\limits_{\vec{c} \in C_p} \frac{\vec{c}}{q} 
+\label{eq:colorBlend}
+\end{equation}
+
+There are other, more complex, methods we could use to weight certain projections higher than others, but this simple averaging scheme is more computationally efficient. 
  
  \subsubsection{Post-Displacement Lighting Recalculation}
  
@@ -479,9 +502,11 @@ GoPro cameras were a simple, cost-effective, solution to acquire underwater ster
 The quality of those images, however, could be greatly increased with more professional hardware.  
 With better cameras the output images would not need to be processed down to remove jpeg compression artifacts, which would allow much larger disparity images.  
 Similarly, with better cameras there would be no need to compensate for different exposure times between images.
-Alternatively, better lighting, including blue lighting, would allow pixel values to be compared in the HSL color space.  
+Alternatively, better lighting, including blue lights, would allow pixel values to be compared in the HSL color space.  
 Such hardware would reduce the need for a different camera setup.
-With regards to the shader calculations, a proper calibration would allow for the true disparity scales and offsets. Additionally, a second vertex shader could be implemented in order to compute Phong shading on the displaced vertex positions.
+
+With regards to the shader calculations, a proper calibration would allow for the true disparity scales and offsets. 
+Additionally, a second vertex shader could be implemented in order to compute Phong shading on the displaced vertex positions.
 In the future it would be interesting to explore the possibility of integrating this algorithm with a SLAM algorithm and more computing power to allow a robot to autonomously image each surface of a cistern. 
 Unfortunately, that would require a far more complex setup that what we had available at the time of writing.
 
