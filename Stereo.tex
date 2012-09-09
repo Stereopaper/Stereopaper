@@ -49,7 +49,10 @@ Third and finally, the rough 3D model is deformed and textured using the details
 
 %Related works and an overview of the procedure. Possibly system block diagram leading the reader through the process.
 
-\noindent Recent research in the field of mobile robotics has allowed for the creation of maps of settings otherwise inaccessible to humans, such as underwater domains and dangerous caves [cite Billy's paper]. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors. However, these maps often suffer from misrepresentation of fine geometry details due to equipment limitations, sensor noise, and probabilistic uncertainty during reconstruction. We examine a case in which a sonar sensor is used to extract surface data in an underwater environment, further complicating geometric misrepresentation by introducing equipment drift during scan captures, and floating occlusions.
+\noindent Recent research in the field of mobile robotics has demonstrated the creation of 3D maps of settings otherwise inaccessible to humans, such as underwater domains and dangerous caves [cite Billy's paper]. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors.
+ Unfortunately, these maps often suffer from misrepresentations of fine geometry details due to equipment limitations, sensor noise, and probabilistic uncertainty during reconstruction.
+ We examine a case in which a sonar sensor is used to extract surface data in an underwater environment.
+Error is furthered in this case by equipment drift during scans and floating occlusions, both of which lead to geometric misrepresentations.
 
 In this paper we present a preliminary solution towards the reintroduction of fine details omitted by sonar data into surface reconstructions.  
 Two cameras are used to capture stereo images of underwater surfaces.
