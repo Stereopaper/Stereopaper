@@ -96,13 +96,13 @@ The following equations were used:
 \[ \text{Aspect Ratio} = \frac{\text{width}}{\text{height}}\]
 \[ \text{VFOV} = 2 * tan^{-1}(\frac{\text{height}/2}{\text{depth}}) \]
 
-\begin{figure}[!h]
-   \vspace{-0.2cm}
-   \centering{
-      \epsfig{file = pics/CalibrationDimentions.png, width = 7cm}}
-   \caption{GoPro Calibration Measurements}
-  \label{fig:ROV}
- \end{figure}
+%\begin{figure}[!h]
+%   \vspace{-0.2cm}
+%   \centering{
+%      \epsfig{file = pics/CalibrationDimentions.png, width = 7cm}}
+%   \caption{GoPro Calibration Measurements}
+%  \label{fig:ROV}
+% \end{figure}
 
 These two values were used to specify the behavior of projectors that are discussed later in the Projective Texturing Section: ~\ref{subsec:projectiveTexturing}.
 
@@ -438,51 +438,53 @@ Note that the left and right images have a slight difference in lighting.
 \end{figure}
 
 \subsection{Projection Results}
-To demonstrate our complete stereo mapping system we deployed our VideoRay robot in a rock-walled well.
+To demonstrate our complete cistern mapping system we deployed our ROV in a rock-walled well.
 This well provided both a large simple cylindrical structure and a detailed bumpy surface.
 
-Using the Sonar data from the well we built the 3D figure shown in Figure~\ref{fig:result1}. 
+Using the Sonar data from the well we built the rough 3D model shown in Figure~\ref{fig:result1}. 
 
 \begin{figure}[!h]
 	\centering
-		\subfigure[Well Top View]{\label{left}\epsfig{file = pics/blankWell1.png, width = 3.5cm}}
+		\subfigure[Well Top View]{\label{left}\epsfig{file = pics/blankWell3.png, width = 3.5cm}}
 		\quad %space between images
 		\subfigure[Well Side View]{\label{right}\epsfig{file = pics/blankWell2.png, width = 3.5cm}}\\%new line
 		\caption{Views of Plain Well Geometry}
 		\label{fig:result1}
 \end{figure}
 
-Inside that geometry we used virtual point projectors to display the rock textures that were taken at those locations (Figure~\ref{fig:result2}).
+Inside that geometry we used virtual point projectors to display the rock images and disparity maps as they were originally captured at that location.  
+The disparity maps were further used to deform the well geometry as shown in Figure ~\ref{fig:result2} (b).
 
 \begin{figure}[!h]
 	\centering
 		\subfigure[Projected Images]{\label{left}\epsfig{file = pics/noDisparity.png, width = 3.5cm}}
 		\quad %space between images
-		\subfigure[Images on Wireframe]{\label{right}\epsfig{file = pics/noDisparityWire.png, width = 3.5cm}}\\%new line
-		\caption{Well With Rock Textures}
+		\subfigure[Disparity Deformations]{\label{left}\epsfig{file = pics/mapsDisparity.png, width = 3.5cm}}
+		\caption{A set of images and disparity maps reprojected as they were captured inside the well.}
 		\label{fig:result2}
 \end{figure}
 
-  The disparity maps calculated at each of those points were then applied to deform the well geometry (Figure ~\ref{fig:result3}).
+%  The disparity maps calculated at each of those points were then applied to deform the well geometry (Figure ~\ref{fig:result4}).
+%
+%\begin{figure}[!h]
+%	\centering
+%		\subfigure[Images on Wireframe]{\label{right}\epsfig{file = pics/noDisparityWire.png, width = 3.5cm}}\\%new line
+%		\quad %space between images
+%		\subfigure[Wireframe Disparity Maps]{\label{right}\epsfig{file = pics/disparityWire.png, width = 3.5cm}}\\%new line
+%		\caption{Well Deformed by Disparity Maps}
+%		\label{fig:result3}
+%\end{figure}
 
+Finally, the disparity maps combined with the surface images were mapped into the well geometry to produce the detailed mesh in Figures~\ref{fig:result4} \&~\ref{fig:resultFull}.  The only factor that is keeping us from filling the well with textures is the Glew texture limit. 
+
+%need to figure out how to do a gradient fade between wireframe and real images
 \begin{figure}[!h]
 	\centering
-		\subfigure[Projected Disparity Maps]{\label{left}\epsfig{file = pics/mapsDisparity.png, width = 3.5cm}}
-		\quad %space between images
-		\subfigure[Wireframe Disparity Maps]{\label{right}\epsfig{file = pics/disparityWire.png, width = 3.5cm}}\\%new line
-		\caption{Well Deformed by Disparity Maps}
-		\label{fig:result3}
-\end{figure}
-
-Finally, the disparity maps combined with the images were mapped into the well geometry to produce the final detailed mesh (Figures~\ref{fig:result4},~\ref{fig:resultFull}).  The only factor that is keeping us from filling the well with textures is the Glew texture limit. 
-
-\begin{figure}[!h]
-	\centering
-		\subfigure[Well Wide Shot]{\label{left}\epsfig{file = pics/disparity.png, width = 3.5cm}}
-		\quad %space between images
-		\subfigure[Rocks Closeup]{\label{right}\epsfig{file = pics/mappedWell1.png, width = 3.5cm}}\\%new line
-		\medskip
-		\subfigure[Rocks Closeup Wireframe]{\label{center}\epsfig{file = pics/mappedWell2.png, width = 6cm}}
+%		\subfigure[Well Wide Shot]{\label{left}\epsfig{file = pics/disparity.png, width = 3.5cm}}
+%		\quad %space between images
+%		\subfigure[Rocks Closeup]{\label{right}\epsfig{file = pics/mappedWell1.png, width = 3.5cm}}\\%new line
+%		\medskip
+		\subfigure[Rocks Closeup Wireframe]{\label{center}\epsfig{file = pics/closeFinal4.png, width = 7cm}}
 		\caption{Fully Mapped Well}
 		\label{fig:result4}
 \end{figure}
