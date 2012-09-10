@@ -35,10 +35,10 @@
 
 \keywords{3D Site Reconstruction: Surface Reconstruction: Underwater Stereo Vision: Projective Texturing}
 
-\abstract{The study of underwater structures, such as wells, cisterns and water storage systems, can be of historical and scientific significance for archeologists.  Such sites pose a challenge as access and study of them can be dangerous and infeasible for humans. 
-Robots can often reach these locations safer and cause less harm, especially underwater micro-ROVs, such as the Videoray  Pro 3 GTO, which can navigate very small tunnels and openings.  
-Prior work has successfully reconstructed geometric models of such underwater structures with the use of sonar measurements.  Although effective, sonar has a fairly limited resolution and many fine geometric details of the model are lost in the scanning process.  In this paper, we present a preliminary solution towards the accurate reconstruction of fine details of geometric features in the underwater setting using stereo pairs.  These fine details can then integrated into 3D models reconstructed from sonar to create a more accurate final model of the water system.  The initial rough 3D model is generated using multiple sonar scans of the walls of the site.  The fine details of the internal organic surfaces are recorded using stereoscopic imaging.
-Third and finally, the rough 3D model is deformed and textured using the details obtained through stereo imaging. We present initial results and detailed methodology for future data acquisition.
+\abstract{The study of underwater structures, such as wells, cisterns, and water storage systems, can be of historical and scientific significance for archeologists. However, access to and study of such sites can be dangerous or infeasible for humans.
+Underwater micro-ROVs, such as the VideoRay Pro 3 GTO, can often reach and navigate these locations more safely while causing less harm to the site.
+Prior work has successfully reconstructed geometric models of such underwater structures with the use of sonar measurements. Although effective, sonar has a limited resolution and omits many fine geometric details of the model in the scanning process. In this paper, we present a preliminary solution towards the accurate reconstruction of fine details of geometric features in the underwater setting using stereo pairs. These fine details can then integrated into 3D models reconstructed from sonar to create a more accurate final model of a water system. The initial rough 3D model is generated using multiple sonar scans of the walls of the site. The fine details of the internal organic surfaces are recorded using stereoscopic imaging. Finally, the rough 3D model is deformed and textured using the details obtained through stereoscopic imaging. 
+We present initial results and detailed methodology for future data acquisition.
 }
 
 \onecolumn \maketitle \normalsize \vfill
@@ -49,20 +49,30 @@ Third and finally, the rough 3D model is deformed and textured using the details
 %Related works and an overview of the procedure. Possibly system block diagram leading the reader through the process.
 %ZJW, yes we need a system block diagram - can you make one Erik? Tim?
 
-\noindent Recent research in the field of mobile robotics has demonstrated the creation of 3D maps of settings otherwise inaccessible to humans, such as narrow tunnels and difficult to navigate marine caves~\cite{ICEX11,McVicker,McVicker2}. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms  (~\cite{Williams2000}, ~\cite{harbor}, and \cite{Fairfield2005,Fairfield2006}) allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors.  Such maps , or evidence grids, can then be used as implicit volumes and a geometric model of scanned region can be constructed using marching cubes~\cite{Lorensen}.  An example of a geometric model of a well used for water storage, can be seen in Figure~\ref{fig:}.
- Unfortunately, due equipment limitations, sensor noise, and probabilistic uncertainty occurring in the  data acquisition process, these geometric models often suffer from a loss of fine geometric details.  For end users who wish to study these models or use them for educational purposes, this loss of detail in the scanning process is a problem.  
+\noindent Recent research in the field of mobile robotics has demonstrated the creation of 3D maps of settings otherwise inaccessible to humans, such as narrow tunnels and difficult to navigate marine caves~\cite{ICEX11,McVicker,McVicker2}. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms  (\cite{Williams2000}, ~\cite{harbor}, and \cite{Fairfield2005,Fairfield2006}) allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors. Such maps, or evidence grids, can then be treated as implicit volumes to construct a geometric model of the scanned regions using marching cubes~\cite{Lorensen}. An example of a geometric model of a well used for water storage, can be seen in Figure~\ref{fig:}.
+Unfortunately, due equipment limitations, sensor noise, and probabilistic uncertainty occurring in the  data acquisition process, these models often suffer from a loss of fine geometric details. Loss of detail in the scanning process is a problem for end-users, who wish to study these models or use them for educational purposes.
  %We examine a case in which a sonar sensor is used to extract surface data in an underwater environment.
 %Error is furthered in this case by equipment drift during scans and floating occlusions, both of which lead to geometric misrepresentations.
 In this paper we present a preliminary solution towards the reintroduction of fine details omitted by sonar data into surface reconstructions.  
 Two cameras are used to capture stereo images of underwater surfaces.
-Those images are then processed to produce disparity maps which contain the fine geometric detail of the original surface.
+The stereo images are then processed to produce disparity maps which contain the fine geometric detail of the original surface.
 Each disparity map can then be used to enhance the final geometric model.
 
-This project is a part of a larger one, with the broad goal of mapping and modeling ancient water storage systems, i.e. cisterns, wells and water galleries located in most houses, churches, and fortresses of the islands of Malta, Gozo, and Sicily. This multiple year project involved the deployment of a micro sized ROV into water systems in the Mediterranean~\cite{White10,ICEX11,McVicker,McVicker2} with this paper documenting the first use of stereo data for fine level geometry acquisition for this project.  The data used in this paper was gathered through a series of underwater robot deployments in which multiple sonar scans were gathered, then fused into a map of the scene via SLAM algorithms (Simultaneous Localization and Mapping). In addition to the sonar data, stereo pairs were obtained for use in creating disparity maps to model fine level geometry.  In order incorporate the disparity information with the general surfaces, both the color data and disparity information is projectively textured onto a pre-established gross sonar generated 3D model. Finally, the geometry contained within the viewport of the projector is displaced in accordance with the projected disparity map, preserving the fine details omitted in earlier stages of reconstruction.
+This project is a part of a larger ongoing project, with the broad goal of mapping and modeling ancient water storage systems, i.e. cisterns, wells and water galleries located in most houses, churches, and fortresses of the islands of Malta, Gozo, and Sicily. This multiple year project involves the deployment of a micro-ROV into water systems in the Mediterranean~\cite{White10,ICEX11,McVicker,McVicker2} with this paper documenting the first use of stereo data for fine level geometry acquisition. The data used in this paper was gathered through a series of underwater robot deployments in which multiple sonar scans were gathered, then fused into a map of the scene via Simultaneous Localization and Mapping (SLAM) algorithms. In addition to the sonar data, stereo pairs were obtained for use in creating disparity maps to model fine level geometry. In order incorporate the disparity information with the general surfaces, both the color data and disparity information is projectively textured onto the pre-established gross sonar generated 3D model. Finally, the geometry contained within the frustums of the projectors in the model is displaced in accordance with the projected disparity maps, preserving the fine details omitted in earlier stages of reconstruction.
 
 %The accurate surface reconstruction solution proposed in this paper involves four steps. First, an occupancy grid of the acquired sonar data is generated by mosaicing sonar scans together with a simultaneous localization and mapping (SLAM) algorithm. Next, a hole filling algorithm is used to probabilistically complete the occupancy grid and form a closed surface, which is extrapolated into 3D and stored as a mesh. Meanwhile, disparity maps are created from stereo image pairs captured on the HD cameras in multiple locations. Finally, a projective texturing and depth extraction algorithm is used to project the generated disparity maps from multiple locations onto surfaces of the mesh, and subsequently displace the vertices intersecting the projector's view frustum according to the disparity map's color values. 
 
-The work reported in this paper is preliminary work work in a multidisciplinary setting, utilizing aspects of emerging robotics and computer graphics technology.  This paper outlines the data acquisition and gross sonar model reconstruction processes, and describes our preliminary novel solution to displacing rough geometry in accordance with a projected disparity map. The result of our work is a computer model which has the potential to include the fine organic features found in underwater storage systems.
+The work reported in this paper is preliminary work in a multidisciplinary setting, utilizing aspects of emerging robotics and computer graphics technology. This paper outlines the data acquisition and gross sonar model reconstruction processes, and describes our preliminary novel solution to displacing rough geometry in accordance with a projected disparity map. The result of our work is a computer model which has the potential to include the fine organic features found in underwater storage systems.
+
+The proposed initial solution results from the following stages: Data Acquisition and Hardware Calibration, Gross Sonar Model Reconstruction, Fine Detail Additions Via Stereoscopic Imaging~\ref{fig:systemblock}.
+
+\begin{figure*}[!ht]
+  \vspace{-0.2cm}
+  \centering{
+     \epsfig{file = pics/systemBlock.png, width = \textwidth}}
+  \caption{Pipeline for fine detail additions to sonar generated meshes.}
+ \label{fig:systemblcok}
+\end{figure*}
 
 \section{\uppercase{Related Work}}
 \label{sec:data}
@@ -76,7 +86,7 @@ In addition, this work relies on well known algorithms from computer graphics, s
 In addition, this work relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:gutMarroquin},~\cite{stereo:scharsteinSzeliski}.  In particular, this work uses the method of ~\cite{stereo:zitKan}.  The underwater setting posses specific challenges on stereo reconstruction due to poor lighting conditions (DESCRIBE MORE).  Thus, this work explores the application of the solution proposed by Nalpandtidis and Gasteratos~\cite{stereo:nalpantidis2010stereo}  of  converting the images into the HSL color space and looking at only the hue and saturation values. 
 
 
-\section{\uppercase{Data Acquisition and Hardware}}
+\section{\uppercase{Data Acquisition and Hardware Calibration}}
 \label{sec:data}
 
 \noindent The goal of this project is to acquire geometric models of underwater structures found in the Mediterranean.  We describe the exact hardware and data acquisition process used in this project.
@@ -103,8 +113,11 @@ That position in the physical cistern is then used again in the virtual cistern 
 To facilitate the accurate virtual reconstruction of the world it was necessary to calibrate the GoPro cameras.
   Both the aspect ratio and the vertical field of view (VFOV) needed to be calculated to accurately re-project the captured images and disparity maps in the virtual world.  
 The following equations were used:
-\[ \text{Aspect Ratio} = \frac{\text{width}}{\text{height}}\]
-\[ \text{VFOV} = 2 * tan^{-1}(\frac{\text{height}/2}{\text{depth}}) \]
+
+\begin{align}
+\text{Aspect Ratio} &= \frac{\text{width}}{\text{height}} \\
+\text{VFOV} &= 2 * tan^{-1}(\frac{\text{height}/2}{\text{depth}})
+\end{align}
 
 %\begin{figure}[!h]
 %   \vspace{-0.2cm}
@@ -116,7 +129,7 @@ The following equations were used:
 
 These two values were used to specify the behavior of projectors that are discussed later in the Projective Texturing Section: ~\ref{subsec:projectiveTexturing}.
 
-\subsection{\uppercase{Gross sonar Model Reconstruction}}
+\section{\uppercase{Gross sonar Model Reconstruction}}
 \label{sec:reconstruction}
 
 
