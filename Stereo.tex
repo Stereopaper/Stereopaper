@@ -24,9 +24,10 @@
 
 \begin{document}
 
-\title{Title  \subtitle{Subtitle} }
+%ZJW: this is a slightly ambitious title, but it is a start
+\title{Reconstruction of Fine Level Geometric Structure From Stereo Pairs in the Underwater Setting}
 
-\author{\authorname{Timothy M. Peters*, Erik A. Nelson*, Tyler Vitti, Timothy Gambin, Christopher M. Clark, and Zo\"{e} J. Wood}
+\author{\authorname{Timothy M. Peters*, Erik A. Nelson*, Tyler Vitti, Timothy Gambin, \\Christopher M. Clark, and Zo\"{e} J. Wood}
 \affiliation{California Polytechnic State University, San Luis Obispo, CA, U.S.A.}
 \thanks{(Author)* denotes equal contributions }
 \thanks{This material is based upon work supported by the National Science Foundation under Grant No. 0966608.}%
@@ -34,12 +35,10 @@
 
 \keywords{3D Site Reconstruction: Surface Reconstruction: Underwater Stereo Vision: Projective Texturing}
 
-\abstract{There are a number of historically and scientifically significant sites in inaccessible underwater areas. 
-Robots can often reach these locations safer and cause less harm while getting there than humans.  
-We present a preliminary solution towards the accurate reconstruction of those underwater sites.  
-First, a rough 3D model is generated using multiple sonar scans of the walls of the site.
-Second, the fine details of the internal organic surfaces are recorded using stereoscopic imaging.
-Third and finally, the rough 3D model is deformed and textured using the details obtained through stereo imaging. 
+\abstract{The study of underwater structures, such as wells, cisterns and water storage systems, can be of historical and scientific significance for archeologists.  Such sites pose a challenge as access and study of them can be dangerous and infeasible for humans. 
+Robots can often reach these locations safer and cause less harm, especially underwater micro-ROVs, such as the Videoray X, which can navigate very small tunnels and openings.  
+Prior work has successfully reconstructed geometric models of such underwater structures with the use of sonar measurements.  Although effective, sonar has a fairly limited resolution and many fine geometric details of the model are lost in the scanning process.  In this paper, we present a preliminary solution towards the accurate reconstruction of fine details of geometric features in the underwater setting using stereo pairs.  These fine details can then integrated into 3D models reconstructed from sonar to create a more accurate final model of the water system.  The initial rough 3D model is generated using multiple sonar scans of the walls of the site.  The fine details of the internal organic surfaces are recorded using stereoscopic imaging.
+Third and finally, the rough 3D model is deformed and textured using the details obtained through stereo imaging. We present initial results and detailed methodology for future data acquisition.
 }
 
 \onecolumn \maketitle \normalsize \vfill
@@ -49,7 +48,7 @@ Third and finally, the rough 3D model is deformed and textured using the details
 
 %Related works and an overview of the procedure. Possibly system block diagram leading the reader through the process.
 
-\noindent Recent research in the field of mobile robotics has demonstrated the creation of 3D maps of settings otherwise inaccessible to humans, such as underwater domains and dangerous caves [cite Billy's paper]. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors.
+\noindent Recent research in the field of mobile robotics has demonstrated the creation of 3D maps of settings otherwise inaccessible to humans, such as narrow tunnels and difficult to navigate marine caves~\cite{McVicker}. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors.
  Unfortunately, these maps often suffer from misrepresentations of fine geometry details due to equipment limitations, sensor noise, and probabilistic uncertainty during reconstruction.
  We examine a case in which a sonar sensor is used to extract surface data in an underwater environment.
 Error is furthered in this case by equipment drift during scans and floating occlusions, both of which lead to geometric misrepresentations.
