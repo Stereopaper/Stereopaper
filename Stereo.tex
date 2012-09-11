@@ -104,12 +104,24 @@ A micro sized submersible Remotely Operated Vehicle (ROV), specifically a VideoR
   \label{fig:ROV}
  \end{figure}
 
-While the ROV is navigating a cistern, two high-definition (HD) cameras are mounted to the bow in a waterproof casing.
-These cameras are triggered to synchronously capture images.  
-Images from the pair of stereo cameras can then be used to build disparity maps, as described below.  
-At specific intervals along the cistern wall, the ROV is paused to take a few images.  
-The approximate position and heading of the ROV are recorded for those images.  
-That position in the physical cistern is then used again in the virtual cistern model created from the sonar data to correctly place the captured images and disparity maps and ultimately reconstruct that portion of the cistern. 
+After the sonar scans have been collected, the ROV is utilized to collect stereoscopic images of the cistern walls.
+These images are collected using two GoPro HD Hero2 cameras, which are synchronized using the 3D Hero System.  
+The 3D Hero System is a waterproof camera housing and a connector cable that synchronizes image captures between cameras.
+The camera unit is not able to be controlled remotely.  
+Instead the cameras are set to capture an image every second.
+That housing is physically mounted to the ROV using the included plastic arms. 
+Normally the GoPro mounting hardware attaches to a surface using adhesives, however, these are unreliable in an underwater environment.  
+Instead, we drilled holes into the base piece of the mounting hardware allowing it to be bolted to the ROV.    
+
+Unfortunately, the default domed lenses of the 3D Hero Housing distort images taken underwater.  
+There are a number of 3rd party vendors who sell flat replacement lenses for the 3D Hero and other Hero Housings which resolve this issue.  
+All of our image data was collected after these flat lenses were installed.
+
+To collect stereoscopic images the ROV is maneuvered around the edges of the cistern, pausing every few feet.  
+The ROV is positioned about 0.5 to 1.5 meters from the wall to create optimal stereo images.  
+The ROV's main video camera is used to position the unit at each location.  
+The images captured at each of these locations are then used to create disparity maps, as described in section ~\ref{disparityMapGeneration}.
+
 
 %ZJW - Please add more details about the actual mounting and set up - which cameras were used, what underwater housing, how mounted, etc!!!
 
@@ -179,6 +191,7 @@ Archaeologists could then use that model to examine every protruding stone and e
 %Discuss why this is necessary. Discuss a system level overview of the process (more in depth than in introduction).
 
 \subsection{Disparity Map Generation}
+\label{disparityMapGeneration}
 
 \begin{figure*}[!ht]
    \vspace{-0.2cm}
