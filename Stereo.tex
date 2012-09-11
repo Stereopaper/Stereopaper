@@ -214,12 +214,15 @@ Obviously, this reduces the level of fine details that can be resolved from the 
 Instead, a large window gives us a more reliable matching between rocks faces because it can encompass more features for each pixel.  
 
 %ZJW read this and make sure you agree
-One of the largest issue we faced in the underwater environments is lighting.  Most of the water systems we explored were dark (with very little light entering the systems through narrow tunnels and openings.  This meant that almost all lighting in the images was from the onboard lights on the ROV and the ROV had to fly relatively close to the walls in order to illuminate features for the cameras.  The ROV has two lights on the left and right side, which results in two fairly contrasting lighting conditions for the left and right images, thus disparities in lighting between images, and as a result pixel intensities, is a common problem in our images (see Figure~\ref{fig:disparity} for an example of the contrasting lighting).  This extreme lighting conditions is not handled well by the Zitnick and Kanade algorithm and potential future solutions is discussed in greater depth in Section~\ref{subsec:hsl_color_correction}.
+%TP I think the left and the right lights overlapped enough where separate lighting for each camera wasn't the issue.
+%  Instead the problem was one camera being closer than the other to the wall, or to one rock more than another camera, which created a difference in each camera's light sensor resulting in different exposure times.
+The greatest issue we found in the underwater environments was lighting.  Most of the water systems we explored were dark (with very little light entering the systems through narrow tunnels and openings).  This meant that almost all lighting in the images was from the ROV's onboard lights and that the ROV had to fly relatively close to the walls in order to illuminate features for the cameras.
+Each camera was computing its own exposure time based on the amount of light it received.  
+As a result of some well illuminated features being closer to one camera than the other, there are discrepancies in exposure times between left and right images, (see Figure~\ref{fig:disparity} for an example of this contrasting lighting).
+  This unbalanced lighting condition is not handled well by the Zitnick and Kanade algorithm, potential future solutions are discussed in greater depth in Section~\ref{subsec:hsl_color_correction}.
 
 One of the strengths of the Zitnick and Kanade algorithm is its ability to detect occlusions.  
-Another common challenge in our images is dirt particles in the water due to the ROV's positioning thrusters agitating sediment in the water systems. Usually the particles are small enough to be detected and removed from the final disparity map.
-%ZJW: say how removed (smoothing?)
-
+Another common challenge in our images is dirt particles in the water due to the ROV's positioning thrusters agitating sediment in the water systems. Usually the particles are small enough to be detected as occusions and removed from the final disparity map by the Zitnick and Kanade algorithm, see ~\ref{stereo:zitKan}.
 
 \subsubsection{Image Correction}
 \label{subsec:image_correction}
@@ -229,9 +232,13 @@ Regrettably, the GoPro cameras that we used were limited to recording images in 
 To solve this issue we smoothed and shrunk the high resolution .jpeg images taken by the GoPros to produce smaller left and right images that were comparable at the pixel level.
 
 %ZJW: we should have text that lists the image sizes and then what size they are shrunk to
+%TP 
 Image correction starts with a smoothing step  to remove .jpeg artifacts.
-  A simple Gaussian smoothing step was ineffective in this case because it blurred the edges of the rocks or bricks, removing valuable features from an already feature-scarce image.  Instead an image smoothing tool was used (Photoshop's "surface smooth") which preserved edges while still blurring similar color regions.  Next the shrinking step was performed on the image to further reduce the .jpeg artifacts and trim the size to (x by x).  Through experimentation, we discovered that the
-best image detail to process time ratio was obtained by reducing the images by one sixth.   
+  A simple Gaussian smoothing step was ineffective in this case because it blurred the edges of the rocks or bricks, removing valuable features from an already feature-scarce image.
+  Instead an image smoothing tool was used (Photoshop's "surface smooth") which preserved edges while still blurring similar color regions.
+  Next the shrinking step was performed on the image to further reduce the .jpeg artifacts and trim the size (from 3200 by 2400 to 512 by 384).
+The image size of 512 was chosen out of convenience.  It was large enough to preserve the details in the image, while still providing a significant size reduction to reduce .jpeg artifacts.   
+%Through experimentation, we discovered that the best image detail to process time ratio was obtained by reducing the images by one sixth.   
 Shrinking was performed after smoothing to preserve the maximum amount of detail in the image.  
 
 % possibly move to future works section? -
