@@ -83,8 +83,8 @@ In addition, this work relies on well known algorithms from computer graphics, s
 
 In addition, this work relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:gutMarroquin},~\cite{stereo:scharsteinSzeliski}.
   In particular, this work uses the method of ~\cite{stereo:zitKan}.
-  We also consulted the work of ~\cite{stereo:nalpantidis2010stereo} to compensate for differences in light intensities between images.
-  This paper explores the conversion of images into the HSL color space in an attempt to remove light intensity from the equation and compare soley at hue and saturation values.
+  We also consulted the work of ~\cite{stereo:nalGast} to compensate for differences in light intensities between images.
+  This paper explores the conversion of images into the HSL color space in an attempt to remove light intensity from the equation and compare solely at hue and saturation values.
   Unfortunately, the underwater setting does not transmit colors well, and we were forced to use more common stereo-vision comparison methods, see Nalpantidis ~\cite{stereo:nalpantidis2008review}. 
 
 \section{\uppercase{Data Acquisition and Hardware Calibration}}
@@ -189,10 +189,10 @@ Archaeologists could then use that model to examine every protruding stone and e
 
 
 A number of algorithms currently exist to take two images, compare their features, and determine which points were closer and which were further from the camera (Figure~\ref{fig:dispgen}). 
-Unfortunately, few of these algorithms were robust enough to handle compressed underwater images of rock walls.
-We eventually chose the stereo mapping algorithm described by Zitnick and Kanade in ~\cite{stereo:zitKan}.
+Unfortunately, few of these algorithms were robust enough to handle compressed underwater images of rock walls, due to the poor lighting conditions and very organic, shallow structures present.
+After exploring several options, the stereo mapping algorithm described by Zitnick and Kanade in ~\cite{stereo:zitKan} was chosen for the current implementation.
 
-The main problem with our images is that we are dealing with a very dull landscape.  
+The main problem with our images is that they usually represent a landscape with minimal color changes, poor lighting and shallow depressions (in comparison to images with large color or depth contrast).  
 Rocks, and especially bricks, have highly repetitive patterns and colors which produce feature-scarce images.
 Most stereo-matching algorithms, including Zitnic and Kanade, rely on those features to determine disparity.  
 The algorithm proposed by Zitnick and Kanade uses a scanning, sliding comparison window to build an initial disparity map.  
@@ -200,13 +200,12 @@ To mitigate the dull landscape, we choose a large initial disparity window with 
 Obviously, this reduces the level of fine details that can be resolved from the image and adds a smoothing effect to the disparity map, but these drawbacks are acceptable in the given environment.  
 Instead, a large window gives us a more reliable matching between rocks faces because it can encompass more features for each pixel.  
 
-One of the strengths of the Zitnick and Kanade algorithm is its ability to detect occlusions.  
-A common problem feature in our images is dirt particles, which are agitated by the ROV's positioning thrusters.
-Usually the particles are small enough to be detected and removed from the final disparity map.
+%ZJW read this and make sure you agree
+One of the largest issue we faced in the underwater environments is lighting.  Most of the water systems we explored were dark (with very little light entering the systems through narrow tunnels and openings.  This meant that almost all lighting in the images was from the onboard lights on the ROV and the ROV had to fly relatively close to the walls in order to illuminate features for the cameras.  The ROV has two lights on the left and right side, which results in two fairly contrasting lighting conditions for the left and right images, thus disparities in lighting between images, and as a result pixel intensities, is a common problem in our images (see Figure~\ref{fig:disparity} for an example of the contrasting lighting).  This extreme lighting conditions is not handled well by the Zitnick and Kanade algorithm and potential future solutions is discussed in greater depth in Section~\ref{subsec:hsl_color_correction}.
 
-Another issue with underwater environments is lighting.
-  Disparities in lighting between images, and as a result pixel intensities, is a common problem in our images.  
-This is not handled by the Zitnick and Kanade algorithm and is discussed in greater depth in Section~\ref{subsec:hsl_color_correction}.
+One of the strengths of the Zitnick and Kanade algorithm is its ability to detect occlusions.  
+Another common challenge in our images is dirt particles in the water due to the ROV's positioning thrusters agitating sediment in the water systems. Usually the particles are small enough to be detected and removed from the final disparity map.
+%ZJW: say how removed (smoothing?)
 
 
 \subsubsection{Image Correction}
@@ -214,15 +213,12 @@ This is not handled by the Zitnick and Kanade algorithm and is discussed in grea
 
 In many stereo mapping algorithms, including Zitnick and Kanade, it is assumed that both images are accurate down to the pixel level.
 Regrettably, the GoPro cameras that we used were limited to recording images in the lossy .jpeg format only.
-To solve this issue we smoothed and shrunk the high resolution .jpeg images taken by the GoPros. 
-This produced smaller left and right images that were comparable at the pixel level.
+To solve this issue we smoothed and shrunk the high resolution .jpeg images taken by the GoPros to produce smaller left and right images that were comparable at the pixel level.
 
-The smoothing step was performed to remove .jpeg artifacts.
-  A simple Gaussian smooth was ineffective in this case because it blurred the edges of the rocks or bricks, removing valuable features from an already feature-scarce image.
-  Instead Photoshop's "surface smooth" was used to preserve edges while still blurring similar color regions.
-
-The shrinking step was then performed on the image to further reduce the .jpeg artifacts and trim the size to something process-able.  
-The best detail to process time ratio was obtained by reducing the images by one sixth.   
+%ZJW: we should have text that lists the image sizes and then what size they are shrunk to
+Image correction starts with a smoothing step  to remove .jpeg artifacts.
+  A simple Gaussian smoothing step was ineffective in this case because it blurred the edges of the rocks or bricks, removing valuable features from an already feature-scarce image.  Instead an image smoothing tool was used (Photoshop's "surface smooth") which preserved edges while still blurring similar color regions.  Next the shrinking step was performed on the image to further reduce the .jpeg artifacts and trim the size to (x by x).  Through experimentation, we discovered that the
+best image detail to process time ratio was obtained by reducing the images by one sixth.   
 Shrinking was performed after smoothing to preserve the maximum amount of detail in the image.  
 
 
@@ -264,19 +260,7 @@ If the best weight for all depths for a certain pixel (x,y) is below a predefine
 %Patches of the image would either be unreasonably close to the camera or flat against the background.  
 %These images had to be corrected before they could be mapped to vertices.  
 
-% possibly move to future works section?
-\subsubsection{HSL Color Correction}
-\label{subsec:hsl_color_correction}
-Unfortunately, the paired GoPro cameras that we choose for data collection lacked the ability to sync exposure times.  
-The cameras independntly calculated the correct exposure for their image only, which resulted in a lack of light intensity matching between left and right images.
-Note the difference in light between the left (a) and right (b) images in Figure ~\ref{fig:disparity}.
-A potential solution to this problem lies in using a color comparision function instead of an intensity comparison function ~\cite{stereo:nalGast}.
-The solution proposed by Nalpandtidis and Gasteratos suggests converting the images into the HSL color space and looking at only the hue and saturation values.  
- 
-For our purposes, however, this method failed.  
-Many of the surfaces that we imaged were gray in color producing uniform hue and saturation values.
-For future experiments, introducing a light with a distinct color, perhaps blue, could prove useful for gray surfaces.  
-This blue light would provide definate hue and saturation values that could be compared regardless of exposure times.
+
 
 
 \subsubsection{Calibration}
@@ -284,13 +268,17 @@ This blue light would provide definate hue and saturation values that could be c
 
 An important step in any meaningful disparity mapping is calibration.
 This is the creation of a tuned mapping from an (r,g,b) pixel value to the appropriate vertex offset in the virtual world. 
-We were able to cheat slightly on this calibration because we were tuning for a very short field of view, 0.2m - 1.2m.
-This allowed us to approximate a linear relationship between a disparity value and its physical depth. 
+We were able to approximate a linear relationship between a disparity value and its physical depth for calibration because we were tuning for a very short field of view, 0.2m - 1.2m.
 
 The images and values for the calibration were taken in a controlled pool environment.  
 Pictures of a patterned surface were taken at a number of measured distances from that surface. 
 Those images were then disparity mapped, and the average disparity at the center of the picture was used as the disparity data point for that physical depth.
 Using this set of points we were able to create a linear mapping between disparity and depth.
+
+%ZJW: conclusion about calibration?
+
+%ZJW: Need a concluding paragraph about disparity map generation - Also should you say something about smoothing out spurrious data?
+Once a disparity map has been generated, it can be used as depth values to displace the general geometry created from the sonar data. See Figure~\ref{fig:disparity} illustrates a disparity map generated using our implementation.
 
 
 \subsection{Projective Texturing}
@@ -302,11 +290,12 @@ Using this set of points we were able to create a linear mapping between dispari
 
 %Computation of plane eqs, acquire list of vertices contained within frustum, shader texturing. Explain why $\begin{Vmatrix}C\end{Vmatrix}$ is correct, talk about blending, explain how to determine whether vertex lies within frustum and how to texture map.
 
-\noindent In order to add fine details to the gross sonar generated mesh, we use projective texturing. Rather than implementing (traditional? is there a better word?) texturing, projective texturing is utilized because of its ability to properly simulate an ROV as a point particle with the ROV's view frustum modeled as six implicit plane equations. This similarity enables a 'copy paste' method of texturing, where the ROV captures an image of an organic feature in a cistern, and a projector casts the image from the same relative position onto the a gross sonar reconstruction (Figures~\ref{fig:dispgen},~\ref{fig:projtex}). 
+%ZJW: need to motivate projective texturing - please read what I wrote and edit as desired
+\noindent In order to add fine details to the general mesh created from sonar data, we need to map the location of the disparity map data onto the global coordinates of the general mesh.  Ideally, real localization would be used to correspond the coordinates of the general mesh and the displacements (i.e. solve for where the ROV was in the mapped model when the images were captured).  With our current hardware, ROV localization is only computed for fixed scans and we do not know where the ROV is with respect to the map for every image acquired.  Future work includes using additional hardware such as a smart tether to assist in localization, but for our preliminary results, we use projective texturing with a user's input to place color and disparity data correctly. In general, the ROV captures an image of an organic feature in a cistern, and our implementation allows the user to position a projector which casts the image from the same relative position onto the general mesh for displacement (Figures~\ref{fig:dispgen},~\ref{fig:projtex}). Projective texturing is  utilized because of its ability to properly simulate an ROV as a point particle with the ROV's view frustum modeled as six implicit plane equations (i.e. modeling the camera field of view). Our implementation allows the projection of multiple textures and disparities, allowing a more detailed and colored model to be built up as more images and disparities are placed and added to the general model.  
 
-OpenGL and OpenGL Shading Language (GLSL) graphics libraries are utilized to aid in projective texturing, the latter being used to create shaders - small programs run per-vertex directly on the GPU. The shaders are programmed to selectively alter rendered vertex information, such as position (vertex shader) and color (fragment shader). The combination of projective texturing and stereoscopic imaging enables the ability to selectively displace vertices according to the color of a texture-mapped disparity map that is projected onto a surface. These vertices are displaced along the vector leading from their original 3D position in the mesh to the position of the projector, re-applying the geometry captured within the cistern to the model.
+The combination of projective texturing and stereoscopic imaging enables the ability to selectively displace vertices according to the color of a texture-mapped disparity map that is projected onto a surface. These vertices are displaced along the vector leading from their original 3D position in the mesh to the position of the projector, re-applying the geometry captured within the cistern to the model.  For our implementation uses, OpenGL and OpenGL Shading Language (GLSL) graphics libraries to aid in projective texturing, the latter being used to create shaders - small programs run per-vertex directly on the GPU. The shaders are programmed to selectively alter rendered vertex information, such as position (vertex shader) and color (fragment shader). 
 
-A projector is simulated by establishing plane equations for a view frustum based on the position and orientation of the ROV when the projected images were captured in a cistern. We define $J = \{j_{1},\dots,j_{N}\}$ to be the set of projectors casting textures onto the gross surface reconstruction. Each projector, $j_{n} = ((j_{n_{x}}^{pos},j_{n_{y}}^{pos},j_{n_{z}}^{pos}), \langle j_{n_{x}}^{look},j_{n_{y}}^{look},j_{n_{z}}^{look}\rangle)$, is uniquely defined by its position in 3D space, and a look vector orthonormal to the projector's viewport (Figure~\ref{fig:frustum}). All projectors have a pre-calibrated Field Of View (FOV) mimicking the compound FOV produced by the GoPro camera and waterproof housing lenses. The ROV is not equipped with roll thrusters, allowing us to ignore the possibility of a tilted camera frustum (i.e. the projector's right facing vector will always lie in the horizontal plane). Implicit plane equations modeling the projector view frustums in the form $Ax + By + Cz + D = 0$ are resolved using the approach in [CITATION NEEDED], where $\langle A, B, C\rangle$ is the plane's normal vector and  $(x, y, z)$ is a point on the plane. In this approach, plane equations are computed in homogenous space using the composite $4x4$ modelview projection matrix of the projector, $\lbrack \chi \rbrack$.
+A projector is simulated by establishing plane equations for a view frustum based on the position and orientation of the ROV when the projected images were captured in a cistern. We define $J = \{j_{1},\dots,j_{N}\}$ to be the set of projectors casting textures onto the gross surface reconstruction. Each projector, $j_{n} = ((j_{n_{x}}^{pos},j_{n_{y}}^{pos},j_{n_{z}}^{pos}), \langle j_{n_{x}}^{look},j_{n_{y}}^{look},j_{n_{z}}^{look}\rangle)$, is uniquely defined by its position in 3D space, and a look vector orthonormal to the projector's viewport (Figure~\ref{fig:frustum}). All projectors have a pre-calibrated Field Of View (FOV) mimicking the compound FOV produced by the GoPro camera and waterproof housing lenses. The ROV is not equipped with roll thrusters, allowing us to ignore the possibility of a tilted camera frustum (i.e. the projector's right facing vector will always lie in the horizontal plane). Implicit plane equations modeling the projector view frustums in the form $Ax + By + Cz + D = 0$ are resolved using the clip space approach~\cite{vfc}, where $\langle A, B, C\rangle$ is the plane's normal vector and  $(x, y, z)$ is a point on the plane. In this approach, plane equations are computed in homogenous space using the composite $4x4$ modelview projection matrix of the projector, $\lbrack \chi \rbrack$.
 
 \begin{align}
 \nonumber %Left plane
@@ -557,6 +546,20 @@ With better cameras the output images would not need to be processed down to rem
 Similarly, with better cameras there would be no need to compensate for different exposure times between images.
 Alternatively, better lighting, including blue lights, would allow pixel values to be compared in the HSL color space.  
 Such hardware would reduce the need for a different camera setup.
+
+% possibly move to future works section?
+\subsubsection{HSL Color Correction}
+\label{subsec:hsl_color_correction}
+In addition to the general lighting challenges described above,  the paired GoPro cameras that we choose for data collection lacked the ability to sync exposure times.  
+The cameras independently calculated the correct exposure for their image only, which resulted in a lack of light intensity matching between left and right images.
+Note the difference in light between the left (a) and right (b) images in Figure ~\ref{fig:disparity}.
+A potential solution to this problem lies in using a color comparison function instead of an intensity comparison function ~\cite{stereo:nalGast}.
+The solution proposed by Nalpandtidis and Gasteratos suggests converting the images into the HSL color space and looking at only the hue and saturation values.  
+ 
+For our purposes, however, this method failed.  
+Many of the surfaces that we imaged were gray in color producing uniform hue and saturation values.
+For future experiments, introducing a light with a distinct color, perhaps blue, could prove useful for gray surfaces.  
+This blue light would provide definite hue and saturation values that could be compared regardless of exposure times.
 
 With regards to the shader calculations, a proper calibration would allow for the true disparity scales and offsets. 
 Additionally, a second vertex shader could be implemented in order to compute Phong shading on the displaced vertex positions.
