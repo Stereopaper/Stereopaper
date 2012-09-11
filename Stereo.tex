@@ -111,6 +111,8 @@ At specific intervals along the cistern wall, the ROV is paused to take a few im
 The approximate position and heading of the ROV are recorded for those images.  
 That position in the physical cistern is then used again in the virtual cistern model created from the sonar data to correctly place the captured images and disparity maps and ultimately reconstruct that portion of the cistern. 
 
+%ZJW - Please add more details about the actual mounting and set up - which cameras were used, what underwater housing, how mounted, etc!!!
+
 \subsection{Hardware Calibration}
 To facilitate the accurate virtual reconstruction of the world it was necessary to calibrate the GoPro cameras.
   Both the aspect ratio and the vertical field of view (VFOV) needed to be calculated to accurately re-project the captured images and disparity maps in the virtual world.  
@@ -131,47 +133,48 @@ The following equations were used:
 
 These two values were used to specify the behavior of projectors that are discussed later in the Projective Texturing Section: ~\ref{subsec:projectiveTexturing}.
 
-\section{\uppercase{Gross sonar Model Reconstruction}}
+%ZJW: Note this section should be minimal unless you want to put Billy and Jeff on the paper - we more need to treat this as - we get input, which is the gross model
+\subsection{{Gross sonar Model Reconstruction}}
 \label{sec:reconstruction}
 
-
-
-%Discuss sonar models/how they are generated in our situation. More focused on the robotics aspect, rather than the details of Jeff and Billy's projects.
-
-\noindent In this section we provide a background detailing the approach to rough geometry model generation from sonar input. Zoe" might be best at this... I think we just want to summarize it very fast and without too much detail so that we have more room for the stereo stuff. I tried to summarize section~\ref{sec:data} briefly as well, but perhaps we can shorten it a bit if we need more room. Mention that we extrapolate the near-ground scan plane into 3D in most cases, rather than having true 3D maps.
-
-\begin{figure*}[!ht]
+\begin{figure*}[ht!]
    \vspace{-0.2cm}
    \centering{
       \epsfig{file = pics/1.png, width = 0.9\textwidth}}
    \caption{How we generate meshes from sonar models.}
   \label{fig:meshgen}
  \end{figure*}
+ 
+\noindent This work is focused on reconstructing geometric models from evidence maps representing Mediterranean water storage systems (cisterns, wells and water galleries).  As a pre-process to the algorithms presented here for fine level geometry modeling, the cisterns are mapped using sonar data, which is fused into a two dimensional grid of cells with given a likelihood $p_{i,j} \in [0,1]$ of being occupied \cite{Thrun2005} and~\cite{White10}.  This single 2D layer can then be extruded into a 3D evidence grid and be treated as volume data.  A polygonal geometric model of the scanned data can be constructed via marching cubes, where any cell with $p_{i,j} > t$ is considered an \emph{occupied cell} and associated with a wall in the model.   The threshold value, $t$, is used to define \emph{occupancy} and is generally set to values in the range $.65-.85$. We refer the reader to~\cite{ICEX11,McVicker,McVicker2} for more details on the mapping process.  See Figure~\ref{fig:meshgen} for an illustration of the general process used to acquire data and generate a geometric model.
 
-\section{\uppercase{Fine Detail Additions Via Stereoscopic Depth Extraction}}
+%Discuss sonar models/how they are generated in our situation. More focused on the robotics aspect, rather than the details of Jeff and Billy's projects.
+%Mention that we extrapolate the near-ground scan plane into 3D in most cases, rather than having true 3D maps.
+
+%\section{\uppercase{Fine Detail Additions Via Stereoscopic Depth Extraction}}
+\section{\uppercase{Constructing a more accurate geometric model}}
 \label{sec:detail}
 
-\noindent In this section we describe our approach towards the addition of fine details to the gross sonar models produced in Section~\ref{sec:reconstruction}. 
+\noindent The models constructed from the evidence give a very good representation of the gross shape of an underwater system.  However, due to challenges in the acquisition process for sonar data these models tend to lose the fine geometric details present in many of the mapped structures.  See Figure~\ref{fig:wellNoFine} for an example of a well model constructed from sonar data alone.  In contrast, Figure~\ref{fig:wellPhoto}, shows a photo of the well, where it is clear that fine level details such as the rocky bricks that comprise the walls of the well are not well modeled in Figure~\ref{fig:wellNoFine}.
 
-% Rough stub, delete/edit/use for inspiration!
+In this section we describe our approach towards the addition of fine details to the gross sonar models produced in Section~\ref{sec:reconstruction}. 
+s% Rough stub, delete/edit/use for inspiration!
 The first step towards building fine details into a planar mesh is extracting those details from the original surface. 
-We chose to extract these details through stereo images.  
-Using a pair of stereo images, left and right, it is possible to determine which features were closer to the camera and which were further away.  
-The result of this comparison is stored in a disparity map.  
-This method is only accurate for determining the distance of objects up to at most two meters from the cameras.  
-For cistern walls, however, that is not a problem.  
+We extract these details through the acquisition of stereo pair images during the ROV deployment.
+Using a pair of stereo images, left and right, it is possible to determine which features were closer to the camera and which were further away in addition to capturing the color data of the surface walls.  
+The result of this comparison is stored in a disparity map, which can then be used to add fine geometric details to the general model.  
+Due to the constraints on the available mounting positions for the stereo cameras, this method is only accurate for determining the distance of objects up to at most two meters from the cameras, however,  for cistern walls, this was not a problem.  
 Disparity maps can be generated from this image information to accurately represent the internal features of a cistern. 
 The details of this process are described below.
 
-The second step, is taking those disparity maps and image pairs and using them to deform and texture, respectively, the basic sonar mesh. 
-This is done by recording the location of the ROV when it takes a picture of the wall of the cistern.  
-Using that real-world location, the corresponding disparity map and image can be projected back onto the rough Sonar geometry from that same location in the virtual-world.
+The second step required to build a more accurate geometric model, is to take the disparity maps and image pairs and using them to deform and texture, respectively, the basic sonar mesh. There are two challenges at this stage in the process.  One is accurately localizing the ROV with respect to the general model to map the disparity maps onto the correct part of the model and the second is mapping those disparities onto the existing model.
+For the current implementation, localization of the ROV is done by recording the location of the ROV when it takes a picture of the wall of the cistern.  
+Using that real-world location, the corresponding disparity map and image can be projected back onto the general geometry from that same location in the virtual-world.
 The information in the disparity map is then used to deform the vertices onto which it was projected.
 Lighter patches of the disparity map pull vertices out towards the camera, away from the existing wall, and darker patches push those vertices into the wall.
-The images that were used to create the disparity map are then projected, or one of the two is projected, onto the newly deformed surface.  
+The images that were used to create the disparity map are then projected, or one of the two is projected, onto the newly deformed surface, giving the model both the color and shape of the original structure.  
 This creates a reasonable facsimile to the original wall when viewed from that location.  
 Repeating this procedure for each section of wall in a cistern will produce a finely detailed 3D model of that cistern.  
-Archaeologists can then use that model to examine every protruding stone and every nook and cranny of the original cistern without getting their feet wet.
+Archaeologists could then use that model to examine every protruding stone and every nook and cranny of the original cistern without getting their feet wet.
 
 %Discuss why this is necessary. Discuss a system level overview of the process (more in depth than in introduction).
 
@@ -466,15 +469,25 @@ Note that the left and right images have a slight difference in lighting.
 To demonstrate our complete cistern mapping system we deployed our ROV in a rock-walled well.
 This well provided both a large simple cylindrical structure and a detailed bumpy surface.
 
-Using the Sonar data from the well we built the rough 3D model shown in Figure~\ref{fig:result1}. 
+Using the Sonar data from the well we built the rough 3D model shown in Figure~\ref{fig:wellNoFine}. 
 
 \begin{figure}[!h]
 	\centering
 		\subfigure[Well Top View]{\label{left}\epsfig{file = pics/blankWell3.png, width = 3.5cm}}
 		\quad %space between images
 		\subfigure[Well Side View]{\label{right}\epsfig{file = pics/blankWell2.png, width = 3.5cm}}\\%new line
+
 		\caption{Views of Plain Well Geometry}
-		\label{fig:result1}
+		\label{fig:wellNoFine}
+\end{figure}
+
+
+\begin{figure}[!h]
+	\centering
+		\subfigure[Well Photo]{\label{right}\epsfig{file = pics/wellPhoto, width = 3.5cm}}\\%new line
+
+		\caption{ An photograph of the walls of the well.}
+		\label{fig:wellPhoto}
 \end{figure}
 
 Inside that geometry we used virtual point projectors to display the rock images and disparity maps as they were originally captured at that location.  
@@ -485,7 +498,8 @@ The disparity maps were further used to deform the well geometry as shown in Fig
 		\subfigure[Projected Images]{\label{left}\epsfig{file = pics/noDisparity.png, width = 3.5cm}}
 		\quad %space between images
 		\subfigure[Disparity Deformations]{\label{left}\epsfig{file = pics/mapsDisparity.png, width = 3.5cm}}
-		\caption{A set of images and disparity maps reprojected as they were captured inside the well.}
+
+		\caption{A set of images and disparity maps reprojected as they were captured inside the well. <INSERT well site name>}
 		\label{fig:result2}
 \end{figure}
 
