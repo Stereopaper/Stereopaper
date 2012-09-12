@@ -1,4 +1,4 @@
-\documentclass[a4paper,twoside]{article}
+\documentclass[twocolumn]{article}
 
 \usepackage{epsfig}
 \usepackage{subfigure}
@@ -21,6 +21,27 @@
 \subfigtopskip=0pt
 \subfigcapskip=0pt
 \subfigbottomskip=0pt
+
+\pagestyle{empty}
+\setlength{\textwidth}{7in}
+\setlength{\textheight}{9.125in}
+\setlength{\columnsep}{0.5in}
+\setlength{\topmargin}{-0.8in}
+\setlength{\oddsidemargin}{-0.25in}
+\setlength{\parindent}{5 ex}
+\makeatletter
+\def\@normalsize{\@setsize\normalsize{12pt}\xpt\@xpt \abovedisplayskip 11pt
+plus2pt minus5pt\belowdisplayskip \abovedisplayskip \abovedisplayshortskip \z@
+plus3pt\belowdisplayshortskip 6pt plus3pt
+minus3pt\let\@listi\@listI}
+%the following line was changed
+\def\subsize{\@setsize\subsize{12pt}\xipt\@xipt}
+\def\section{\@startsection{section}{1}{\z@}{24pt plus 2 pt
+minus 2 pt} {12pt plus 2pt minus 2pt}{\large\bf}}
+\def\subsection{\@startsection {subsection}{2}{\z@}{12pt
+plus 2pt minus 2pt}{12pt plus 2pt minus 2pt}{\subsize\bf}}
+\makeatother
+
 
 \begin{document}
 
