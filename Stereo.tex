@@ -142,11 +142,6 @@ At these location, the approximate position and heading of the ROV is recorded f
 The ROV's main video camera is used to position the unit at each location.  
 The images captured at each of these locations are then used to create disparity maps, as described in section ~\ref{disparityMapGeneration}.
 
-
-%ZJW - Please add more details about the actual mounting and set up - which cameras were used, what underwater housing, how mounted, etc!!!
-
-%Erik - Tim?
-
 \subsection{Hardware Calibration}
 To facilitate the accurate virtual reconstruction of the world it was necessary to calibrate the GoPro cameras.
 Both the aspect ratio and the vertical field of view (VFOV) needed to be calculated to accurately re-project the captured images and disparity maps in the virtual world.  
@@ -248,8 +243,6 @@ In many stereo mapping algorithms, including Zitnick and Kanade, it is assumed t
 Regrettably, the GoPro cameras used were limited to recording images in the lossy .jpeg format only.
 To solve this issue we smoothed and shrunk the high resolution .jpeg images taken by the GoPros to produce smaller left and right images that were comparable at the pixel level.
 
-%ZJW: we should have text that lists the image sizes and then what size they are shrunk to
-%TP 
 Image correction starts with a smoothing step  to remove .jpeg artifacts.
   A simple Gaussian smoothing step was ineffective in this case because it blurred the edges of the rocks or bricks, removing valuable features from an already feature-scarce image.
   Instead an image smoothing tool was used (Photoshop's "surface smooth") which preserved edges while still blurring similar color regions.
@@ -315,16 +308,26 @@ If the best weight for all depths for a certain pixel $(x,y)$ is below a predefi
 \subsection{Calibration}
 \label{subsec:calibration}
 
-An important step in any meaningful disparity mapping is calibration.
-This is the creat
+%TP: 
+An important step in any meaningful measrument, including disparity mapping, is calibration.
+This is the creation of a tuned mapping from an (r,g,b) pixel value to the appropriate vertex offset in the virtual world.  
 Pictures of a patterned surface were taken at a number of measured distances from that surface.
 Those images were then disparity mapped, and the average disparity at the center of the picture was used as the disparity data point for that physical depth.
-Using this set of points we were able to create a linear mapping between disparity and depth.
+We used that set of points to create an exponential relationship between disparity value and physical depth.  
+That equation is used later to accurately recreate the internal dimentions of the cistern, see section ~\ref{Vertex Displacement} for more info.
 
-%ZJW: conclusion about calibration?
+%TP: still could be more conclusive..
 
 %ZJW: Need a concluding paragraph about disparity map generation - Also should you say something about smoothing out spurrious data?
-Once a disparity map has been generated, it can be used as depth values to displace the general geometry created from the sonar data. See Figure~\ref{fig:disparity} illustrates a disparity map generated using our implementation.
+%TP: we could break the "smoothing" into its own section as is commented above... but for now it works here.
+After the disparity maps were generated, a number of them had obvious errors--blobs of all white and all black.  
+These erronious errors were fixed by flooring and capping the intensity of the pixels. 
+Pixels that had unreasonably small values were simply increased in value to a reasonable minimum, around 1.5 meters.  
+Groups of pixels that were too large in value were deleted and replaced by a linear smoothing of the surrounding reasonable pixel values. 
+With these issues fixed, the disparity maps are used to provide depth values to displace the general geometry created from the sonar data. Figure~\ref{fig:disparity} illustrates a disparity map generated using our implementation.
+We tested a number of different stereo algorithms and approaches before choosing the Zitnick and Kanade algorithm.  
+The feature-less, poorly lit, and repetative underwater enviornment required us to use a very large serch window when matching points between images.  
+In future, a better hardware setup could provide more detailed results of this enviornment.
 
 
 \subsection{Projective Texturing}
@@ -486,6 +489,7 @@ One such output image is show in Figure~\ref{fig:disparity}.
 This image was generated using an initial support region of size (11, 11, 5), and then an iterative local support region of size (13,13,5).
 Note that the left and right images demonstrate a difference in lighting.
 %ZJW: is there anything else we can say about your implementation or parameter setting to differentiate this work from just a generic re-implementation?
+%TP: unfortunately, not really.  That is what HSL was supposed to do for us, but failed at...  
 
 \begin{figure}[!h]
 	\centering
@@ -579,7 +583,7 @@ Finally, the disparity maps combined with the surface images were mapped into th
 \noindent 
 This paper presents a novel way to add geometric details to maps created to represent underwater environments. A general model is acquired from sonar data and mapping~\cite{ICEX11,McVicker,McVicker2}, and we present the addition of fine level details using stereo image data.  This work is motivated by the desire to better map underwater caverns and cisterns using robotic tools.  We have presented our methodology and hardware for data acquisition, disparity map generation, and incorporation of that disparity data via projective texturing displacements.  We have shown results of a partial reconstruction of a well in Carini, Sicily.
 
-In this preliminary work, we have discovered many of the key factors for obtaining more complete models and details.  Future enhancements include: the creation of more detailed disparity maps, inclusion of color lighting, inclusion of smart tether for better localization, enhancements to memory management to process more textures and disparity maps at once.
+In this preliminary work, we have discovered many of the key factors for obtaining more complete models and details.  Future enhancements include: the use of higher quality cameras, inclusion of color and more powerful lighting, addition of smart tether for better localization, and enhancement of memory management to process more textures and disparity maps at once.
 For example, more detailed disparity maps could be achieved by upgrading the cameras and the lights on the robot.
 GoPro cameras were a simple, cost-effective, solution to acquire underwater stereo images.
 The quality of the captured images, however, could be greatly increased with more professional hardware.
