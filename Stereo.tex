@@ -57,8 +57,8 @@ plus 2pt minus 2pt}{12pt plus 2pt minus 2pt}{\subsize\bf}}
 \keywords{3D Site Reconstruction: Surface Reconstruction: Underwater Stereo Vision: Projective Texturing}
 
 \abstract{The study of underwater structures, such as wells, cisterns, and water storage systems, can be of historical and scientific significance for archeologists. However, access to and study of such sites can be dangerous or infeasible for humans.
-Underwater micro-ROVs, such as the VideoRay Pro III GTO, can often reach and navigate these locations more safely while causing less harm to the site.
-Prior work has successfully reconstructed geometric models of such underwater structures with the use of sonar measurements. Although effective, sonar has a limited resolution and omits many fine geometric details of the model in the scanning process. In this paper, we present a preliminary solution towards the accurate reconstruction of fine details of geometric features in the underwater setting using stereo pairs. These fine details can then integrated into 3D models reconstructed from sonar to create a more accurate final model of a water system. The initial rough 3D model is generated using multiple sonar scans of the walls of the site. The fine details of the internal organic surfaces are recorded using stereoscopic imaging. Finally, the rough 3D model is deformed and textured using the details obtained through stereoscopic imaging. 
+Underwater micro-ROVs, such as the VideoRay Pro III GTO, can often reach and navigate these locations safely while causing less harm to the site.
+Prior work has successfully reconstructed geometric models of such underwater structures with the use of sonar measurements. Although effective, sonar has a limited resolution and omits many fine geometric details of the model in the scanning process. In this paper, we present a preliminary solution towards the reconstruction of fine details of geometric features in the underwater setting using stereo pairs. These fine details can then integrated into 3D models reconstructed from sonar to create a more accurate final model of a water system. The initial rough 3D model is generated using multiple sonar scans of the walls of the site. The fine details of the internal organic surfaces are recorded using stereoscopic imaging. Finally, the rough 3D model is deformed and textured using the details obtained through stereoscopic imaging. 
 We present initial results and detailed methodology for future data acquisition.
 }
 
@@ -67,17 +67,17 @@ We present initial results and detailed methodology for future data acquisition.
 \section{\uppercase{Introduction}}
 \label{sec:introduction}
 
-\noindent Recent research in the field of mobile robotics has demonstrated the creation of 3D maps of settings otherwise inaccessible to humans, such as narrow tunnels and difficult to navigate marine caves~\cite{ICEX11,McVicker,McVicker2}. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms  (\cite{Williams2000}, ~\cite{harbor}, and \cite{Fairfield2005,Fairfield2006}) allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors. Such maps, or evidence grids, can then be treated as implicit volumes to construct a geometric model of the scanned regions using marching cubes~\cite{Lorensen}. An example of a geometric model of a well used for water storage, can be seen in Figure~\ref{fig:wellNoFine}.
-Unfortunately, due equipment limitations, sensor noise, and probabilistic uncertainty occurring in the  data acquisition process, these models often suffer from a loss of fine geometric details. Loss of detail in the scanning process is a problem for end-users, who wish to study these models or use them for educational purposes.
+\noindent Recent research in the field of mobile robotics has demonstrated the creation of 3D maps of settings otherwise inaccessible to humans, such as narrow tunnels and marine caves~\cite{ICEX11,McVicker,McVicker2}. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms  (\cite{Williams2000}, ~\cite{harbor}, and \cite{Fairfield2005,Fairfield2006}) allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors. Such maps, or evidence grids, can then be treated as implicit volumes to construct a geometric model of the scanned regions using marching cubes~\cite{Lorensen}. An example of a geometric model of a well used for water storage can be seen in Figure~\ref{fig:wellNoFine}.
+Unfortunately, equipment limitations, sensor noise, and probabilistic uncertainty occurring in the data acquisition process cause these models to suffer from a loss of fine geometric details. Loss of detail in the scanning process is a problem for end-users, who wish to study these models or use them for educational purposes.
 
-In this paper we present a preliminary solution towards the reintroduction of fine details omitted by sonar data into surface reconstructions.  
+In this paper we present a preliminary solution towards the reintroduction of fine details omitted by sonar data into surface reconstructions.
 Two cameras are used to capture stereo images of underwater surfaces.
 The stereo images are then processed to produce disparity maps which contain the fine geometric detail of the original surface.
-Each disparity map can then be used to enhance the final geometric model.
+The depth information in each disparity map can then be used to enhance the final geometric model.
 
-This project is a part of a larger ongoing project, with the broad goal of mapping and modeling ancient water storage systems, i.e. cisterns, wells and water galleries located in most houses, churches, and fortresses of the islands of Malta, Gozo, and Sicily. This multiple year project involves the deployment of a micro-ROV into water systems in the Mediterranean~\cite{White10,ICEX11,McVicker,McVicker2} with this paper documenting the first use of stereo data for fine level geometry acquisition. The data used in this paper was gathered through a series of underwater robot deployments in which multiple sonar scans were gathered, then fused into a map of the scene via Simultaneous Localization and Mapping (SLAM) algorithms. In addition to the sonar data, stereo pairs were obtained for use in creating disparity maps to model fine level geometry. In order to incorporate the disparity information with the general surfaces, both the color data and disparity information is projected onto the  general geometric model generated from the sonar data. Finally, the geometry contained within the frustums of the projectors in the model is displaced in accordance with the projected disparity maps, preserving the fine details omitted in earlier stages of reconstruction. The stages of our algorithm can be seen in Figure~\ref{fig:systemblock}.
+This project is a part of a larger ongoing project, with the broad goal of mapping and modeling ancient water storage systems, i.e. cisterns, wells and water galleries located in most houses, churches, and fortresses on the islands of Malta, Gozo, and Sicily. This multiple year project involves the deployment of a micro-ROV into water systems in the Mediterranean~\cite{White10,ICEX11,McVicker,McVicker2} with this paper documenting the first use of stereo data for fine level geometry acquisition. The data used in this paper was gathered through a series of underwater robot deployments in which multiple sonar scans were gathered, then fused into a map of the scene via Simultaneous Localization and Mapping (SLAM) algorithms. In addition to the sonar data, stereo pairs were obtained for use in creating disparity maps to model fine level geometry. In order to annex this fine geometry to the general models, both the color data and disparity information from the disparity maps are projected onto the geometric model generated from the sonar data via projective texturing. Finally, the geometry contained within the frustums of the projectors in the model is displaced in accordance with the projected disparity maps, preserving the fine details omitted in earlier stages of reconstruction. The stages of our algorithm can be seen in Figure~\ref{fig:systemblock}.
 
-The results reported in this paper are from preliminary work in a multidisciplinary setting, utilizing aspects of emerging robotics and computer graphics technology.  This paper outlines the data acquisition and stereo displacement map computation, describes our preliminary novel solution to displacing rough geometry in accordance with a projected disparity map, illustrates our results on a partial model using existing data, and outlines a data acquisition process for future missions. The goal of this work is the generation of a computer model which includes the fine organic features found in underwater storage systems.
+The results reported in this paper are from preliminary work in a multidisciplinary setting, utilizing aspects of emerging robotics and computer graphics technology. This paper outlines the data acquisition and stereo displacement map computation, describes our solution to displacing rough geometry in accordance with a projected disparity map, illustrates our results on a partial model using an incomplete data set, and outlines a data acquisition process for future missions. The goal of this work is the generation of a computer model which includes the fine organic features found in underwater storage systems.
 
 \begin{figure*}[!ht]
   \vspace{-0.2cm}
@@ -90,55 +90,35 @@ The results reported in this paper are from preliminary work in a multidisciplin
 \section{\uppercase{Related Work}}
 \label{sec:data}
 
-This project relies on data acquired from algorithms for mapping with underwater robots (e.g. \cite{Williams2000}, ~\cite{Williams09}, ~\cite{opizarro-2009a}, \cite{Fairfield2005,Fairfield2006}, \cite{Clark2008b}, and~\cite{White10}). For a good survey of the core techniques capable of fusing data from multiple sensors, see Thurn~\cite{Thrun2005}.  
+This project relies on data acquired from algorithms for mapping with underwater robots (e.g. \cite{Williams2000}, ~\cite{Williams09}, ~\cite{opizarro-2009a}, \cite{Fairfield2005,Fairfield2006}, \cite{Clark2008b}, and~\cite{White10}). For a good survey of the core techniques capable of fusing data from multiple sensors, see Thurn~\cite{Thrun2005}.
 For this project the most relevant  research in underwater robot Simultaneous Localization and Mapping (SLAM) is found in (e.g. \cite{Williams2000}, ~\cite{harbor}, and \cite{Fairfield2005,Fairfield2006}).  
 %TP: move somewhere else?
-The work of Mahon et al. address a related underwater SLAM and stereovision problem, which was depth mapping ruins on the sea floor~\cite{Mahon:2011}.
+The work of Mahon et al. addresses a related underwater SLAM and stereo vision problem, where sea floor ruins were mapped~\cite{Mahon:2011}.
 
-
-In addition, this work relies on well known algorithms from computer graphics, such as surface extraction from volume data using marching cubes~\cite{Lorensen}, projective texturing and texture mapping~\cite{Williams78castingcurved,Segal} and the use of vertex shaders to displace existing vertices on the GPU. Work in ~\cite{Fairfield:2010} likewise uses marching cubes to create a geometric model of underwater structures from an evidence grid, but uses a much more complex ROV and sensors.
+In addition, this work relies on well known algorithms from computer graphics, such as surface extraction from volume data using marching cubes~\cite{Lorensen}, projective texturing and texture mapping~\cite{Williams78castingcurved,Segal}, and the use of vertex shaders to displace existing vertices on the GPU. Work in ~\cite{Fairfield:2010} likewise uses marching cubes to create a geometric model of underwater structures from an evidence grid, but uses a far more complex ROV with superior sensors.
 
 This work also relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:gutMarroquin},~\cite{stereo:scharsteinSzeliski}.
-  In particular, this work uses the method of~\cite{stereo:zitKan}.
-  The work of~\cite{stereo:nalGast} was consulted to compensate for differences in light intensities between images.
-  This paper explores the conversion of images into the HSL color space in an attempt to remove light intensity from the equation and compare solely the hue and saturation values.
-  Unfortunately, the underwater setting does not transmit colors well, forcing the use of more common stereo-vision comparisons. 
+In particular, this work uses the method of~\cite{stereo:zitKan}.
+The work of~\cite{stereo:nalGast} was consulted to compensate for differences in light intensities between images.
+This paper explores the conversion of images into the HSL color space in an attempt to remove light intensity from the equation and compare solely the hue and saturation values.
+Unfortunately, the underwater setting does not transmit colors well, forcing the use of more common stereo vision comparisons. 
 
 \section{\uppercase{Data Acquisition and Hardware Calibration}}
 \label{sec:data}
 
-\noindent The goal of this project is to acquire geometric models of underwater structures found in the Mediterranean.  We describe the exact hardware and data acquisition process used in this project.
+A VideoRay Pro III GTO micro submersible Remotely Operated Vehicle (ROV) is utilized in the data acquisition process as a means of navigating cisterns and properly orienting the data collection hardware (Figure~\ref{fig:ROV}). The ROV is deployed into a cistern and guided from a control module above the surface. During deployment, the navigator repeatedly rests the ROV on the cistern floor and records a $360^{\circ}$ stationary sonar scan, then lifts the ROV and repositions it elsewhere in the cistern for another scan until data for the entire horizontal scan plane has been collected. The sonar scans must have some overlap to facilitate mosaicing and localization for surface reconstruction, which is taken into consideration when positioning the ROV on the cistern floor. The approximate position and heading of the ROV is recorded before each scan for later use in aligning projectors in the geometric model. The ROV's main video camera is used to position the unit at each location. A more complete overview of the sonar data acquisition process can be found in~\cite{ClarkVast}. This collection of sonar scan planes is then used to build a general 3D model of the cistern in question~\cite{ICEX11}.
 
-A micro submersible Remotely Operated Vehicle (ROV), specifically a VideoRay Pro III GTO, is utilized in the data acquisition process as a means of navigating cisterns and properly orienting the data collection hardware (Figure~\ref{fig:ROV}). The ROV is deployed into a cistern and guided from a control module above the surface. During deployment, the navigator repeatedly rests the ROV on the cistern floor and records a $360^{\circ}$ stationary sonar scan, then lifts the ROV and repositions it elsewhere in the cistern for another scan until data for the entire horizontal scan plane has been collected. The sonar scans must have some overlap to facilitate mosaicing and localization for surface reconstruction, which is taken into consideration when positioning the ROV on the cistern floor. A complete overview of the sonar data acquisition process can be found in~\cite{ClarkVast}.  This collection of scan planes is then used to build a general 3D model of the cistern in question~\cite{ICEX11}.
-  
+While the sonar scans are being collected, the ROV captures stereo image pairs of the cistern walls. These images are collected using two GoPro HD Hero2 cameras mounted to the front of the ROV, which are synchronized through the 3D Hero System waterproof housing and connector cable. The default domed lenses of the 3D Hero Housing distort images taken underwater, so flat lenses were installed to minimize complexity during data processing. The camera unit is unable to be controlled remotely, and instead, each camera is set to capture an image every second. To collect stereoscopic images the ROV is maneuvered around the edges of the cistern, pausing every few feet. The ROV is positioned rougly one meter from the wall to capture stereo pairs with features that can be easily matched later. The images captured at each of these locations are used to create disparity maps, as described in section ~\ref{disparityMapGeneration}.
+
 \begin{figure}[!h]
    \vspace{-0.2cm}
    \centering{
       \epsfig{file = pics/ROV.jpg, width = 7cm}}
-   \caption{Hardware setup, consisting of a Tritech SeaSprite sonar sensor and two vertically aligned HD GoPro cameras mounted on a VideoRay Pro III GTO micro ROV.}
+   \caption{Hardware setup, consisting of a Tritech SeaSprite sonar sensor and two vertically aligned GoPro HD Hero2 cameras mounted on a VideoRay Pro III GTO micro ROV.}
   \label{fig:ROV}
  \end{figure}
 
-After the sonar scans have been collected, the ROV is utilized to collect stereoscopic images of the cistern walls.
-These images are collected using two GoPro HD Hero2 cameras, which are synchronized using the 3D Hero System.  
-The 3D Hero System is a waterproof camera housing and a connector cable that synchronizes image captures between cameras.
-The camera unit is not able to be controlled remotely.  
-Instead the cameras are set to capture an image every second.
-That housing is physically mounted to the ROV using the included plastic arms. 
-Normally the GoPro mounting hardware attaches to a surface using adhesives, however, these are unreliable in an underwater environment.  
-Instead, we drilled holes into the base piece of the mounting hardware allowing it to be bolted to the ROV.    
-
-Unfortunately, the default domed lenses of the 3D Hero Housing distort images taken underwater.  
-There are a number of 3rd party vendors who sell flat replacement lenses for the 3D Hero and other Hero Housings which resolve this issue.  
-All of our image data was collected after these flat lenses were installed.
-
-To collect stereoscopic images the ROV is maneuvered around the edges of the cistern, pausing every few feet.  
-The ROV is positioned about 0.5 to 1.5 meters from the wall to create optimal stereo images.  
-At these location, the approximate position and heading of the ROV is recorded for later use in aligning projectors in the cistern model.
-The ROV's main video camera is used to position the unit at each location.  
-The images captured at each of these locations are then used to create disparity maps, as described in section ~\ref{disparityMapGeneration}.
-
-\subsection{Hardware Calibration}
+\subsection{Hardware Calibration HAVE NOT EDITED YET}
 To facilitate the accurate virtual reconstruction of the world it was necessary to calibrate the GoPro cameras.
 Both the aspect ratio and the vertical field of view (VFOV) needed to be calculated to accurately re-project the captured images and disparity maps in the virtual world.  
 The following equations were used:
@@ -157,36 +137,29 @@ These two values were used to specify the behavior of projectors, discussed late
    \vspace{-0.2cm}
    \centering{
       \epsfig{file = pics/1.png, width = 0.9\textwidth}}
-   \caption{How we generate meshes from sonar models.}
+   \caption{The sonar data acquisiton and general model reconstruction stages of the project. Sonar data is collected in a 2D scan plane, merged into a 2D surface using FastSLAM, marching cubes, and a hole filling algorithm, and extruded into 3D.}
   \label{fig:meshgen}
  \end{figure*}
- 
-\noindent Prior work is focused on reconstructing general geometric models from evidence maps representing Mediterranean water storage systems (cisterns, wells and water galleries)~\cite{ICEX11,McVicker,McVicker2}.  As a pre-process to the algorithms presented here for fine level geometry modeling, the cisterns are mapped using sonar data, which is fused into a two dimensional grid of cells with given a likelihood $p_{i,j} \in [0,1]$ of being occupied \cite{Thrun2005} and~\cite{White10}. This single 2D layer can then be extruded into a 3D evidence grid and be treated as volume data.  A polygonal geometric model of the scanned data can be constructed via marching cubes, where any cell with $p_{i,j}$ greater than a threshold value, $t$, is considered an occupied cell and associated with a wall in the model. $t$ is used to define occupancy and is generally set to values in the range $.65-.85$. We refer the reader to~\cite{ICEX11,McVicker,McVicker2} for more details on the mapping process. See Figure~\ref{fig:meshgen} for an illustration of the general process used to acquire data and generate a geometric model.
+
+Prior work is focused on reconstructing general geometric models from evidence maps representing Mediterranean water storage systems (cisterns, wells and water galleries)~\cite{ICEX11,McVicker,McVicker2}. As a pre-process to the algorithms presented here for fine level geometry modeling, the cisterns are mapped using sonar data, which is fused into a two dimensional grid of cells with a likelihood $p_{i,j} \in [0,1]$ of being occupied \cite{Thrun2005} and~\cite{White10}. This single 2D layer can then be extruded into a 3D evidence grid and treated as volume data. A polygonal geometric model of the scanned data can be constructed via marching cubes, where any cell with $p_{i,j}$ greater than a threshold value, $t$, is considered an occupied cell and associated with a wall in the model. $t$ is used to define occupancy and is generally set to values in the range $.65-.85$. We refer the reader to~\cite{ICEX11,McVicker,McVicker2} for more details on the mapping process. See Figure~\ref{fig:meshgen} for an illustration of the general process used to acquire data and generate a geometric model.
 
 %\section{\uppercase{Fine Detail Additions Via Stereoscopic Depth Extraction}}
 \section{\uppercase{Constructing a more accurate geometric model}}
 \label{sec:detail}
 
-\noindent The models constructed from the evidence grid give a good representation of the gross shape of an underwater system. However, due to challenges in the acquisition process for sonar data, these models tend to lose the fine geometric details present in many of the mapped structures, which are important to archaeologists seeking to study the underwater system. See Figure~\ref{fig:wellNoFine} for an example of a well model constructed from sonar data alone. In contrast, Figure~\ref{fig:wellPhoto} shows a photograph of the well, where it is clear that fine level details such as the rocks that comprise the walls are not well modeled by the sonar reconstruction.
+\noindent The models constructed from the evidence grid give a good representation of the gross shape of an underwater system. However, due to challenges in the acquisition process for sonar data, these models tend to lose the fine geometric details present in many of the mapped structures, which are important to archaeologists seeking to study the underwater system. See Figure~\ref{fig:wellNoFine} for an example of a well model constructed from sonar data alone. In contrast, Figure~\ref{fig:wellPhoto} shows a photograph of the well, where it is clear that fine level details such as the rocks that comprise the walls are not well modeled by the sonar reconstruction alone.
 
-In this section we describe our approach towards the addition of fine details to the gross sonar models produced in Section~\ref{sec:reconstruction}.
-% Rough stub, delete/edit/use for inspiration!
-The first step towards building fine details into a planar mesh is extracting those details from the original surface. 
-We extract these details through the acquisition of stereo pair images during the ROV deployment.
-Pairs of stereo images (left and right) were used both to distinguish between features close and far from the camera, and to capture the color data of the surface walls.
-The result of this comparison is stored in a disparity map, which can then be used to add fine geometric details to the general model.  
-Due to the constraints on the available mounting positions for the stereo cameras, this method is only accurate for determining the distance of objects up to two meters from the cameras. This constraint was not an issue for our purposes, as the ROV was held roughly half a meter from the wall when capturing images.
-The details of the disparity map generation process are described in more detail below.
+The first step towards building fine details into a planar mesh is extracting those details from the original surface. We extract these details through the acquisition of stereo pair images during the ROV deployment. Pairs of stereo images (left and right) were used both to distinguish between features close and far from the camera, and to capture the color data of the surface walls.
+The result of this comparison is stored in a disparity map. Due to the constraints on the available mounting positions for the stereo cameras, this method is only accurate for determining the distance of objects up to two meters from the cameras. This constraint was not an issue for our purposes, as the ROV was held roughly one meter from the wall when capturing images.
 
-The second step towards to building a more accurate geometric model requires the use of the disparity maps and image pairs to deform and texture, respectively, the basic sonar mesh. There are two challenges at this stage in the process.  One is accurately localizing the ROV with respect to the general model to map the disparity maps onto the correct section of the model. The second is mapping those disparities onto the existing model.
-For the current implementation, the ROV is localized by recording the location of the ROV when it takes a picture of the wall of the cistern.  
-Using that real-world location, the corresponding disparity map and image can be projected back onto the general geometry from that same location in the virtual-world.
-%Erik - I don't think the above is true. We don't have any position data, which is why we are doing this first on a circularly symmetrical mesh.
-The color data stored in the disparity map is then used to deform the vertices onto which the disparity map was projected.
-Lighter patches of the disparity map pull vertices out towards the camera, away from the existing wall, while darker patches push those vertices into the wall.
-One of the two images used to create the disparity map is then projected onto the deformed surface, giving the model both the color and shape of the original surface. Repeating this procedure for each section of wall produces a finely detailed 3D model of the cistern.
+The second step towards to building a more accurate geometric model requires the use of the disparity maps and image pairs to deform and texture, respectively, the basic sonar mesh. There are two challenges at this stage in the process.  One is accurately localizing the ROV with respect to the general model to map the disparity maps onto the correct section of model surface. The second is mapping captured depth information onto the existing model.
+For the current implementation, the first challenge remains unresolved. The location of the ROV is unknown without better data acquisiton techniques, a Smart Tether for GPS data, or an implementation of stereo SLAM. Instead, the preliminary results presented in this paper are from a cylindrical well with rotational symmetry.
 
-\subsection{Disparity Map Generation}
+The second challenge is resolved by using the color data stored in the grayscale disparity map to deform the vertices onto which the disparity map was projected.
+Light patches of the disparity map pull vertices towards the projector and away from the existing wall, while dark patches push those vertices into the wall.
+One of the two images used to create the disparity map is then projected onto the deformed model, giving the model both the color and shape of the original surface. Repeating this procedure for each section of wall produces a finely detailed 3D model of the cistern.
+
+\subsection{Disparity Map Generation HAVE NOT EDITED YET}
 \label{disparityMapGeneration}
 
 \begin{figure*}[!ht]
@@ -220,7 +193,7 @@ As a result of some well illuminated features being closer to one camera than th
 
 Another common challenge in our images is dirt particles in the water due to the ROV's positioning thrusters agitating sediment in the water systems. Usually the particles are small enough to be detected as occusions and removed from the final disparity map by the Zitnick and Kanade algorithm, see ~\ref{stereo:zitKan}.
 
-\subsubsection{Image Correction}
+\subsubsection{Image Correction HAVE NOT EDITED YET}
 \label{subsec:image_correction}
 
 In many stereo mapping algorithms, including Zitnick and Kanade, it is assumed that both images are accurate down to the pixel level.
@@ -235,7 +208,7 @@ The image size of 512 was chosen out of convenience.  It was large enough to pre
 %Through experimentation, we discovered that the best image detail to process time ratio was obtained by reducing the images by one sixth.   
 Shrinking was performed after smoothing to preserve the maximum amount of detail in the image.
 
-\subsubsection{HSL Color Correction}
+\subsubsection{HSL Color Correction HAVE NOT EDITED YET}
 \label{subsec:hsl_color_correction}
 In addition to the general lighting challenges described above, the paired GoPro cameras chosen for data collection lacked the ability to sync exposure times.
 The cameras independently calculated the correct exposure for their image only, which resulted in a lack of light intensity matching between left and right images (note the difference in light between the left and right images in Figure ~\ref{fig:disparity}).
@@ -246,7 +219,7 @@ Many of the surfaces that we imaged were gray in color producing uniform hue and
 For future experiments, introducing a light with a distinct color, perhaps blue, could prove useful for gray surfaces.  
 This blue light would provide definite hue and saturation values that could be compared regardless of exposure times.
 
-\subsubsection{Disparity Mapping}
+\subsubsection{Disparity Mapping HAVE NOT EDITED YET}
 \label{subsec:disparity_mapping}
 
 Disparity maps were generated using the cooperative, iterative approach described by Zitnick and Kanade ~\cite{stereo:zitKan}.
@@ -289,7 +262,7 @@ If the best weight for all depths for a certain pixel $(x,y)$ is below a predefi
 
 
 
-\subsection{Calibration}
+\subsection{Calibration HAVE NOT EDITED}
 \label{subsec:calibration}
 
 %TP: 
@@ -318,32 +291,35 @@ In future, a better hardware setup could provide more detailed results of this e
 \label{subsec:projectiveTexturing}
 
 %ZJW: need to motivate projective texturing - please read what I wrote and edit as desired
-\noindent In order to add fine details to the general mesh created from sonar data, $M_s$, we need to map the location of the disparity map data onto the global coordinates of the general mesh. Ideally, real localization would be used to correspond the coordinates of the general mesh and the displacements (i.e. solve the ROV's location in the mapped model when the images were captured).  With our current hardware, ROV localization is only computed for fixed scans and we do not know where the ROV is with respect to the map for every image acquired. Future work includes using additional hardware such as a smart tether to assist in localization, but for our preliminary results, we use projective texturing with a user's input to place color and disparity data correctly. In general, the ROV captures an image of an organic feature in a cistern, and our implementation allows the user to position a projector which casts the image from the same relative position onto the general mesh for displacement (Figure~\ref{fig:dispgen}). Projective texturing is  utilized because of its ability to properly simulate an ROV as a point particle with the ROV's view frustum modeled as six implicit plane equations (i.e. modeling the camera field of view). Our implementation allows the projection of multiple textures and disparities, building a more detailed and colored model as more images and disparities are placed and added to the original mesh.
+\noindent In order to add fine details to the general mesh created from sonar data, $M_s$, we map the location of the disparity map data onto the global coordinates of the general mesh. Ideally, real localization would be used to correspond the coordinates of the general mesh and the displacements (i.e. solve the ROV's location in the mapped model when the images were captured). With our current hardware, ROV localization is only computed for fixed scans and the ROV's position with respect to the map is unknown for each stereo pair capture. Future work includes using additional hardware such as a Smart Tether to assist in localization, but for our preliminary results, we use projective texturing with a user's input to manually align disparity map and image projections. In general, the ROV captures an image of an organic feature in a cistern, and our implementation allows the user to position a projector which casts the image from the same relative position onto the general mesh for displacement (Figure~\ref{fig:dispgen}). Projective texturing is utilized because of its ability to properly simulate an ROV as a point particle with the ROV's view frustum modeled as six implicit plane equations (i.e. modeling the camera field of view). Our implementation allows the projection of multiple textures and disparities, building a more detailed and colored model as more images and disparities are placed and added to the original mesh.
 
-The combination of projective texturing and stereoscopic imaging enables the ability to selectively displace vertices according to the color of a texture-mapped disparity map that is projected onto a surface. These vertices are displaced along the vector leading from their original 3D position in the mesh to the position of the projector, re-applying the geometry captured within the cistern to the model.  For our implementation uses, OpenGL and OpenGL Shading Language (GLSL) graphics libraries to aid in projective texturing, the latter being used to create shaders - small programs run per-vertex directly on the GPU. The shaders are programmed to selectively alter rendered vertex information, such as position (vertex shader) and color (fragment shader). 
+The combination of projective texturing and stereoscopic imaging enables the ability to selectively displace vertices according to the color of a texture-mapped disparity map that is projected onto a surface. These vertices are displaced along the vector leading from their original 3D position in the mesh to the position of the projector. OpenGL and OpenGL Shading Language (GLSL) graphics libraries were used to aid in projective texturing, the latter being used to create shaders - small programs run per-vertex directly on the GPU. The shaders are programmed to selectively alter rendered vertex position (vertex shader) and color (fragment shader).
 
-A projector is simulated by establishing plane equations for a view frustum based on the position and orientation of the ROV when the projected images were captured in a cistern. We define $J = \{j_{1},\dots,j_{N}\}$ to be the set of projectors casting textures onto the gross surface reconstruction. Each projector, $j_{n} = ((j_{n_{x}}^{pos},j_{n_{y}}^{pos},j_{n_{z}}^{pos}), \langle j_{n_{x}}^{look},j_{n_{y}}^{look},j_{n_{z}}^{look}\rangle)$, is uniquely defined by its position in 3D space, and a look vector orthonormal to the projector's viewport (Figure~\ref{fig:frustum}). All projectors have a pre-calibrated Field Of View (FOV) mimicking the compound FOV produced by the GoPro camera and waterproof housing lenses. The ROV is not equipped with roll thrusters, allowing us to ignore the possibility of a tilted camera frustum (i.e. the projector's right facing vector will always lie in the horizontal plane). Implicit plane equations modeling the projector view frustums in the form $Ax + By + Cz + D = 0$ are resolved using the clip space approach~\cite{vfc}, where $\langle A, B, C\rangle$ is the plane's normal vector and  $(x, y, z)$ is a point on the plane. In this approach, plane equations are computed in homogenous space using the composite $4x4$ modelview projection matrix of the projector, $\lbrack \chi \rbrack$.
+A projector is simulated by establishing plane equations for a view frustum based on the position and orientation of the ROV when the projected images were captured in a cistern. We define $J = \{j_{1},\dots,j_{N}\}$ to be the set of projectors casting textures onto the gross surface reconstruction. Each projector, $j_{n} = ((j_{n_{x}}^{pos},j_{n_{y}}^{pos},j_{n_{z}}^{pos}), \langle j_{n_{x}}^{look},j_{n_{y}}^{look},j_{n_{z}}^{look}\rangle)$, is uniquely defined by its position in 3D space, and a look vector orthonormal to the projector's viewport (Figure~\ref{fig:frustum}). All projectors have a pre-calibrated Field Of View (FOV) mimicking the compound FOV produced by the GoPro camera and waterproof housing lenses. The ROV is not equipped with roll thrusters, allowing us to ignore the possibility of a tilted camera frustum (i.e. the projector's right facing vector will always lie in the horizontal plane). Implicit plane equations modeling the projector view frustums in the form $Ax + By + Cz + D = 0$ are resolved using the clip space approach~\cite{vfc}, where $\langle A, B, C\rangle$ is the plane's normal vector and  $(x, y, z)$ is a point on the plane. In this approach, plane equations for each projector are computed in homogenous space using the composite $4x4$ modelview projection matrix of the projector.
 
-\begin{align}
-\nonumber %Left plane
-&\lbrack A \hspace{3pt} B \hspace{3pt} C \hspace{3pt} D \rbrack^\mathrm{T}_{Left} \hspace{-15pt} &= \hspace{10pt}&\lbrack \chi_{11} \cdots \chi_{41} \rbrack^\mathrm{T} + \lbrack \chi_{14} \cdots \chi_{44} \rbrack^\mathrm{T}
-\\
-\nonumber %Right plane
-&\lbrack A \hspace{3pt} B \hspace{3pt} C \hspace{3pt} D \rbrack^\mathrm{T}_{Right} \hspace{-15pt} &= -&\lbrack \chi_{11} \cdots \chi_{41} \rbrack^\mathrm{T} + \lbrack \chi_{14} \cdots \chi_{44} \rbrack^\mathrm{T}
-\\
-\nonumber %Top plane
-&\lbrack A \hspace{3pt} B \hspace{3pt} C \hspace{3pt} D \rbrack^\mathrm{T}_{Top} \hspace{-15pt} &= \hspace{10pt}&\lbrack \chi_{12} \cdots \chi_{42} \rbrack^\mathrm{T} + \lbrack \chi_{14} \cdots \chi_{44} \rbrack^\mathrm{T}
-\\
-\nonumber %Bottom plane
-&\lbrack A \hspace{3pt} B \hspace{3pt} C \hspace{3pt} D \rbrack^\mathrm{T}_{Bot} \hspace{-15pt} &= -&\lbrack \chi_{12} \cdots \chi_{42} \rbrack^\mathrm{T} + \lbrack \chi_{14} \cdots \chi_{44} \rbrack^\mathrm{T}
-\\
-\nonumber %Near plane
-&\lbrack A \hspace{3pt} B \hspace{3pt} C \hspace{3pt} D \rbrack^\mathrm{T}_{Near} \hspace{-15pt} &= \hspace{10pt}&\lbrack \chi_{13} \cdots \chi_{43} \rbrack^\mathrm{T} + \lbrack \chi_{14} \cdots \chi_{44} \rbrack^\mathrm{T}
-\\
-\nonumber %Far plane
-&\lbrack A \hspace{3pt} B \hspace{3pt} C \hspace{3pt} D \rbrack^\mathrm{T}_{Far} \hspace{-15pt} &= -&\lbrack \chi_{13} \cdots \chi_{43} \rbrack^\mathrm{T} + \lbrack \chi_{14} \cdots \chi_{44} \rbrack^\mathrm{T}
-\\
-\end{align}
+LOTS COMMENTED OUT, MAKE SURE TO COME BACK AND DEFINE ALL MATH SYMBOLS USED LATER IN THE TEXT
+
+finish this up (bla bla bla, we cull this stuff, then stuff is sent to shaders)
+%\begin{align}
+%\nonumber %Left plane
+%&\lbrack A \hspace{3pt} B \hspace{3pt} C \hspace{3pt} D \rbrack^\mathrm{T}_{Left} \hspace{-15pt} &= \hspace{10pt}&\lbrack \chi_{11} \cdots \chi_{41} \rbrack^\mathrm{T} + \lbrack \chi_{14} \cdots \chi_{44} \rbrack^\mathrm{T}
+%\\
+%\nonumber %Right plane
+%&\lbrack A \hspace{3pt} B \hspace{3pt} C \hspace{3pt} D \rbrack^\mathrm{T}_{Right} \hspace{-15pt} &= -&\lbrack \chi_{11} \cdots \chi_{41} \rbrack^\mathrm{T} + \lbrack \chi_{14} \cdots \chi_{44} \rbrack^\mathrm{T}
+%\\
+%\nonumber %Top plane
+%&\lbrack A \hspace{3pt} B \hspace{3pt} C \hspace{3pt} D \rbrack^\mathrm{T}_{Top} \hspace{-15pt} &= \hspace{10pt}&\lbrack \chi_{12} \cdots \chi_{42} \rbrack^\mathrm{T} + \lbrack \chi_{14} \cdots \chi_{44} \rbrack^\mathrm{T}
+%\\
+%\nonumber %Bottom plane
+%&\lbrack A \hspace{3pt} B \hspace{3pt} C \hspace{3pt} D \rbrack^\mathrm{T}_{Bot} \hspace{-15pt} &= -&\lbrack \chi_{12} \cdots \chi_{42} \rbrack^\mathrm{T} + \lbrack \chi_{14} \cdots \chi_{44} \rbrack^\mathrm{T}
+%\\
+%\nonumber %Near plane
+%&\lbrack A \hspace{3pt} B \hspace{3pt} C \hspace{3pt} D \rbrack^\mathrm{T}_{Near} \hspace{-15pt} &= \hspace{10pt}&\lbrack \chi_{13} \cdots \chi_{43} \rbrack^\mathrm{T} + \lbrack \chi_{14} \cdots \chi_{44} \rbrack^\mathrm{T}
+%\\
+%\nonumber %Far plane
+%&\lbrack A \hspace{3pt} B \hspace{3pt} C \hspace{3pt} D \rbrack^\mathrm{T}_{Far} \hspace{-15pt} &= -&\lbrack \chi_{13} \cdots \chi_{43} \rbrack^\mathrm{T} + \lbrack \chi_{14} \cdots \chi_{44} \rbrack^\mathrm{T}
+%\\
+%\end{align}
 
 \begin{figure}[!h]
    \vspace{-0.2cm}
@@ -353,43 +329,45 @@ A projector is simulated by establishing plane equations for a view frustum base
   \label{fig:frustum}
  \end{figure}
 
-In order to optimize the projection step and only displace and color vertices in the current view, for each projector, all faces in the mesh are passed through a view frustum culling filter in order to produce a list of faces contained within the current frustum. We define $P = \{p_{1},\dots,p_{M}\}$ to be the set of vertices of the general mesh, $M_s$. Each vertex, $p_{n} =  (p_{m_{x}},p_{m_{y}},p_{m_{z}})$, is defined by its position in 3D space. Additionally, we define $F = \{f_{1},\dots,f_{Q}\}$ as the set of faces in the mesh, $M_s$. Each face, $f_{q} = (p_{\alpha}, p_{\beta}, p_{\gamma})$, is comprised of three vertices. We begin with a preliminary culling which discards faces if their bounding sphere is outside of the projector's view frustum. Since frustum planes are modeled implicitly with normal vectors pointing into the frustum, if the signed distance from the face's center to the frustum plane, $\delta_{center}$, is less than the negative of the face's bounding sphere's radius, then the face's bounding sphere is entirely outside of the view frustum. In this case the face is immediately culled. $\delta_{center}$ is computed as follows,
+%In order to optimize the projection step and only displace and color vertices in the current view, for each projector, all faces in the mesh are passed through a view frustum culling filter in order to produce a list of faces contained within the current frustum. We define $P = \{p_{1},\dots,p_{M}\}$ to be the set of vertices of the general mesh, $M_s$. Each vertex, $p_{n} =  (p_{m_{x}},p_{m_{y}},p_{m_{z}})$, is defined by its position in 3D space. Additionally, we define $F = \{f_{1},\dots,f_{Q}\}$ as the set of faces in the mesh, $M_s$. Each face, $f_{q} = (p_{\alpha}, p_{\beta}, p_{\gamma})$, is comprised of three vertices. We begin with a preliminary culling which discards faces if their bounding sphere is outside of the projector's view frustum. Since frustum planes are modeled implicitly with normal vectors pointing into the frustum, if the signed distance from the face's center to the frustum plane, $\delta_{center}$, is less than the negative of the face's bounding sphere's radius, then the face's bounding sphere is entirely outside of the view frustum. In this case the face is immediately culled. $\delta_{center}$ is computed as follows,
 %
-\begin{equation}
-\delta_{center} = \frac{Ax + By + Cz + D}{3 \begin{Vmatrix} \langle A, B, C \rangle \end{Vmatrix}},
-\end{equation}
+%\begin{equation}
+%\delta_{center} = \frac{Ax + By + Cz + D}{3 \begin{Vmatrix} \langle A, B, C \rangle \end{Vmatrix}},
+%\end{equation}
 
-where
-\begin{equation}
-(x, y, z) = \left(\sum\limits_{\forall p_{m} \in f_{q}} p_{m_{x}}, \sum\limits_{\forall p_{m} \in f_{q}} p_{m_{y}}, \sum\limits_{\forall p_{m} \in f_{q}} p_{m_{z}}\right)
-\end{equation}
+%where
+%\begin{equation}
+%(x, y, z) = \left(\sum\limits_{\forall p_{m} \in f_{q}} p_{m_{x}}, \sum\limits_{\forall p_{m} \in f_{q}} p_{m_{y}}, \sum\limits_{\forall p_{m} \in f_{q}} p_{m_{z}}\right)
+%\end{equation}
 
-Once faces are passed through the preliminary culling filter, a more precise culling is executed in order to remove the small number of faces that lie entirely outside of the frustum, but whose bounding spheres intersect the frustum.  To accomplish this, the signed distances from each vertex in the face to the frustum plane, $\delta_{\alpha}$, $\delta_{\beta}$, and $\delta_{\gamma}$, are individually computed. If $\delta_{\alpha}$, $\delta_{\beta}$, and $\delta_{\gamma}$ are all less than zero, the face is culled. $\delta_{\alpha}$, $\delta_{\beta}$, and $\delta_{\gamma}$ are computed as follows,
+%Once faces are passed through the preliminary culling filter, a more precise culling is executed in order to remove the small number of faces that lie entirely outside of the frustum, but whose bounding spheres intersect the frustum.  To accomplish this, the signed distances from each vertex in the face to the frustum plane, $\delta_{\alpha}$, $\delta_{\beta}$, and $\delta_{\gamma}$, are individually computed. If $\delta_{\alpha}$, $\delta_{\beta}$, and $\delta_{\gamma}$ are all less than zero, the face is culled. $\delta_{\alpha}$, $\delta_{\beta}$, and $\delta_{\gamma}$ are computed as follows,
 %ZJW: this section is slightly detailed - but since we may end up submitting to a more general conference (not graphics specific, we can leave in for now unless we need space later, in which case we can compress this section a good deal
 
-\begin{equation}
-\delta_{\alpha, \beta, \gamma} = \frac{Ax + By + Cz + D}{\begin{Vmatrix} \langle A, B, C \rangle \end{Vmatrix}},
-\end{equation}
+%\begin{equation}
+%\delta_{\alpha, \beta, \gamma} = \frac{Ax + By + Cz + D}{\begin{Vmatrix} \langle A, B, C \rangle \end{Vmatrix}},
+%\end{equation}
 
-where
-\begin{align}
-\nonumber
-(x, y, z)_{\alpha} &= (p_{\alpha_{x}}, p_{\alpha_{y}}, p_{\alpha_{z}})\\
-\nonumber
-(x, y, z)_{\beta} &= (p_{\beta_{x}}, p_{\beta_{y}}, p_{\beta_{z}})\\
-(x, y, z)_{\gamma} &= (p_{\gamma_{x}}, p_{\gamma_{y}}, p_{\gamma_{z}})
-\end{align}
+%where
+%\begin{align}
+%\nonumber
+%(x, y, z)_{\alpha} &= (p_{\alpha_{x}}, p_{\alpha_{y}}, p_{\alpha_{z}})\\
+%\nonumber
+%(x, y, z)_{\beta} &= (p_{\beta_{x}}, p_{\beta_{y}}, p_{\beta_{z}})\\
+%(x, y, z)_{\gamma} &= (p_{\gamma_{x}}, p_{\gamma_{y}}, p_{\gamma_{z}})
+%\end{align}
 
 
-With faces lying outside of the projector view frustums culled, the vertices in the remaining faces are added to a trimmed set, $P^{*}\subset P$, whose members are sent to the vertex and fragment shaders (i.e. to the GPU) to be displaced and textured in accordance with the generated disparity map and camera image, respectively (Figure~\ref{fig:frustum}). $P$ is also sent to the GPU so that the portions of the mesh that are not displaced or textured are still rendered.
+%With faces lying outside of the projector view frustums culled, the vertices in the remaining faces are added to a trimmed set, $P^{*}\subset P$, whose members are sent to the vertex and fragment shaders (i.e. to the GPU) to be displaced and textured in accordance with the generated disparity map and camera image, respectively (Figure~\ref{fig:frustum}). $P$ is also sent to the GPU so that the portions of the mesh that are not displaced or textured are still rendered.
 
-The implemented projective texturing method naturally produces a second projection facing in the direction negative to $j_{n}^{look}$. To remove the unwanted projections, a simple check was added to the vertex shader which ensures that the texture mapped vertex position has a positive $q$ component.
+%The implemented projective texturing method naturally produces a second projection facing in the direction negative to $j_{n}^{look}$. To remove the unwanted projections, a simple check was added to the vertex shader which ensures that the texture mapped vertex position has a positive $q$ component.
 
 \subsection{Per-Vertex Displacement Computations}
 
-A GLSL vertex and fragment shader are used to displace and texture vertices. The vertex shader recieves $P$ and $P^{*}$, as well as a modelview projection matrix for the camera and each projector, projector positions, texture primitives for the disparity maps, an offset and scale value for displacement magnitudes, and normal vectors used for lighting computations from the OpenGL program. The vertex shader displaces vertices one at a time in accordance with the color of the texture-mapped disparity map coordinates. Vertices belonging to $P^{*}$ are updated and sent to the fragment shader for diffuse shading computations.
+A GLSL vertex and fragment shader are used to displace and texture vertices. The vertex shader recieves all of the vertices in the mesh, $P$, with vertices lying in the frustum of one or more projectors, $P^*$, marked. The vertex shader also recieves a modelview projection matrix for the camera and each projector, projector positions, texture primitives for the disparity maps, and offset distances from the wall for each texture from the CPU. The vertex shader displaces vertices one at a time in accordance with the color of the disparity map with respect to the texture-mapped coordinates. Vertices belonging to $P^{*}$ have their position updated. Vertices lying in the frustum of two or more projectors have their displacement vectors blended.
 
-The fragment shader recieves $P$ and $P^{*}$, as well as the camera image texture primitives and the revised normal vectors of the vertices in $P^{*}$. The fragment shader maps the camera images onto the vertices in the frustum of each projector. Again, vertices lying in the frustum of two or more projectors have their colors blended. Once an RGB color value has been computed for the vertex, diffuse shading is added to the model.
+Since the vertex shader is run individually on each vertex, it does not have access to neighboring vertex information. Thus in order to correctly compute normal vectors of the displaced mesh for diffuse shading, the updated position of each vertex must be sent back to the CPU where the entire array of vertices can be accessed. Normals are recomuted for the displaced mesh, and updated normals as well as the displaced mesh are sent to a fragment shader. The displacement vertex shader is only used on the first render, after which time the displaced mesh and updated normals are used for every subsequent render.
+
+The fragment shader recieves $P$ and $P^{*}$, as well as the camera image texture primitives and the updated normals. The fragment shader maps the camera images onto the vertices in the frustum of each projector. Again, vertices lying in the frustum of two or more projectors have their colors blended. Once an RGB color value has been computed for the vertex, diffuse shading is added to the model using the updated normals.
 
 \subsubsection{Vertex Displacement}
 
@@ -439,27 +417,6 @@ Similarly, to determine the final color of the vertex, let $\vec{C_t}$ be the fi
 \end{equation}
 
 There are other, more complex, methods we could use to weight certain projections higher than others, for example by considering distance to the wall and viewing angle, but this simple averaging scheme has worked in practice. 
-
-\subsubsection{Post-Displacement Lighting Recalculation}
-
-The displacement of vertices necessitates a normal vector recalcuation within the vertex shader. Unfortunately, neighboring vertex information is not available in the vertex shader, making true Phong shading calculations difficult. Instead an approximation is used for the new normals which does not require information regarding neighboring vertices.
-
-Assuming vertices in a close vicinity to each other are displaced roughly the same amount, as a vertex is displaced towards a projector, the true normal vectors of the surrounding faces begin to grow towards the displacement vector. While this assumption is imperfect near edges and crevices present in the disparity maps, it has been found to work well in practice. 
-%ZJW re-write this -- and do you have an image of just a grey shaded mesh with new normals?
-Given this information, we require a lighting calculation such that normals are equal to the negative of the displacement vector at an infinite displacement from the projector, normals are equal to their original values if vertices are not displaced, and normals grow towards the displacement vector as vertices are displaced towards the projector. Due to these constraints, the approximate normal computation for diffuse shading on displaced vertices is as follows:
-
-\begin{equation}
-   n_m^* = \left \{ \begin{array}{ll}
-      n_m + \left(\hat{d} \exp\left(\begin{Vmatrix}\vec{d}\end{Vmatrix}\right) - \hat{d}\right) & \text{if} \quad \vec{b} \cdot \vec{d} > 0 \\
-      n_m + \left(\hat{d} \exp\left(-\begin{Vmatrix}\vec{d}\end{Vmatrix}\right) -   \hat{d}\right) & \text{otherwise}
-   \end{array},\right.
-\label{eq:lighting}
-\end{equation}
-
-
-where $n_m$ is the vertex's normal, $n_m^*$ is the updated normal vector, and $\vec{d} = \begin{Vmatrix}\vec{C}\end{Vmatrix} S + O$ is the displacement vector from~\eqref{eq:displace}.
-
-Couple more sentences of explanation here...
 
 \section{\uppercase{Results}}
 \label{sec:results}
