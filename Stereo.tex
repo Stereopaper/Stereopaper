@@ -84,15 +84,14 @@ The results reported in this paper are from preliminary work in a multidisciplin
 This project relies on data acquired from algorithms for mapping with underwater robots (e.g. \cite{Williams2000}, ~\cite{Williams09}, ~\cite{opizarro-2009a}, \cite{Fairfield2005,Fairfield2006}, \cite{Clark2008b}, and~\cite{White10}). For a good survey of the core techniques capable of fusing data from multiple sensors, see Thurn~\cite{Thrun2005}.
 For this project the most relevant  research in underwater robot Simultaneous Localization and Mapping (SLAM) is found in (e.g. \cite{Williams2000}, ~\cite{harbor}, and \cite{Fairfield2005,Fairfield2006}).  
 %TP: move somewhere else?
-The work of Mahon et al. addresses a related underwater SLAM and stereo vision problem, where sea floor ruins were mapped~\cite{Mahon:2011}.
+Related work in stereo vision based SLAM algorithms has been performed to generate 3D maps of the seafloor ~\cite{Mahon:2011}, ~\cite{stereo:Roberson}.
 
 In addition, this work relies on well known algorithms from computer graphics, such as surface extraction from volume data using marching cubes~\cite{Lorensen}, projective texturing and texture mapping~\cite{Williams78castingcurved,Segal}, and the use of vertex shaders to displace existing vertices on the GPU. Work in ~\cite{Fairfield:2010} likewise uses marching cubes to create a geometric model of underwater structures from an evidence grid, but uses a far more complex ROV with superior sensors.
 
-This work also relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:gutMarroquin},~\cite{stereo:scharsteinSzeliski}.
-In particular, this work uses the method of~\cite{stereo:zitKan}.
-The work of~\cite{stereo:nalGast} was consulted to compensate for differences in light intensities between images.
-This paper explores the conversion of images into the HSL color space in an attempt to remove light intensity from the equation and compare solely the hue and saturation values.
-Unfortunately, the underwater setting does not transmit colors well, forcing the use of more common stereo vision comparisons. 
+This research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:gutMarroquin},~\cite{stereo:scharsteinSzeliski}.
+In particular, this work uses the method of~\cite{stereo:zitKan} to generate disparity maps from underwater stereo image pairs.
+The work of~\cite{stereo:nalGast} was consulted to allow us to avoid comparing the differences in light intensities between images.
+We found, however, that the underwater setting does not transmit colors well, which forced us to return to using differences in light intensities.
 
 \section{\uppercase{Data Acquisition and Hardware Calibration}}
 \label{sec:data}
