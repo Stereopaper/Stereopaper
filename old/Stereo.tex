@@ -1,14 +1,8 @@
 \documentclass[twocolumn]{article}
-\pagestyle{empty}
-\setlength{\textwidth}{7in}
-\setlength{\textheight}{9.125in}
-\setlength{\columnsep}{0.5in}
-\setlength{\topmargin}{-0.8in}
-\setlength{\oddsidemargin}{-0.25in}
-\setlength{\parindent}{5 ex}
 
 \usepackage{epsfig}
 \usepackage{subfigure}
+%\usepackage{stfloats}
 \usepackage{algorithm}
 \usepackage{algorithmic}	
 \usepackage{calc}
@@ -16,8 +10,25 @@
 \usepackage{amstext}
 \usepackage{amsmath}
 \usepackage{amsthm}
+\usepackage{multicol}
+\usepackage{pslatex}
+\usepackage{apalike}
+\usepackage{SciTePress}
+\usepackage[small]{caption}
 \usepackage{eqparbox}
+\renewcommand{\algorithmiccomment}[1]{\hfill\eqparbox{COMMENT}{\# #1}}
 
+\subfigtopskip=0pt
+\subfigcapskip=0pt
+\subfigbottomskip=0pt
+
+\pagestyle{empty}
+\setlength{\textwidth}{7in}
+\setlength{\textheight}{9.125in}
+\setlength{\columnsep}{0.5in}
+\setlength{\topmargin}{-0.8in}
+\setlength{\oddsidemargin}{-0.25in}
+\setlength{\parindent}{5 ex}
 \makeatletter
 \def\@normalsize{\@setsize\normalsize{12pt}\xpt\@xpt \abovedisplayskip 11pt
 plus2pt minus5pt\belowdisplayskip \abovedisplayskip \abovedisplayshortskip \z@
@@ -30,33 +41,33 @@ minus 2 pt} {12pt plus 2pt minus 2pt}{\large\bf}}
 \def\subsection{\@startsection {subsection}{2}{\z@}{12pt
 plus 2pt minus 2pt}{12pt plus 2pt minus 2pt}{\subsize\bf}}
 \makeatother
+
+
 \begin{document}
-\date{}
-\title{\Large\bf Reconstruction of Fine Level Geometric Structure From Stereo Pairs in the Underwater Setting}
-%\author{I. M. Author \\
-%My Department\\
-%My Institute \\
-%My City, ST, Zip}
-%for two authors (type the following)
-\author{\begin{tabular}[t]{c@{\extracolsep{8em}}c}
-I. M. Author & U. R. Coauthor \\
-My Department & Coauthor Department\\
-My Institute & Coauthor Institute \\
-City, St ~~Zip & City, ST~~Zip
-\end{tabular}}
-\maketitle
-\thispagestyle{empty}
 
+%ZJW: this is a slightly ambitious title, but it is a start
+\title{Reconstruction of Fine Level Geometric Structure From Stereo Pairs in the Underwater Setting}
 
-\subsection*{\centering Abstract}
-\vspace*{-3mm}
-The study of underwater structures, such as wells, cisterns, and water storage systems, can be of historical and scientific significance for archeologists. However, access to and study of such sites can be dangerous or infeasible for humans.
+\author{\authorname{Timothy M. Peters*, Erik A. Nelson*, Tyler Vitti, Timothy Gambin, \\Christopher M. Clark, and Zo\"{e} J. Wood}
+\affiliation{California Polytechnic State University, San Luis Obispo, CA, U.S.A.}
+\thanks{(Author)* denotes equal contributions }
+\thanks{This material is based upon work supported by the National Science Foundation under Grant No. 0966608.}%
+}
+
+\keywords{3D Site Reconstruction: Surface Reconstruction: Underwater Stereo Vision: Projective Texturing}
+
+\abstract{The study of underwater structures, such as wells, cisterns, and water storage systems, can be of historical and scientific significance for archeologists. However, access to and study of such sites can be dangerous or infeasible for humans.
 Underwater micro-ROVs, such as the VideoRay Pro III GTO, can often reach and navigate these locations safely while causing less harm to the site.
 Prior work has successfully reconstructed geometric models of such underwater structures with the use of sonar measurements. Although effective, sonar has a limited resolution and omits many fine geometric details of the model in the scanning process. In this paper, we present a preliminary solution towards the reconstruction of fine details of geometric features in the underwater setting using stereo pairs. These fine details can then integrated into 3D models reconstructed from sonar to create a more accurate final model of a water system. The initial rough 3D model is generated using multiple sonar scans of the walls of the site. The fine details of the internal organic surfaces are recorded using stereoscopic imaging. Finally, the rough 3D model is deformed and textured using the details obtained through stereoscopic imaging. 
 We present initial results and detailed methodology for future data acquisition.
+}
 
-\section{Introduction}
-Recent research in the field of mobile robotics has demonstrated the creation of 3D maps of settings otherwise inaccessible to humans, such as narrow tunnels and marine caves~\cite{ICEX11,McVicker,McVicker2}. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms  (\cite{Williams2000}, ~\cite{harbor}, and \cite{Fairfield2005,Fairfield2006}) allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors. Such maps, or evidence grids, can then be treated as implicit volumes to construct a geometric model of the scanned regions using marching cubes~\cite{Lorensen}. An example of a geometric model of a well used for water storage can be seen in Figure~\ref{fig:wellNoFine}.
+\onecolumn \maketitle \normalsize \vfill
+
+\section{\uppercase{Introduction}}
+\label{sec:introduction}
+
+\noindent Recent research in the field of mobile robotics has demonstrated the creation of 3D maps of settings otherwise inaccessible to humans, such as narrow tunnels and marine caves~\cite{ICEX11,McVicker,McVicker2}. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms  (\cite{Williams2000}, ~\cite{harbor}, and \cite{Fairfield2005,Fairfield2006}) allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors. Such maps, or evidence grids, can then be treated as implicit volumes to construct a geometric model of the scanned regions using marching cubes~\cite{Lorensen}. An example of a geometric model of a well used for water storage can be seen in Figure~\ref{fig:wellNoFine}.
 Unfortunately, equipment limitations, sensor noise, and probabilistic uncertainty occurring in the data acquisition process cause these models to suffer from a loss of fine geometric details. Loss of detail in the scanning process is a problem for end-users, who wish to study these models or use them for educational purposes.
 
 In this paper we present a preliminary solution towards the reintroduction of fine details omitted by sonar data into surface reconstructions.
@@ -76,8 +87,6 @@ The results reported in this paper are from preliminary work in a multidisciplin
  \label{fig:systemblock}
 \end{figure*}
 
-%There is 1 blank line before the section heading and one afterwards. Heading text is 11 point bold font.
-%You may cite references of the form \cite{key:foo} or \cite{foo:bar}, andLaTex will keep track of numbering. The numbers are based on the order you place them in the bibliography, not the order they appear in the text. They should be in alphabetical order. LaTex will put square brackets around the number in the text of your paper. You must run the latex process twice to allow the references to format properly. You will see a message about a missing .aux file. Simply latex it a second time and it will be fine.
 \section{\uppercase{Related Work}}
 \label{sec:data}
 
@@ -131,6 +140,7 @@ These two values were used to specify the behavior of projectors, discussed late
    \caption{The sonar data acquisiton and general model reconstruction stages of the project. Sonar data is collected in a 2D scan plane, merged into a 2D surface using FastSLAM, marching cubes, and a hole filling algorithm, and extruded into 3D.}
   \label{fig:meshgen}
  \end{figure*}
+
 Prior work is focused on reconstructing general geometric models from evidence maps representing Mediterranean water storage systems (cisterns, wells and water galleries)~\cite{ICEX11,McVicker,McVicker2}. As a pre-process to the algorithms presented here for fine level geometry modeling, the cisterns are mapped using sonar data, which is fused into a two dimensional grid of cells with a likelihood $p_{i,j} \in [0,1]$ of being occupied \cite{Thrun2005} and~\cite{White10}. This single 2D layer can then be extruded into a 3D evidence grid and treated as volume data. A polygonal geometric model of the scanned data can be constructed via marching cubes, where any cell with $p_{i,j}$ greater than a threshold value, $t$, is considered an occupied cell and associated with a wall in the model. $t$ is used to define occupancy and is generally set to values in the range $.65-.85$. We refer the reader to~\cite{ICEX11,McVicker,McVicker2} for more details on the mapping process. See Figure~\ref{fig:meshgen} for an illustration of the general process used to acquire data and generate a geometric model.
 
 %\section{\uppercase{Fine Detail Additions Via Stereoscopic Depth Extraction}}
@@ -361,49 +371,52 @@ The fragment shader recieves $P$ and $P^{*}$, as well as the camera image textur
 
 \subsubsection{Vertex Displacement}
 
-Vertices belonging to $P^{*}$ are displaced along the vector $\vec{b} = j_{n} - p_{m}$ a distance based on the RGB color value, $\vec{C} = \langle C_{r}, C_{b}, C_{g} \rangle$, of the disparity map at the corresponding texture-mapped coordinates, $t_m$. The texture-mapped coordinates of $p_m$, and thus, $\vec{C}$ can be calculated per-vertex using the modelview projection matrix of the projector by
+Vertices belonging to $P^{*}$ are displaced along the vector $\vec{b} = j_{n} - p_{m}$ a distance proportional to the magnitude of the RGB color value, $\vec{C} = \langle C_{r}, C_{b}, C_{g} \rangle$, of the disparity map at the corresponding texture-mapped coordinates, $t_m$. Since the modelview projection matrix of each projector is accessible from the vertex shader, the texture-mapped coordinates of $p_m$, and thus, $\vec{C}$ can be calculated per-vertex.
 
 \begin{align}
 t_{m} &= p_{m}\lbrack MVP \rbrack _{j_{n}} \\
 \vec{C} &= \langle t_{m\_red}, t_{m\_blue}, t_{m\_green} \rangle
 \end{align}
 
-The disparity map is greyscaled such that the disparity value is stored within each of the three members of $\vec{C}$, so only $C_r$ is required for distance computations. The disparity map contains disparity information rather than distance to the wall, so $\vec{C}$ is passed into an exponential equation obtained during calibration, $D(\vec{C})$, to resolve the true distance to the wall. The world space coordinates of $M_s$ are computed such that one unit in world space is equal to one meter in the cistern, so the value returned from passing $\vec{C}$ into the distance function is the true wall distance in meters. With this in mind, vertex displacement proceeds as follows:
+Vertex displacement then proceeds as follows:
 
 \begin{equation}
 p_{m}' = \left \{ 
 \begin{array}{ll}
-p_{m} + (\vec{b} - \hat{b}D(C_r))  & \text{if} \quad p_{m} \in P^{*}\\
+p_{m} + \vec{b} (\begin{Vmatrix}\vec{C}\end{Vmatrix} S + O) & \text{if} \quad p_{m} \in P^{*}\\
 p_{m} & \text{otherwise}
 \end{array},\right.
 \label{eq:displace}
 \end{equation}
 
-where $p_{m}'$ is the displaced vertex position.
+where $p_{m}'$ is the displaced vertex position and $S$ and $O$ are a scale and offset factor. $S$ grants the ability to fit a function to the displacement distance.$O$ is generally negative, ensuring that vertices belonging to $P^{*}$ are both pushed and pulled from the model surface rather than only being pulled towards the projector. In the current version of the software, both $S$ and $O$ are user-controlled. However, the world space coordinates of $M_s$ are computed such that one unit in world space is equal to one meter in the cistern, so a true value for $S$ and $O$ can be calculated through further calibration.
  
  \subsubsection{Projection Blending}
 
 %Feel free to remove/edit/use for inspiration
-The existence of multiple projectors in the model requires the ability to artfully and accurately overlap and blend projections. Every projection has an equal likelihood of being the ground truth data for a vertex. Thus, each projection that is applied to a vertex has equal weight upon that vertex's final color and position. Let us assume $J_1$ is the set of all projectors casting a disparity value onto this vertex and let $B = \{j_n \in J_1 : (j_n - p_m)\}$. 
-Then, expanding on equation~\ref{eq:displace} for $q$ overlapping projections,
+The existence of multiple projections in the virtual cistern requires the ability to artfully and accurately overlap those projections.
+A projection consists of both a texture and a disparity map.
+Each single projection is just as likely of being the ground truth data for a vertex as any other projection that is applied to that vertex. 
+Thus, each projection that is applied to a vertex has equal weight upon that vertex's final color and position.
+Let us assume $J_1$ is the set of all projectors casting a disparity value onto this vertex and let $B = \{j \in J_1 : (j - p_m)\}$. 
+Then expanding on equation ~\ref{eq:displace} for q overlapping projections,
 
 \begin{equation}
 p_{m}' = \left \{ 
 \begin{array}{ll}
-p_{m} + \sum\limits_{\vec{b} \in B} \frac{\vec{b} - \hat{b}D(C_r)}{q} & \text{if} \quad p_{m} \in P^{*}\\
+p_{m} + \sum\limits_{\vec{b} \in B} \frac{(\vec{b} \begin{Vmatrix}\vec{C}\end{Vmatrix} S + O)}{q} & \text{if} \quad p_{m} \in P^{*}\\
 p_{m} & \text{otherwise}
 \end{array},\right.
 \label{eq:displaceBlend}
 \end{equation}
 
-Similarly, to determine the final color of the vertex, $\vec{C_t}$, let $C_p$ be the set of all colors projected onto the vertex. Then,
-
+Similarly, to determine the final color of the vertex, let $\vec{C_t}$ be the final color of a vertex and let $C_p$ be the set of all colors projected onto that vertex. 
 \begin{equation}
 \vec{C_t} = \sum\limits_{\vec{c} \in C_p} \frac{\vec{c}}{q} 
 \label{eq:colorBlend}
 \end{equation}
 
-There are other, more complex, methods that could be used to weigh certain projections higher than others, for example by considering distance to the wall and viewing angle, but this simple averaging scheme has worked in practice. 
+There are other, more complex, methods we could use to weight certain projections higher than others, for example by considering distance to the wall and viewing angle, but this simple averaging scheme has worked in practice. 
 
 \section{\uppercase{Results}}
 \label{sec:results}
@@ -509,7 +522,7 @@ Finally, the disparity maps combined with the surface images were mapped into th
 \label{sec:conclusion}
 
 \noindent 
-This paper presents a method of adding geometric details to maps created to represent underwater environments. A general model is acquired from sonar data and mapping~\cite{ICEX11,McVicker,McVicker2}, and we present the addition of fine level details using stereo image data.  This work is motivated by the desire to better map underwater caverns and cisterns using robotic tools.  We have presented our methodology and hardware for data acquisition, disparity map generation, and incorporation of that disparity data via projective texturing displacements.  We have shown results of a partial reconstruction of a well in Carini, Sicily.
+This paper presents a novel way to add geometric details to maps created to represent underwater environments. A general model is acquired from sonar data and mapping~\cite{ICEX11,McVicker,McVicker2}, and we present the addition of fine level details using stereo image data.  This work is motivated by the desire to better map underwater caverns and cisterns using robotic tools.  We have presented our methodology and hardware for data acquisition, disparity map generation, and incorporation of that disparity data via projective texturing displacements.  We have shown results of a partial reconstruction of a well in Carini, Sicily.
 
 In this preliminary work, we have discovered many of the key factors for obtaining more complete models and details.  Future enhancements include: the use of higher quality cameras, inclusion of color and more powerful lighting, addition of smart tether for better localization, and enhancement of memory management to process more textures and disparity maps at once.
 For example, more detailed disparity maps could be achieved by upgrading the cameras and the lights on the robot.
@@ -529,13 +542,9 @@ Unfortunately, that would require a far more complex setup that what we had avai
 
 %ZJW: Please add some suggestion for actual data collection methods as well - re: lighting, positioning ROV, etc.
 
-\subsection*{Acknowledgements}
-------
-\begin{thebibliography}{9}
-\bibitem{key:foo}
-I. M. Author, An Article I Wrote," {\em The Journal Name},
-Vol. 11, pp. 3-14, 1982.
-\bibitem{foo:bar}
-Next Author, {\em Title of Book}, the Publisher, 1982.
-\end{thebibliography}
+\bibliographystyle{apalike}
+
+\bibliography{stereo}
+
 \end{document}
+
