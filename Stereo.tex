@@ -80,15 +80,14 @@ The results reported in this paper are from preliminary work in a multidisciplin
 This project relies on data acquired from algorithms for mapping with underwater robots (e.g. \cite{Williams2000}, ~\cite{Williams09}, ~\cite{opizarro-2009a}, \cite{Fairfield2005,Fairfield2006}, \cite{Clark2008b}, and~\cite{White10}). For a good survey of the core techniques capable of fusing data from multiple sensors, see Thurn~\cite{Thrun2005}.
 For this project the most relevant  research in underwater robot Simultaneous Localization and Mapping (SLAM) is found in (e.g. \cite{Williams2000}, ~\cite{harbor}, and \cite{Fairfield2005,Fairfield2006}).  
 %TP: move somewhere else?
-The work of Mahon et al. addresses a related underwater SLAM and stereo vision problem, where sea floor ruins were mapped~\cite{Mahon:2011}.
+Related work in stereo vision based SLAM algorithms has been performed to generate 3D maps of the seafloor ~\cite{Mahon:2011}, ~\cite{stereo:Roberson}.
 
 In addition, this work relies on well known algorithms from computer graphics, such as surface extraction from volume data using marching cubes~\cite{Lorensen}, projective texturing and texture mapping~\cite{Williams78castingcurved,Segal}, and the use of vertex shaders to displace existing vertices on the GPU. Work in ~\cite{Fairfield:2010} likewise uses marching cubes to create a geometric model of underwater structures from an evidence grid, but uses a far more complex ROV with superior sensors.
 
-This work also relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:gutMarroquin},~\cite{stereo:scharsteinSzeliski}.
-In particular, this work uses the method of~\cite{stereo:zitKan}.
-The work of~\cite{stereo:nalGast} was consulted to compensate for differences in light intensities between images.
-This paper explores the conversion of images into the HSL color space in an attempt to remove light intensity from the equation and compare solely the hue and saturation values.
-Unfortunately, the underwater setting does not transmit colors well, forcing the use of more common stereo vision comparisons. 
+This research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:gutMarroquin},~\cite{stereo:scharsteinSzeliski}.
+In particular, this work uses the method of~\cite{stereo:zitKan} to generate disparity maps from underwater stereo image pairs.
+The work of~\cite{stereo:nalGast} was consulted to allow us to avoid comparing the differences in light intensities between images.
+We found, however, that the underwater setting does not transmit colors well, which forced us to return to using differences in light intensities.
 
 \section{Data Acquisition and Hardware Calibration}
 \label{sec:data}
@@ -142,7 +141,7 @@ One of the two images used to create the disparity map is then projected onto th
 \label{disparityMapGeneration}
 
 A number of algorithms currently exist which compare the features of two images in order to determine the distance between the feature and the camera.
-Unfortunately, few of these algorithms are robust enough to handle compressed underwater images of rock walls, due to the poor lighting conditions and very organic, shallow features present.
+Unfortunately, few of these algorithms are robust enough to handle compressed underwater images of rock walls, combined with poor lighting conditions and very organic, shallow features.
 After exploring several options, the stereo mapping algorithm described by Zitnick and Kanade in ~\cite{stereo:zitKan} was chosen for the current implementation.
 
 The images captured within the cisterns usually represent a landscape with minimal color changes, poor lighting and shallow depressions (in comparison to images with large color or depth contrast).
@@ -156,12 +155,14 @@ Instead, a large window gives a more reliable matching between rocks faces becau
 %ZJW read this and make sure you agree
 %TP I think the left and the right lights overlapped enough where separate lighting for each camera wasn't the issue.
 %  Instead the problem was one camera being closer than the other to the wall, or to one rock more than another camera, which created a difference in each camera's light sensor resulting in different exposure times.
-The greatest issue we found in the underwater environments was lighting.  Most of the water systems we explored were dark (with very little light entering the systems through narrow tunnels and openings).  This meant that almost all lighting in the images was from the ROV's onboard lights and that the ROV had to fly relatively close to the walls in order to illuminate features for the cameras.
+One issue we found in the underwater environments was lighting.  Most of the water systems we explored were dark (with very little light entering the systems through narrow tunnels and openings).  This meant that almost all lighting in the images was from the ROV's onboard lights and that the ROV had to fly relatively close to the walls in order to illuminate features for the cameras.
 Each camera was computing its own exposure time based on the amount of light it received.  
 As a result of some well illuminated features being closer to one camera than the other, there are discrepancies in exposure times between left and right images, (see Figure~\ref{fig:disparity} for an example of this contrasting lighting).
-  This unbalanced lighting condition is not handled well by the Zitnick and Kanade algorithm, potential future solutions are discussed in greater depth in Section~\ref{subsec:hsl_color_correction}.
+We attempted to use the work in \cite{stereo:nalGast} to fix this problem by shifting the image into the HSL color space.  For our purposes, however, this method failed.  Too much of the color from our ROV's lights was absorbed by the water to allow us to use images in the HSL space.
 
-Another common challenge in our images is dirt particles in the water due to the ROV's positioning thrusters agitating sediment in the water systems. Usually the particles are small enough to be detected as occusions and removed from the final disparity map by the Zitnick and Kanade algorithm, see ~\ref{stereo:zitKan}.
+Another common challenge are dirt particles in the images.
+This is due to the ROV's positioning thrusters agitating sediment in the water systems.
+Usually the particles are small enough to be detected as occusions and removed from the final disparity map by the Zitnick and Kanade algorithm, see ~\ref{stereo:zitKan}.
 
 \subsubsection{Image Correction HAVE NOT EDITED YET}
 \label{subsec:image_correction}
@@ -178,16 +179,8 @@ The image size of 512 was chosen out of convenience.  It was large enough to pre
 %Through experimentation, we discovered that the best image detail to process time ratio was obtained by reducing the images by one sixth.   
 Shrinking was performed after smoothing to preserve the maximum amount of detail in the image.
 
-\subsubsection{HSL Color Correction HAVE NOT EDITED YET}
-\label{subsec:hsl_color_correction}
-In addition to the general lighting challenges described above, the paired GoPro cameras chosen for data collection lacked the ability to sync exposure times.
-The cameras independently calculated the correct exposure for their image only, which resulted in a lack of light intensity matching between left and right images (note the difference in light between the left and right images in Figure ~\ref{fig:disparity}).
-A potential solution to this problem lies in using a color comparison function instead of an intensity comparison function ~\cite{stereo:nalGast}.
-The solution proposed by Nalpandtidis and Gasteratos suggests converting the images into the HSL color space and looking at only the hue and saturation values.
-For our purposes, however, this method failed.  
-Many of the surfaces that we imaged were gray in color producing uniform hue and saturation values.
-For future experiments, introducing a light with a distinct color, perhaps blue, could prove useful for gray surfaces.  
-This blue light would provide definite hue and saturation values that could be compared regardless of exposure times.
+Similar to the work of Johnson-Roberson, we also computed the need for illumination fade-off, or vignetting, across our image sets (~\cite{stereo:Roberson}).  
+We found, however, that due to our close proximity to walls and narrow field of view, de-vignetting our images would have had little effect.
 
 \subsubsection{Disparity Mapping HAVE NOT EDITED YET}
 \label{subsec:disparity_mapping}
