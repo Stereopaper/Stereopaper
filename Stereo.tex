@@ -127,42 +127,48 @@ Prior work is focused on reconstructing general geometric models from evidence m
 
 \noindent The models constructed from the evidence grid give a good representation of the gross shape of an underwater system. However, due to challenges in the acquisition process for sonar data, these models tend to lose the fine geometric details present in many of the mapped structures, which are important to archaeologists seeking to study the underwater system. See Figure~\ref{fig:wellNoFine} for an example of a well model constructed from sonar data alone. In contrast, Figure~\ref{fig:wellPhoto} shows a photograph of the well, where it is clear that fine level details such as the rocks that comprise the walls are not well modeled by the sonar reconstruction alone.
 
-The first step towards building fine details into a planar mesh is extracting those details from the original surface. We extract these details through the acquisition of stereo pair images during the ROV deployment. Pairs of stereo images (left and right) were used both to distinguish between features close and far from the camera, and to capture the color data of the surface walls.
-The result of this comparison is stored in a disparity map. Due to the constraints on the available mounting positions for the stereo cameras, this method is only accurate for determining the distance of objects up to two meters from the cameras. This constraint was not an issue for our purposes, as the ROV was held roughly one meter from the wall when capturing images.
+The first step towards building fine details into a planar mesh is extracting those details from the original surface. 
+We used stereo vision. 
+Pairs of stereo images (left and right images of the same surface) were used both to distinguish between features close and far from the camera, and to capture the color data of the surface walls.
+The two images were compared to form a disparity map. 
+Due to hardware constraints, our stereo setup is only accurate for determining the distance of objects up to two meters away from the cameras.
+This constraint was not an issue for our purposes, as the ROV was held roughly one meter from the wall when capturing images.
 
-The second step towards to building a more accurate geometric model requires the use of the disparity maps and image pairs to deform and texture, respectively, the basic sonar mesh. There are two challenges at this stage in the process.  One is accurately localizing the ROV with respect to the general model to map the disparity maps onto the correct section of model surface. The second is mapping captured depth information onto the existing model.
-For the current implementation, the first challenge remains unresolved. The location of the ROV is unknown without better data acquisiton techniques, a Smart Tether for GPS data, or an implementation of stereo SLAM. Instead, the preliminary results presented in this paper are from a cylindrical well with rotational symmetry.
+The second step towards to building a more accurate geometric model requires the use of the disparity maps and image pairs to deform and texture, respectively, the basic sonar mesh.
+There are two challenges at this stage in the process.  One is accurately localizing the ROV with respect to the general model to correctly project the disparity maps onto the model surface. The second is mapping captured depth information onto the existing model.
+For the current implementation, the first challenge remains unresolved. The location of the ROV is unknown without better data acquisiton techniques such as a Smart Tether system, or an implementation of stereo SLAM.
+Instead, the preliminary results presented in this paper are from a cylindrical well with rotational symmetry.
 
-The second challenge is resolved by using the color data stored in the grayscale disparity map to deform the vertices onto which the disparity map was projected.
+The second challenge is resolved by using the pixel intensity data stored in the grayscale disparity map to deform the vertices onto which the disparity map was projected.
 Light patches of the disparity map pull vertices towards the projector and away from the existing wall, while dark patches push those vertices into the wall.
-One of the two images used to create the disparity map is then projected onto the deformed model, giving the model both the color and shape of the original surface. Repeating this procedure for each section of wall produces a finely detailed 3D model of the cistern.
+One of the two stereo images is projected onto the deformed model, giving the model both the color and shape of the original surface. Repeating this procedure for each section of wall produces a finely detailed 3D model of the cistern.
 
 \subsection{Disparity Map Generation HAVE NOT EDITED YET}
 \label{disparityMapGeneration}
 
-A number of algorithms currently exist which compare the features of two images in order to determine the distance between the feature and the camera.
-Unfortunately, few of these algorithms are robust enough to handle compressed underwater images of rock walls, combined with poor lighting conditions and very organic, shallow features.
+A number of stereo vision algorithms currently exist to compare the features of two images in order to determine the distance between the feature and the camera.
+Unfortunately, few of these algorithms are robust enough to handle compressed underwater images of rock walls combined with poor lighting conditions and very shallow features.
 After exploring several options, the stereo mapping algorithm described by Zitnick and Kanade in ~\cite{stereo:zitKan} was chosen for the current implementation.
 
-The images captured within the cisterns usually represent a landscape with minimal color changes, poor lighting and shallow depressions (in comparison to images with large color or depth contrast).
-Rocks bricks, two common features found on the cistern walls, have highly repetitive patterns and colors which produce feature-scarce images.
-Most stereo-matching algorithms, including Zitnic and Kanade, rely on defining and matching distinct features.
-The algorithm proposed by Zitnick and Kanade uses a scanning, sliding comparison window to build an initial disparity map.
-To mitigate the dull landscape, we choose a large initial disparity window with a radius of five pixels.
+The images captured within the cisterns usually contain minimal color variation, poor lighting, and shallow depressions (in comparison to images with large color or depth contrast).
+Rocks and bricks, two common features found on cistern walls, have highly repetitive patterns and colors--providing only a few unique features.
+Most stereo-matching algorithms, including Zitnic and Kanade, rely on unique features between images to aid in pixel mapping.
+Specifically, the algorithm proposed by Zitnick and Kanade uses a scanning, sliding comparison window to build an initial disparity map.
+To mitigate the dull landscape, we choose a large initial comparison window with a radius of five pixels.
 This decision reduces the level of fine details that can be resolved from the image and adds a smoothing effect to the disparity map, but these drawbacks are acceptable in the given environment.
-Instead, a large window gives a more reliable matching between rocks faces because it can encompass more features for each pixel.  
+Instead, a large window gives a more reliable matching between rocks faces because it encompasses more features for each pixel.  
 
-%ZJW read this and make sure you agree
-%TP I think the left and the right lights overlapped enough where separate lighting for each camera wasn't the issue.
-%  Instead the problem was one camera being closer than the other to the wall, or to one rock more than another camera, which created a difference in each camera's light sensor resulting in different exposure times.
-One issue we found in the underwater environments was lighting.  Most of the water systems we explored were dark (with very little light entering the systems through narrow tunnels and openings).  This meant that almost all lighting in the images was from the ROV's onboard lights and that the ROV had to fly relatively close to the walls in order to illuminate features for the cameras.
-Each camera was computing its own exposure time based on the amount of light it received.  
+Lighting was perhaps our most challenging issue. 
+Most of the water systems we explored were dark (with very little light entering the systems through narrow tunnels and openings).
+Meaning that the imaged surfaces were lit almost solely by the ROV's onboard lights and that the ROV had to fly relatively close to the walls in order to illuminate features for the cameras.
+Each camera computed its own exposure time based on the amount of light it received.  
 As a result of some well illuminated features being closer to one camera than the other, there are discrepancies in exposure times between left and right images, (see Figure~\ref{fig:disparity} for an example of this contrasting lighting).
-We attempted to use the work in \cite{stereo:nalGast} to fix this problem by shifting the image into the HSL color space.  For our purposes, however, this method failed.  Too much of the color from our ROV's lights was absorbed by the water to allow us to use images in the HSL space.
+We attempted to use the work in \cite{stereo:nalGast} to fix this problem by shifting the image into the HSL color space.  For our purposes, however, this method failed.
+Too much of the color from our ROV's lights was absorbed by the water to allow us to use images in the HSL space.
 
 Another common challenge are dirt particles in the images.
 This is due to the ROV's positioning thrusters agitating sediment in the water systems.
-Usually the particles are small enough to be detected as occusions and removed from the final disparity map by the Zitnick and Kanade algorithm, see ~\ref{stereo:zitKan}.
+Usually the particles are small enough to be detected as occlusions and removed from the final disparity map by the Zitnick and Kanade algorithm, see ~\ref{stereo:zitKan}.
 
 \subsubsection{Image Correction HAVE NOT EDITED YET}
 \label{subsec:image_correction}
@@ -228,15 +234,12 @@ If the best weight for all depths for a certain pixel $(x,y)$ is below a predefi
 \subsection{Calibration HAVE NOT EDITED}
 \label{subsec:calibration}
 
-%TP: 
-An important step in any meaningful measurement, including disparity mapping, is calibration.
-This is the creation of a tuned mapping from an (r,g,b) pixel value to the appropriate vertex offset in the virtual world.  
+An important step in any meaningful recreation, including disparity mapping, is calibration.
+This is the creation of a tuned mapping from a grayscale pixel value to the appropriate vertex offset in the virtual world.  
 Pictures of a patterned surface were taken at a number of measured distances from that surface.
 Those images were then disparity mapped, and the average disparity at the center of the picture was used as the disparity data point for that physical depth.
 We used that set of points to create an exponential relationship between disparity value and physical depth.  
 That equation is used later to accurately recreate the internal dimensions of the cistern, see section ~\ref{Vertex Displacement} for more info.
-
-%TP: still could be more conclusive..
 
 %ZJW: Need a concluding paragraph about disparity map generation - Also should you say something about smoothing out spurrious data?
 %TP: we could break the "smoothing" into its own section as is commented above... but for now it works here.
@@ -245,10 +248,6 @@ These erroneous errors were fixed by flooring and capping the intensity of the p
 Pixels that had unreasonably small values were simply increased in value to a reasonable minimum, around 1.5 meters.  
 Groups of pixels that were too large in value were deleted and replaced by a linear smoothing of the surrounding reasonable pixel values. 
 With these issues fixed, the disparity maps are used to provide depth values to displace the general geometry created from the sonar data. Figure~\ref{fig:disparity} illustrates a disparity map generated using our implementation.
-We tested a number of different stereo algorithms and approaches before choosing the Zitnick and Kanade algorithm.  
-The feature-less, poorly lit, and repetitive underwater environment required us to use a very large search window when matching points between images.  
-In future, a better hardware setup could provide more detailed results of this environment.
-
 
 \subsection{Projective Texturing}
 \label{subsec:projectiveTexturing}
