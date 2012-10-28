@@ -69,8 +69,9 @@ This project is a part of a larger ongoing project, with the broad goal of mappi
 The stages of our algorithm can be seen in Figure~\ref{fig:systemblock}.
 
 %The results reported in this paper are from preliminary work in a multidisciplinary setting, utilizing aspects of emerging robotics and computer graphics technology. 
-The goal of this work is the generation of a computer model which includes the fine organic features found in underwater storage systems.
-This paper outlines the data acquisition and stereo displacement map computation, describes our solution to displacing rough geometry in accordance with a projected disparity map, illustrates our results on a model using a partial  data set, and outlines a data acquisition process for future missions. 
+%The goal of this work is the generation of a computer model which includes the fine organic features found in underwater storage systems.
+This paper outlines the data acquisition and stereo displacement map computation, describes our solution to displacing rough geometry in accordance with a projected disparity map, and illustrates our results on a model using a partial  data set.
+%, and presents for future missions. 
 
 \begin{figure*}[!ht]
   \vspace{-0.2cm}
@@ -83,28 +84,27 @@ This paper outlines the data acquisition and stereo displacement map computation
 \vspace{-5pt}
 \section{Related Work}
 \label{sec:data}
-This project relies on data acquired from algorithms for mapping with underwater robots (e.g.~\cite{Williams09},~\cite{opizarro-2009a},~\cite{Fairfield2006},~\cite{Clark2008b}). For a good survey of the core techniques capable of fusing data from multiple sensors, see Thurn~\cite{Thrun2005}.
+This project relies on data acquired from algorithms for mapping with underwater robots (e.g.~\cite{Williams09},~\cite{opizarro-2009a},~\cite{Fairfield2006},~\cite{Clark2008b}). For a good survey of the core techniques capable of fusing data from multiple sensors, see Thrun~\cite{Thrun2005}.
 For this project the most relevant  research in underwater robot Simultaneous Localization and Mapping (SLAM) is found in (e.g.~\cite{Williams2000},~\cite{harbor}, and~\cite{Fairfield2005,Fairfield2006}).
-%TP: move somewhere else?
-Related work in stereo vision based SLAM algorithms has been performed to generate 3D maps of the seafloor~\cite{Mahon:2011},~\cite{stereo:Roberson}.
 
-In addition, this work relies on well known algorithms from computer graphics, such as surface extraction from volume data using marching cubes~\cite{Lorensen}, projective texturing and texture mapping~\cite{Williams78castingcurved,Segal}, and the use of vertex shaders to displace existing vertices on the GPU. Work in~\cite{Fairfield:2010} likewise uses marching cubes to create a geometric model of underwater structures from an evidence grid, but uses a far more complex ROV with extensive sensors.
+In addition, this work relies on well known algorithms from computer graphics, such as surface extraction from volume data using marching cubes~\cite{Lorensen}, projective texturing and texture mapping~\cite{Williams78castingcurved,Segal}, and the use of vertex shaders to displace existing vertices on the GPU. Work in~\cite{Fairfield:2010} likewise uses marching cubes to create a geometric model of underwater structures from an evidence grid, but uses a far more complex ROV with extensive sensors.  Stereo vision based SLAM algorithms has been used to generate 3D maps of the seafloor, while we are using the stereo data to enhance models created from sonar data~\cite{Mahon:2011},~\cite{stereo:Roberson}.
 
 This research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:scharsteinSzeliski}.
 In particular, this work uses the method of~\cite{stereo:zitKan} to generate disparity maps from underwater stereo image pairs.
-The work of ~\cite{stereo:nalGast} was also explored to compensate for lighting differences. 
-However, it was found to be innefective for our setup. 
+The work of ~\cite{stereo:nalGast} was also explored to compensate for lighting differences, however, it was found to be ineffective for our setup. 
 \vspace{-11pt}
 \section{Data Acquisition}
 \label{sec:data}
 
 A VideoRay Pro III GTO micro submersible Remotely Operated Vehicle (ROV) is utilized in the data acquisition process (Figure~\ref{fig:ROV}). 
 %The ROV is deployed into a cistern and guided from a control module above the surface. 
-During deployment, the navigator repeatedly rests the ROV on the cistern floor and records a $360^{\circ}$ stationary sonar scan, then the ROV is repositioned in the cistern for another scan to collect an entire horizontal scan. 
+During deployment, the navigator repeatedly rests the ROV on the cistern floor and records a $360^{\circ}$ stationary sonar scan, then the ROV is repositioned for another scan to collect occluded or missing data. 
 %The sonar scans must have some overlap to facilitate mosaicing and localization for surface reconstruction, which is taken into consideration when positioning the ROV on the cistern floor. The approximate position and heading of the ROV is recorded before each scan for later use in aligning projectors in the geometric model. The ROV's main video camera is used to position the unit at each location. 
-A more complete overview of the sonar data acquisition process can be found in~\cite{ClarkVast}. This collection of sonar scan planes is then used to build a general 3D model~\cite{ICEX11}.
+A more complete overview of the sonar data acquisition process can be found in~\cite{ClarkVast}. 
+%This collection of sonar scan planes is then used to build a general 3D model~\cite{ICEX11}.
 
-While the sonar scans are being collected, the ROV captures stereo image pairs of the cistern walls. These images are collected using two GoPro HD Hero2 cameras mounted to the front of the ROV, which are synchronized through the 3D Hero System waterproof housing and connector cable. The default domed lenses of the 3D Hero Housing distort images taken underwater, so flat lenses were installed to minimize complexity during data processing. The camera unit is unable to be controlled remotely, and instead, each camera is set to capture an image every second. To collect stereoscopic images the ROV is maneuvered around the edges of the cistern, pausing every few feet. The ROV is positioned roughly one meter from the wall to capture stereo pairs with features that can be matched later. The images captured at each of these locations are used to create disparity maps, (see Section~\ref{disparityMapGeneration}).
+While the sonar scans are being collected, the ROV captures stereo image pairs of the cistern walls. These images are collected using two GoPro HD Hero2 cameras mounted to the front of the ROV, which are synchronized through the 3D Hero System waterproof housing and connector cable. The default domed lenses of the 3D Hero Housing distort images taken underwater, so flat lenses were installed to minimize complexity during data processing. The camera unit is unable to be controlled remotely, and instead, each camera is set to capture an image every second. To collect stereoscopic images the ROV is maneuvered around the edges of the cistern, pausing every few feet. The ROV is positioned roughly one meter from the wall to capture stereo pairs. The images captured at each location are used to create disparity maps.
+%, (see Section~\ref{disparityMapGeneration}).
 
 \begin{figure}[!h]
    \vspace{-0.2cm}
@@ -128,7 +128,8 @@ These two values were used to specify the behavior of projectors, discussed late
 
 \paragraph{Gross sonar Model Reconstruction}
 \label{sec:reconstruction}
-Prior work is focused on reconstructing general geometric models from evidence maps representing Mediterranean water storage systems (cisterns, wells and water galleries)~\cite{ICEX11,McVicker}. As a pre-process to the algorithms presented here for fine level geometry modeling, the cisterns are mapped using sonar data, which is fused into a two dimensional grid of cells with a likelihood $p_{i,j} \in [0,1]$ of being occupied \cite{Thrun2005} and~\cite{White10}. This single 2D layer can then be extruded into a 3D evidence grid and treated as volume data. A polygonal geometric model of the scanned data can be constructed via marching cubes, where any cell with $p_{i,j}$ greater than a threshold value, $t$, is considered an occupied cell and associated with a wall in the model. $t$ is used to define occupancy and is generally set to values in the range $.65-.85$. We refer the reader to~\cite{ICEX11,McVicker} for more details on the mapping process.
+Prior work is focused on reconstructing general geometric models from evidence maps representing Mediterranean water storage systems (cisterns, wells and water galleries)~\cite{ICEX11,McVicker}. As a pre-process to the algorithms presented here for fine level geometry modeling, the cisterns are mapped using sonar data, which is fused into a two dimensional grid of cells with a likelihood $p_{i,j} \in [0,1]$ of being occupied \cite{Thrun2005} and~\cite{White10}. This single 2D layer can then be extruded into a 3D evidence grid and treated as volume data. A polygonal geometric model of the scanned data can be constructed via marching cubes, where any cell with $p_{i,j}$ greater than a threshold value, $t$, is considered an occupied cell and associated with a wall in the model. %$t$ is used to define occupancy and is generally set to values in the range $.65-.85$. 
+We refer the reader to~\cite{ICEX11,McVicker} for more details. 
 
 %\section{\uppercase{Fine Detail Additions Via Stereoscopic Depth Extraction}}
 \section{Constructing a more accurate geometric model}
@@ -141,14 +142,14 @@ To capture fine details, pairs of stereo images (left and right images of the sa
 Due to hardware constraints, our stereo setup is only accurate for determining the distance of objects up to two meters away from the cameras.
 This constraint was not an issue for our purposes, as the ROV was held roughly one meter from the wall when capturing images.
 
-To integrate these fine details into the exisiting geometric model requires the use of the disparity maps and image pairs to deform and texture, respectively, the basic sonar mesh.
+To integrate these fine details into the existing geometric model requires the use of the disparity maps and image pairs to deform and texture, respectively, the basic sonar mesh.
 There are two challenges at this stage in the process.  One is accurately localizing the ROV with respect to the general model to correctly project the disparity maps onto the model surface. The second is mapping captured depth information onto the existing model.
 For the current implementation, we do not include a computational solution to the first challenge. 
 Instead, the preliminary results presented in this paper are from a cylindrical well with rotational symmetry and a user interactively sets the location from which data was acquired.
 
-The second challenge is resolved by using the pixel intensity data stored in the grayscale disparity map to deform the vertices onto which the disparity map was projected.
-Light patches of the disparity map pull vertices towards the projector and away from the existing wall, while dark patches push those vertices into the wall.
-One of the two stereo images is projected onto the deformed model, giving the model both the color and shape of the original surface. Repeating this procedure for each section of wall produces a finely detailed 3D model of the cistern.
+The second challenge is resolved by using the pixel intensity data stored in the grayscale disparity map to deform the associated vertices.
+Light patches of the disparity map pull vertices away from the existing wall, while dark patches push those vertices into the wall.
+One of the two stereo images is projected onto the deformed model, adding the color of the original surface to the model. Repeating this procedure for each section of wall produces a finely detailed 3D model of the cistern.
 
 \begin{figure}[!h]
 	\centering
@@ -156,7 +157,7 @@ One of the two stereo images is projected onto the deformed model, giving the mo
 		\quad %space between images
 		\subfigure[Well Side View]{\label{wellside}\epsfig{file = pics/cisternWall.png, width = 3.5cm}}\\%new line
 
-		\caption{Views of Plain Well Geometry}
+		\caption{Views of plain well geometry.}
 		\label{fig:wellNoFine}
 \end{figure}
 
@@ -175,24 +176,25 @@ One of the two stereo images is projected onto the deformed model, giving the mo
 A number of stereo vision algorithms currently exist to compare the features of two images in order to determine the distance between the feature and the camera.
 % few of these algorithms are robust enough to handle compressed underwater images of rock walls combined with poor lighting conditions and very shallow features.
 However, rocks and bricks, two common features found on cistern walls, have highly repetitive patterns and colors--providing only a few unique features.  In addition, the images  captured within the cisterns usually contain poor lighting, and shallow depressions (in comparison to images with large color or depth contrast).  All of which prove to be challenging to most stereo vision algorithms.
-After exploring several options, the stereo mapping algorithm described by Zitnick and Kanade in~\cite{stereo:zitKan} was chosen for the current implementation.
+After exploring several options, the stereo mapping algorithm described by Zitnick and Kanade in~\cite{stereo:zitKan} was chosen.
+% for the current implementation.
 
 Most stereo-matching algorithms, including Zitnic and Kanade, rely on unique features between images to aid in pixel mapping.
-Specifically, the algorithm proposed by Zitnick and Kanade uses a scanning, sliding comparison window to build an initial disparity map.
+Specifically, the algorithm proposed in~\cite{stereo:zitKan}  uses a scanning, sliding comparison window to build an initial disparity map.
 To mitigate the dull landscape, we choose a large initial comparison window with a radius of five pixels.
-This decision reduces the level of fine details that can be resolved from the image and adds a smoothing effect to the disparity map, but these drawbacks are acceptable in the given environment.
-Instead, a large window gives a more reliable matching between rocks faces because it encompasses more features for each pixel.  
+A large window gives a more reliable matching between rocks faces because it encompasses more features for each pixel.  The resulting smoothing effect to the disparity map is acceptable in the given environment.
 
 Lighting was perhaps our most challenging issue. 
 Most of the water systems explored were dark (with very little light entering the systems through narrow tunnels and openings).
-Meaning that the imaged surfaces were lit almost solely by the ROV's onboard lights and that the ROV had to fly relatively close to the walls in order to illuminate features for the cameras.
+The imaged surfaces were lit almost solely by the ROV's onboard lights and the ROV had to fly relatively close to the walls in order to illuminate features.
 Each camera computed its own exposure time based on the amount of light it received.  
-As a result of some well illuminated features being closer to one camera than the other, there are discrepancies in exposure times between left and right images, (see Figure~\ref{fig:disparity} for an example of this contrasting lighting).
+Some well illuminated features are closer to one camera than the other, thus there are discrepancies in exposure times between left and right images, (see Figure~\ref{fig:disparity} for an example of this contrasting lighting).
 We attempted to use the work in \cite{stereo:nalGast} to fix this problem by shifting the image into the HSL color space.  For our purposes, however, this method failed since too much of the color from our ROV's lights was absorbed by the water to allow us to use images in the HSL space.
 
 Another common challenge is the presence of dirt particles in the images.
 This is due to the ROV's positioning thrusters agitating sediment in the water systems.
-Usually the particles are small enough to be detected as occlusions and removed from the final disparity map by the Zitnick and Kanade algorithm.
+Usually the particles are small enough to be detected as occlusions and removed from the final disparity map.
+% by the Zitnick and Kanade algorithm.
 
 \begin{figure}[!h]
 	\centering
@@ -211,17 +213,14 @@ Usually the particles are small enough to be detected as occlusions and removed 
 
 In many stereo mapping algorithms, including Zitnick and Kanade, it is assumed that both images are accurate down to the pixel level.
 Regrettably, the GoPro cameras used were limited to recording images in the lossy .jpeg format only.
-To solve this issue we smoothed and shrunk the high resolution .jpeg images taken by the GoPros to produce smaller left and right images that were comparable at the pixel level.
-
-Image correction starts with a smoothing step.
-  A simple Gaussian smoothing step was ineffective in this case because it blurred the edges of the rocks or bricks, removing valuable features from an already feature-scarce image.
-  Instead an image smoothing tool was used (Photoshop's "surface smooth") which preserved edges while still blurring similar color regions.
-  Next a shrinking step was performed on the image to further reduce artifacts and trim the size (from 3200 by 2400 to 512 by 384).
-The final size was large enough to preserve the details in the image, while still providing a significant size reduction to artifacts.   
+To solve this issue we smoothed and shrunk the high resolution .jpeg images taken by the GoPros to produce smaller left and right images that were comparable at the pixel level.  For smoothing a simple Gaussian was ineffective because it blurred the edges of the rocks or bricks, removing valuable features from an already feature-scarce image.
+  Instead an image smoothing tool was used (Photoshop's ``surface smooth''), which preserved edges while still blurring similar color regions.
+  Next a shrinking step was performed on the image to further reduce artifacts (e.g. from 3200 by 2400 to 512 by 384).
+The final size was large enough to preserve the details in the image, while still providing a significant reduction to artifacts.   
 %Through experimentation, we discovered that the best image detail to process time ratio was obtained by reducing the images by one sixth.   
 %Shrinking was performed after smoothing to preserve the maximum amount of detail in the image.
 
-Similar to the work of Johnson-Roberson, we explored accounting for illumination fade-off, or vignetting, across our image sets~\cite{stereo:Roberson}.  
+We explored accounting for illumination fade-off, or vignetting, across our image sets, similar to the work in~\cite{stereo:Roberson}.  
 We found, however, that due to our close proximity to walls and narrow field of view, de-vignetting our images had little effect.
 
 \paragraph{Disparity Mapping}
@@ -258,21 +257,19 @@ If the best weight for all depths for a certain pixel $(x,y)$ is below a predefi
 %All of the disparity maps generated by the Zitnick and Kanade algorithm had slight errors around the edges.  
 %Patches of the image would either be unreasonably close to the camera or flat against the background.  
 %These images had to be corrected before they could be mapped to vertices.  
+After the disparity maps were generated, a number of them had obvious errors--small regions of all white and all black.  
+These erroneous regions were fixed by flooring and capping the intensity of the pixels. 
+Pixels that had unreasonably small values were simply increased in value to a reasonable minimum, around 1.5 meters, while groups of pixels that were too large in value were replaced by a linear smoothing of the surrounding pixel values. 
+
+Using these methods, the computed disparity maps are then used to provide depth values to displace the general geometry created from the sonar data. Figure~\ref{fig:disparity} illustrates a disparity map generated using our implementation.
 
 \paragraph{Calibration}
-An important step in any meaningful recreation, including disparity mapping, is calibration.
+An important step in any meaningful re-creation, including disparity mapping, is calibration.
 This is the creation of a tuned mapping from a grayscale pixel value to the appropriate vertex offset in the virtual world.  
 Pictures of a patterned surface were taken at a number of measured distances from that surface.
 Those images were then disparity mapped, and the average disparity at the center of the picture was used as the disparity data point for that physical depth.
 We used that set of points to create an exponential relationship between disparity value and physical depth.  
-That equation is used later to accurately recreate the internal dimensions of the cistern.
-
-After the disparity maps were generated, a number of them had obvious errors--small regions of all white and all black.  
-These erroneous regions were fixed by flooring and capping the intensity of the pixels. 
-Pixels that had unreasonably small values were simply increased in value to a reasonable minimum, around 1.5 meters.  
-Groups of pixels that were too large in value were deleted and replaced by a linear smoothing of the surrounding reasonable pixel values. 
-
-Using the above described methods, the computed disparity maps are then used to provide depth values to displace the general geometry created from the sonar data. Figure~\ref{fig:disparity} illustrates a disparity map generated using our implementation.
+That equation is used later to accurately model the physical dimensions.
 
 \subsection{Projective Texturing}
 \label{subsec:projectiveTexturing}
@@ -408,21 +405,15 @@ This paper presents a method of adding geometric details to maps created to repr
 %A general model is acquired from sonar data and mapping~\cite{ICEX11,McVicker,McVicker2}, and we present the addition of fine level details using stereo image data.  
 This work is motivated by the desire to better map underwater caverns and cisterns using robotic tools.  We have presented our methodology and hardware for data acquisition, disparity map generation, and incorporation of that disparity data via projective texturing displacements.  We have shown results of a partial reconstruction of a well in Carini, Sicily.
 
-In this preliminary work, we have discovered many of the key factors for obtaining more complete models and details.  Future enhancements include: the use of higher quality cameras, inclusion of color and more powerful lighting, addition of smart tether for better localization, and enhancement of memory management to process more textures and disparity maps at once.
-%For example, more detailed disparity maps could be achieved by upgrading the cameras and the lights on the robot.
-
-Additional lessons learned include: since the clearest pictures were taken before the ROV had uplifted sediment from the cistern floor by landing, the ROV should capture all images of the cistern wall before landing to record sonar scans. In the future, we would like to explore algorithms from texture synthesis and apply learning to a small subset of disparity images in order to generalize the small detailed geometry without having to acquire disparity maps of the entire wall (since complete data coverage is a challenge).
+Future enhancements include: the use of higher quality cameras, inclusion of color and more powerful lighting, addition of smart tether for better localization, and enhancement of memory management to process more textures and disparity maps at once.
+For future missions, we have learned that since the clearest pictures were taken before the ROV had uplifted sediment from the cistern floor, the ROV should capture all images of the cistern wall before landing. 
 
 In addition, GoPro cameras were a simple, cost-effective, solution to acquire underwater stereo images.
-With better cameras the output images would not need to be processed down to remove jpeg compression artifacts, which would allow much larger disparity images.  
-Similarly, with better cameras there would be no need to compensate for different exposure times between images, and images could be captured synchronously.
+Better cameras would reduce compression artifacts, and ideally images could be captured synchronously.
 Alternatively, better lighting, including blue lights, would allow pixel values to be compared in the HSL color space.
-Such lighting additions could reduce the need for a different camera setup.  Finally, it would be interesting to explore the possibility of integrating this algorithm with a SLAM algorithm and more computing power to allow a robot to autonomously image each surface of a cistern. 
+It would be interesting to explore the possibility of integrating this algorithm with a SLAM algorithm and more computing power to allow a robot to autonomously image each surface.  Finally, we would like to explore algorithms from texture synthesis and apply learning to a small subset of disparity images in order to generalize the small detailed geometry without having to acquire disparity maps of the entire wall (since complete data coverage is a challenge).
 
 %Data collection in future deployments should be performed during a dry weather, as flowing rainwater dirtied the water and reduced image quality for the current data. 
-
-
-
 
 %Unfortunately, that would require a far more complex setup that what we had available at the time of writing.
 
@@ -543,10 +534,10 @@ Mahon, Pizarro, Johnson-Robertson, Friedman, Williams, Henderson. (2011).
 \newblock Reconstructing Pavlopetri: Mapping the World's Oldest Submerged Town using Stereo-vision.
 \newblock In {\em International Conference on Robotics and Automation}.
 
-\bibitem{stereo:Roberson}
-Johnson-Roberson, Matthew and Pizarro, Oscar and Williams, Stefan B. and Mahon, Ian (2010).
-\newblock Generation and visualization of large-scale three-dimensional reconstructions from underwater robotic surveys
-\newblock In {\em Journal of Field Robotics}.
+\bibitem{Mahon:2011}
+Mahon, Pizarro, Johnson-Robertson, Friedman, Williams, Henderson. (2011).
+\newblock Reconstructing Pavlopetri: Mapping the World's Oldest Submerged Town using Stereo-vision.
+\newblock In {\em International Conference on Robotics and Automation}.
 
 \bibitem{stereo:scharsteinSzeliski}
 Scharstein, Daniel and Szeliski, Richard (1998).
