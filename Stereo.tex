@@ -374,7 +374,7 @@ Note that the left and right images demonstrate a difference in lighting.
 
 Using the geometry from the general mesh constructed from the sonar data, we used projective texturing to display the rock images and disparity maps as they were originally captured at that location as shown in Figure~\ref{fig:result2}.
 
-Finally, the disparity maps combined with the surface images were mapped into the well geometry to produce the detailed mesh in Figures~\ref{fig:result4} \&~\ref{fig:resultFull}. In our current implementation all textures are stored on the GPU, which limits the number we can currently display to X. Future work will include methods to cycle through textures.
+Finally, the disparity maps combined with the surface images were mapped into the well geometry to produce the detailed mesh in Figure~\ref{fig:resultFull}. In our current implementation all textures are stored on the GPU, which limits the number we can currently display to X. Future work will include methods to cycle through textures.
 %he only factor that is keeping us from filling the well with textures is the Glew texture limit. ???
 %ZJW: really???  we need a way around that - Once you've displaced and colored vertices can't you release a texture and cycle through more? - the above sounds fairly weak....
 
