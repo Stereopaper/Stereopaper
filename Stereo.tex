@@ -41,11 +41,12 @@ plus 2pt minus 2pt}{12pt plus 2pt minus 2pt}{\subsize\bf}}
 %My Institute \\
 %My City, ST, Zip}
 %for two authors (type the following)
-\author{\begin{tabular}[t]{c@{\extracolsep{8em}}c}
-I. M. Author & U. R. Coauthor \\
-My Department & Coauthor Department\\
-My Institute & Coauthor Institute \\
-City, St ~~Zip & City, ST~~Zip
+%\author{\begin{tabular}[t]{c@{\extracolsep{8em}}c}
+\author{\begin{tabular}[t]{c c c c c c}
+Timothy M. Peters* & Erik A. Nelson* & Tyler Vitti & Timothy Gambin & Christopher M. Clark & Zo\"{e} J. Wood \\
+Computer Engineering & Materials Engineering & Computer Engineering & Archeology & Computer Science & Computer Science \\
+Cal Poly & Cal Poly & Cal Poly & Malta Univeristy? & Harvey Mudd & Cal Poly 
+%City, St ~~Zip & City, ST~~Zip
 \end{tabular}}
 \maketitle
 \thispagestyle{empty}
@@ -88,7 +89,7 @@ Related work in stereo vision based SLAM algorithms has been performed to genera
 
 In addition, this work relies on well known algorithms from computer graphics, such as surface extraction from volume data using marching cubes~\cite{Lorensen}, projective texturing and texture mapping~\cite{Williams78castingcurved,Segal}, and the use of vertex shaders to displace existing vertices on the GPU. Work in~\cite{Fairfield:2010} likewise uses marching cubes to create a geometric model of underwater structures from an evidence grid, but uses a far more complex ROV with extensive sensors.
 
-This research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:gutMarroquin},~\cite{stereo:scharsteinSzeliski}.
+This research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:scharsteinSzeliski}.
 In particular, this work uses the method of~\cite{stereo:zitKan} to generate disparity maps from underwater stereo image pairs.
 The work of~\cite{stereo:nalGast} was also explored to allow us to avoid comparing the differences in light intensities between images.
 We found, however, that the underwater setting does not transmit colors well, which forced us to return to using differences in light intensities.
@@ -540,5 +541,21 @@ Williams, S.~B., Pizarro, O., Jakuba, M., and Barrett, N. (2009).
 \bibitem{stereo:zitKan}
 Zitnick, L. and Kanade, T. (1999).
 \newblock A cooperative algorithm for stereo matching and occlusion detection.
+
+\bibitem{Mahon:2011}
+Mahon, Pizarro, Johnson-Robertson, Friedman, Williams, Henderson. (2011).
+\newblock Reconstructing Pavlopetri: Mapping the World's Oldest Submerged Town using Stereo-vision.
+\newblock In {\em International Conference on Robotics and Automation}.
+
+\bibitem{stereo:Roberson}
+Johnson-Roberson, Matthew and Pizarro, Oscar and Williams, Stefan B. and Mahon, Ian (2010).
+\newblock Generation and visualization of large-scale three-dimensional reconstructions from underwater robotic surveys
+\newblock In {\em Journal of Field Robotics}.
+
+\bibitem{stereo:scharsteinSzeliski}
+Scharstein, Daniel and Szeliski, Richard (1998).
+\newblock Stereo Matching with Nonlinear Diffusion
+\newblock In {\em International Journal of Computer Vision}.
+
 \end{thebibliography}
 \end{document}
