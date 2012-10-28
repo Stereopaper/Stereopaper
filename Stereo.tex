@@ -176,7 +176,7 @@ One of the two stereo images is projected onto the deformed model, adding the co
 
 A number of stereo vision algorithms currently exist to compare the features of two images in order to determine the distance between the feature and the camera.
 % few of these algorithms are robust enough to handle compressed underwater images of rock walls combined with poor lighting conditions and very shallow features.
-However, rocks and bricks, two common features found on cistern walls, have highly repetitive patterns and colors--providing only a few unique features.  In addition, the images  captured within the cisterns usually contain poor lighting, and shallow depressions (in comparison to images with large color or depth contrast).  All of which prove to be challenging to most stereo vision algorithms.
+However, rocks and bricks, two common features found on cistern walls, have highly repetitive patterns and colors.  In addition, the images  captured within the cisterns usually contain poor lighting, and shallow depressions (in comparison to images with large color or depth contrast).  All of which prove to be challenging to most stereo vision algorithms.
 After exploring several options, the stereo mapping algorithm described by Zitnick and Kanade in~\cite{stereo:zitKan} was chosen.
 % for the current implementation.
 
@@ -187,7 +187,7 @@ A large window gives a more reliable matching between rocks faces because it enc
 
 Lighting was perhaps our most challenging issue. 
 Most of the water systems explored were dark (with very little light entering the systems through narrow tunnels and openings).
-The imaged surfaces were lit almost solely by the ROV's onboard lights and the ROV had to fly relatively close to the walls in order to illuminate features.
+The imaged surfaces were lit almost solely by the ROV's onboard lights; meaning that, the ROV had to fly relatively close to the walls in order to illuminate features.
 Each camera computed its own exposure time based on the amount of light it received.  
 Some well illuminated features are closer to one camera than the other, thus there are discrepancies in exposure times between left and right images, (see Figure~\ref{fig:disparity} for an example of this contrasting lighting).
 We attempted to use the work in \cite{stereo:nalGast} to fix this problem by shifting the image into the HSL color space.  For our purposes, however, this method failed since too much of the color from our ROV's lights was absorbed by the water to allow us to use images in the HSL space.
@@ -195,7 +195,6 @@ We attempted to use the work in \cite{stereo:nalGast} to fix this problem by shi
 Another common challenge is the presence of dirt particles in the images.
 This is due to the ROV's positioning thrusters agitating sediment in the water systems.
 Usually the particles are small enough to be detected as occlusions and removed from the final disparity map.
-% by the Zitnick and Kanade algorithm.
 
 \begin{figure}[!h]
 	\centering
