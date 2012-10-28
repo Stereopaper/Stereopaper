@@ -45,7 +45,7 @@ plus 2pt minus 2pt}{12pt plus 2pt minus 2pt}{\subsize\bf}}
 \author{\begin{tabular}[t]{c c c c c c}
 Timothy M. Peters* & Erik A. Nelson* & Tyler Vitti & Timothy Gambin & Christopher M. Clark & Zo\"{e} J. Wood \\
 Computer Engineering & Materials Engineering & Computer Engineering & Archeology & Computer Science & Computer Science \\
-Cal Poly & Cal Poly & Cal Poly & Malta Univeristy? & Harvey Mudd & Cal Poly 
+Cal Poly & Cal Poly & Cal Poly & Malta University? & Harvey Mudd & Cal Poly 
 %City, St ~~Zip & City, ST~~Zip
 \end{tabular}}
 \maketitle
@@ -54,10 +54,10 @@ Cal Poly & Cal Poly & Cal Poly & Malta Univeristy? & Harvey Mudd & Cal Poly
 
 \subsection*{\centering Abstract}
 \vspace*{-3mm}
-The study of underwater structures, such as wells, cisterns, and water storage systems, can be of historical and scientific significance for archeologists. However, access to and study of such sites can be dangerous or infeasible for humans. Underwater micro-ROVs, such as the VideoRay Pro III GTO, can often reach and navigate these locations safely while causing less harm to the site. Prior work has successfully reconstructed geometric models of such underwater structures with the use of sonar measurements. Although effective, sonar has a limited resolution and omits many fine geometric details of the model in the scanning process. In this paper, we present a preliminary solution towards the reconstruction of fine details of geometric features in the underwater setting using stereo pairs. These fine details can then be integrated into 3D models reconstructed from sonar to create a more visually accurate model. We present initial results and detailed methodology for future data acquisition.
+The study of underwater structures, such as wells, cisterns, and water storage systems, can be of historical and scientific significance for archeologists. However, access to and study of such sites can be dangerous or infeasible for humans. Underwater micro-ROVs, such as the VideoRay Pro III GTO, can often reach and navigate these locations safely while minimizing harm to the site. Prior work has successfully reconstructed geometric models of such underwater structures with the use of sonar measurements. Although effective, sonar has a limited resolution and omits many fine geometric details. In this paper, we present a preliminary solution towards the reconstruction of fine details of organic underwater shapes using stereo vision. These fine details can then be integrated into 3D models reconstructed from sonar to create a more visually accurate model. We present initial results and detailed methodology for future data acquisition.
 \\
 \\
-\noindent {\bf Keywords:} 5 KEY WORDS HERE
+\noindent {\bf Keywords:} 5 KEY WORDS HERE: Stereo Vision,
 
 \section{Introduction}
 Recent research in the field of mobile robotics has demonstrated the creation of 3D maps of settings otherwise inaccessible to humans, such as narrow tunnels and marine caves~\cite{ICEX11,McVicker}. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms  (\cite{Williams2000},~\cite{harbor}, and \cite{Fairfield2006}) allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors. Such maps, or evidence grids, can then be treated as implicit volumes and then used to construct a geometric model of the scanned regions using marching cubes~\cite{Lorensen}. An example of a geometric model of a well used for water storage can be seen in Figure~\ref{fig:wellNoFine}. Unfortunately, equipment limitations, sensor noise, and probabilistic uncertainty occurring in the data acquisition process cause these models to suffer from a loss of fine geometric details. Loss of detail in the scanning process is a problem for end-users, who wish to study these models or use them for educational purposes. In this paper we present a preliminary solution towards the reintroduction of fine details omitted by sonar data into surface reconstructions via the use of two cameras to capture stereo images of underwater surfaces.  The stereo images are then processed to produce disparity maps which contain the fine geometric detail of the original surface. The depth information in each disparity map can then be used to enhance the final geometric model.
@@ -91,8 +91,8 @@ In addition, this work relies on well known algorithms from computer graphics, s
 
 This research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:scharsteinSzeliski}.
 In particular, this work uses the method of~\cite{stereo:zitKan} to generate disparity maps from underwater stereo image pairs.
-The work of~\cite{stereo:nalGast} was also explored to allow us to avoid comparing the differences in light intensities between images.
-We found, however, that the underwater setting does not transmit colors well, which forced us to return to using differences in light intensities.
+The work of ~\cite{stereo:nalGast} was also explored to compensate for lighting differences. 
+However, it was found to be innefective for our setup. 
 \vspace{-11pt}
 \section{Data Acquisition}
 \label{sec:data}
@@ -103,7 +103,7 @@ During deployment, the navigator repeatedly rests the ROV on the cistern floor a
 %The sonar scans must have some overlap to facilitate mosaicing and localization for surface reconstruction, which is taken into consideration when positioning the ROV on the cistern floor. The approximate position and heading of the ROV is recorded before each scan for later use in aligning projectors in the geometric model. The ROV's main video camera is used to position the unit at each location. 
 A more complete overview of the sonar data acquisition process can be found in~\cite{ClarkVast}. This collection of sonar scan planes is then used to build a general 3D model of the cistern~\cite{ICEX11}.
 
-While the sonar scans are being collected, the ROV captures stereo image pairs of the cistern walls. These images are collected using two GoPro HD Hero2 cameras mounted to the front of the ROV, which are synchronized through the 3D Hero System waterproof housing and connector cable. The default domed lenses of the 3D Hero Housing distort images taken underwater, so flat lenses were installed to minimize complexity during data processing. The camera unit is unable to be controlled remotely, and instead, each camera is set to capture an image every second. To collect stereoscopic images the ROV is maneuvered around the edges of the cistern, pausing every few feet. The ROV is positioned roughly one meter from the wall to capture stereo pairs with features that can be easily matched later. The images captured at each of these locations are used to create disparity maps, as described in Section~\ref{disparityMapGeneration}.
+While the sonar scans are being collected, the ROV captures stereo image pairs of the cistern walls. These images are collected using two GoPro HD Hero2 cameras mounted to the front of the ROV, which are synchronized through the 3D Hero System waterproof housing and connector cable. The default domed lenses of the 3D Hero Housing distort images taken underwater, so flat lenses were installed to minimize complexity during data processing. The camera unit is unable to be controlled remotely, and instead, each camera is set to capture an image every second. To collect stereoscopic images the ROV is maneuvered around the edges of the cistern, pausing every few feet. The ROV is positioned roughly one meter from the wall to capture stereo pairs with features that can be matched later. The images captured at each of these locations are used to create disparity maps, as described in Section~\ref{disparityMapGeneration}.
 
 \begin{figure}[!h]
    \vspace{-0.2cm}
@@ -117,11 +117,11 @@ While the sonar scans are being collected, the ROV captures stereo image pairs o
 % HAVE NOT EDITED YET
 To facilitate the virtual reconstruction of the world it was necessary to calibrate the GoPro cameras.
 Both the aspect ratio and the vertical field of view (VFOV) needed to be calculated to accurately re-project the captured images and disparity maps in the virtual world.  
-The following equations were used:
+The following equations were used with captured images of a checkered plane:
 \vspace{-11pt}
 \begin{align}
-\text{aspect ratio} &= \frac{\text{width}}{\text{height}} \\
-\text{VFOV} &= 2\tan^{-1}\left({\frac{\text{height}}{2\text{depth}}}\right)
+\text{aspect ratio} &= \frac{\text{plane width}}{\text{plane height}} \\
+\text{VFOV} &= 2\tan^{-1}\left({\frac{\text{plane height}}{2 \times \text{depth}}}\right)
 \end{align}
 These two values were used to specify the behavior of projectors, discussed later in Section~\ref{subsec:projectiveTexturing}.
 
