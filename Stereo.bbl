@@ -1,0 +1,140 @@
+\begin{thebibliography}{}
+
+\bibitem[Clark et~al., 2008]{Clark2008b}
+Clark, C.~M., Olstad, C., Buhagiar, K., and Gambin, T. (2008).
+\newblock Archaeology via underwater robots: Mapping and localization within
+  maltese cistern systems.
+\newblock In {\em Proc. of the 10th International Conference on Control,
+  Automation, Robotics and Vision (ICARCV 08).}
+
+\bibitem[Fairfield et~al., 2010]{Fairfield:2010}
+Fairfield, N., Kantor, G., Jonak, D., and Wettergreen, D. (2010).
+\newblock Autonomous exploration and mapping of flooded sinkholes.
+\newblock {\em Int. J. Rob. Res.}, 29(6):748--774.
+
+\bibitem[Fairfield et~al., 2005]{Fairfield2005}
+Fairfield, N., Kantor, G., and Wettergreen, D. (2005)).
+\newblock Three dimensional evidence grids for {SLAM} in complex underwater
+  environments.
+\newblock In {\em Proceedings of the 14th International Symposium of Unmanned
+  Untethered Submersible Technology (UUST).}
+
+\bibitem[Fairfield et~al., 2006]{Fairfield2006}
+Fairfield, N., Kantor, G., and Wettergreen, D. (2006)).
+\newblock Real-time {SLAM} with octree evidence grids for exploration in
+  underwater tunnels.
+\newblock In {\em Journal of Field Robotics, Vol 24, Issue 1-2, pp. 03-21.}
+
+\bibitem[Forney et~al., 2011]{ICEX11}
+Forney, C., Forrester, J., Bagley, B., McVicker, W., White, J., Smith, T.,
+  Batryn, J., Gonzalez, A., Lehr, J., Gambin, T., Clark, C.~M., and Wood, Z.~J.
+  (2011).
+\newblock Surface reconstruction of maltese cisterns using rov sonar data for
+  archeological study.
+\newblock In {\em Proceedings of the 7th international conference on Advances
+  in visual computing - Volume Part I}, ISVC'11, pages 461--471, Berlin,
+  Heidelberg. Springer-Verlag.
+
+\bibitem[Guti√©rrez and Marroquƒ±ÃÅn, 2004]{stereo:gutMarroquin}
+Guti√©rrez, S. and Marroquƒ±ÃÅn, J.~L. (2004).
+\newblock Robust approach for disparity estimation in stereo vision.
+\newblock {\em Image and Vision Computing}, 22(3):183 -- 195.
+
+\bibitem[Hernàndez et~al., 2009]{harbor}
+Hernàndez, E., Ridao, P., Ribas, D., and Batlle, J. (2009).
+\newblock Msispic: A probabilistic scan matching algorithm using a mechanical
+  scanned imaging sonar.
+\newblock In {\em Journal of Physical Agents 3:3–11}.
+
+\bibitem[Hiranandani et~al., 2009]{ClarkVast}
+Hiranandani, D., White, C., Clark, C., Gambin, T., and Buhagiar, K. (2009).
+\newblock Underwater robots with sonar and smart tether for underground cistern
+  mapping and exploration.
+\newblock In {\em The 10th International Symposium on Virtual Reality,
+  Archaeology and Cultural Heritage VAST}.
+
+\bibitem[Lighthouse3d.com, ]{vfc}
+Lighthouse3d.com.
+\newblock Website: `clip space approach: Extracting the planes'.
+\newblock
+  http://www.lighthouse3d.com/tutorials/view-frustum-culling/clip-space-approa%
+ch-extracting-the-planes.
+
+\bibitem[Lorensen and Cline, 1987]{Lorensen}
+Lorensen, W.~E. and Cline, H.~E. (1987).
+\newblock Marching cubes: A high resolution {3D} surface construction
+  algorithm.
+\newblock In {\em Proceedings of the 14th Annual Conference on Computer
+  Graphics and interactive Techniques}, pages 163--169.
+
+\bibitem[Mahon, 2011]{Mahon:2011}
+Mahon, Pizarro, J.-R. F. W.~H. (2011).
+\newblock Reconstructing pavlopetri: Mapping the world's oldest submerged town
+  using stereo-vision.
+\newblock Shanghai, China. IEEE.
+
+\bibitem[McVicker et~al., 2012a]{McVicker2}
+McVicker, W., Forrester, J., Nelson, E., Gambin, T., Lehr, J., Wood, Z., and
+  Clark, C. (2012a).
+\newblock Mapping and visualizing ancient water storage systems with an rov.
+
+\bibitem[McVicker et~al., 2012b]{McVicker}
+McVicker, W., Forrester, J., Nelson, E., Gambin, T., Lehr, J., Wood, Z., and
+  Clark, C. (2012b).
+\newblock Mapping and visualizing ancient water storage systems with an rov -
+  an approach based on fusing stationy scans within a particle filter.
+
+\bibitem[Nalpantidis et~al., 2008]{stereo:nalGast}
+Nalpantidis, L., Sirakoulis, G., and Gasteratos, A. (2008).
+\newblock Review of stereo vision algorithms: from software to hardware.
+\newblock {\em International Journal of Optomechatronics}, 2(4):435--462.
+
+\bibitem[Pizarro et~al., 2009]{opizarro-2009a}
+Pizarro, O., Eustice, R.~M., and Singh, H. (2009).
+\newblock Large area {3D} reconstructions from underwater optical surveys.
+\newblock {\em IEEE Journal of Oceanic Engineering}.
+\newblock In Press.
+
+\bibitem[Scharstein and Szeliski, 1998]{stereo:scharsteinSzeliski}
+Scharstein, D. and Szeliski, R. (1998).
+\newblock Stereo matching with nonlinear diffusion.
+\newblock {\em International Journal of Computer Vision}, 28:155--174.
+\newblock 10.1023/A:1008015117424.
+
+\bibitem[Segal et~al., 1992]{Segal}
+Segal, M., Korobkin, C., van Widenfelt, R., Foran, J., and Haeberli, P. (1992).
+\newblock Fast shadows and lighting effects using texture mapping.
+\newblock In {\em In Computer Graphics (SIGGRAPH ’92 Proceedings)}.
+
+\bibitem[Thrun et~al., 2005]{Thrun2005}
+Thrun, S., Burgard, W., and Fox, D. (2005)).
+\newblock Probabilistic robotics.
+\newblock In {\em MIT Press.}
+
+\bibitem[White et~al., 2010]{White10}
+White, C., Hiranandani, D., Olstad, C., Buhagiar, K., Gabmin, T., and Clark, C.
+  (2010).
+\newblock The malta cistern mapping project: Underwater robot mapping and
+  localization within ancient tunnel systems.
+\newblock In {\em Journal of Field Robotics}.
+
+\bibitem[Williams, 1978]{Williams78castingcurved}
+Williams, L. (1978).
+\newblock Casting curved shadows on curved surfaces.
+\newblock In {\em In Computer Graphics (SIGGRAPH ’78 Proceedings}, pages
+  270--274.
+
+\bibitem[Williams et~al., 2000]{Williams2000}
+Williams, S., Newman, P., Dissanayake, G., and Durrant-Whyte, H. (2000)).
+\newblock Autonomous underwater simultaneous localization and map building.
+\newblock In {\em Proceedings of the 2000 IEEE International Conference.}
+
+\bibitem[Williams et~al., 2009]{Williams09}
+Williams, S.~B., Pizarro, O., Jakuba, M., and Barrett, N. (2009).
+\newblock {AUV} benthic habitat mapping in {S}outh {E}astern {T}asmania.
+\newblock In {\em 7th InternationalConference on Field and Service Robotics}.
+
+\bibitem[Zitnick and Kanade, ]{stereo:zitKan}
+Zitnick, L. and Kanade, T.
+
+\end{thebibliography}
