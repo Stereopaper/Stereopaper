@@ -119,7 +119,7 @@ While the sonar scans are being collected, the ROV captures stereo image pairs o
 \paragraph{\textbf{Hardware Calibration:}}
 To facilitate the virtual reconstruction of the world it was necessary to calibrate the GoPro cameras.
 Both the aspect ratio and the Vertical Field of View (VFOV) need to be calculated to accurately re-project the captured images and disparity maps in the virtual reconstruction.
-The cameras were calibrated using the following equations and stereo pairs of a checkered plane submerged in a pool,with these two values used to specify the behavior of projectors, discussed in Section~\ref{subsec:projectiveTexturing}.:
+The cameras were calibrated using the following equations and stereo images of a checkered plane submerged in a pool.  These two values used to specify the behavior of projectors, discussed in Section~\ref{subsec:projectiveTexturing}.:
 \begin{align}
 \text{aspect ratio} &= \frac{\text{plane width}}{\text{plane height}} \\
 \text{VFOV} &= 2\tan^{-1}\left({\frac{\text{plane height}}{2 \times \text{depth}}}\right)
@@ -144,9 +144,11 @@ Fine details were captured in stereo image pairs (left and right images of the s
 %This constraint was not an issue for our purposes, as the ROV was held roughly  from the wall when capturing images.
 %EN already said this above
 These fine details were integrated back into the existing geometric model by deforming the sonar mesh in accordance with the data stored in the disparity maps, and texturing one of the original images back onto the surface.
+
+
 There are two challenges at this stage in the process. The first is accurately localizing the ROV with respect to the general model to correctly project the disparity maps onto the model surface. The second is mapping captured depth information onto the existing model.
-For the current implementation, we do not include a computational solution to the first challenge. 
-Instead, the preliminary results presented here are from a cylindrical well with rotational symmetry, and the user interactively sets the location from which the image was likely taken.
+We do not include a computational solution to the first challenge in the current implementation. 
+Instead, the preliminary results presented here are from a cylindrical well with rotational symmetry.
 
 The second challenge is resolved by using the pixel intensity data stored in the grayscale disparity map to deform the associated vertices, with light patches pulling vertices away from the existing wall, and dark patches pushing those vertices in.
 Color is projected onto the deformed model from one of the original images. Repeating this procedure for each section of wall produces a finely detailed 3D model of the cistern.
