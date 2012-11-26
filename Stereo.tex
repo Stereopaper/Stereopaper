@@ -66,7 +66,7 @@ The data used in this paper was gathered through a series of underwater deployme
 
 %The results reported in this paper are from preliminary work in a multidisciplinary setting, utilizing aspects of emerging robotics and computer graphics technology. 
 %The goal of this work is the generation of a computer model which includes the fine organic features found in underwater storage systems.
-This paper outlines the data acquisition and stereo displacement map computation, describes our solution to displacing rough geometry in accordance with a projected disparity map, and illustrates our results on a model using a partial  data set.  The stages of our approach can be seen in Figure~\ref{fig:systemblock}.
+This paper outlines our data acquisition and displacement map computation techniques, describes our solution to displacing rough geometry in accordance with the projected disparity map, and illustrates our results on a model using a partial  data set.  The stages of our approach can be seen in Figure~\ref{fig:systemblock}.
 %, and presents for future missions. 
 %
 \begin{figure*}[!ht]
@@ -84,7 +84,7 @@ This paper outlines the data acquisition and stereo displacement map computation
 For this project the most relevant  research in underwater robot Simultaneous Localization and Mapping (SLAM) is found in~\cite{Williams2000,harbor,Fairfield2005,Fairfield2006}.
 
 In addition, this work relies on well known algorithms from computer graphics, such as surface extraction from volume data using marching cubes~\cite{Lorensen}, projective texturing and texture mapping, and the use of vertex shaders to displace vertices on the GPU. Work in~\cite{Fairfield:2010} likewise uses marching cubes to create a geometric model of underwater structures, but uses a far more complex ROV with extensive sensors.
-Stereo vision based SLAM algorithms have been used to generate 3D maps of underwater settings~\cite{Mahon:2011,stereo:Roberson,stereo:Aqua}; however, we are using the stereo data to enhance models created from sonar data.  Finally, this research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:scharsteinSzeliski}.
+Stereo vision based SLAM algorithms have been used to generate 3D maps of underwater settings~\cite{Mahon:2011,stereo:Roberson,stereo:Aqua}; however, we are using the stereo images to enhance models created from sonar data.  Finally, this research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:scharsteinSzeliski}.
 In particular, this work uses the method of~\cite{stereo:zitKan} to generate disparity maps from underwater stereo image pairs.
 %The work of~\cite{stereo:nalGast} was also explored to compensate for lighting differences, but was found to be ineffective for our setup. 
 \vspace{-11pt}
@@ -97,7 +97,7 @@ During deployment, the navigator repeatedly rests the ROV on the cistern floor a
 A more complete overview of the sonar data acquisition process can be found in~\cite{ClarkVast}. 
 %This collection of sonar scan planes is then used to build a general 3D model~\cite{ICEX11}.
 
-While the sonar scans are being collected, the ROV captures stereo image pairs of the cistern walls. These images are collected using two GoPro HD Hero2 cameras mounted to the front of the ROV, which are synchronized through the 3D Hero System waterproof housing and connector cable. The default domed lenses of the 3D Hero housing distort images taken underwater, so flat lenses were installed to minimize complexity during data processing. Each camera is set to capture one image per second. To collect stereo pairs the ROV is maneuvered around the edges of the cistern, pausing every few feet. The ROV is positioned roughly 0.25m to 0.50m from the wall. The images captured each one second interval are used to create disparity maps.
+While the sonar scans are being collected, the ROV captures stereo images of the cistern walls. These images are collected using two GoPro HD Hero2 cameras mounted to the front of the ROV, which are synchronized through the 3D Hero System waterproof housing and connector cable. The default domed lenses of the 3D Hero housing distort images taken underwater, so flat lenses were installed to minimize complexity during data processing. Each camera is set to capture one image per second. To collect stereo images the ROV is maneuvered around the edges of the cistern, pausing every few feet. The ROV is positioned roughly 0.25m to 0.50m from the wall. The images captured each one second interval are used to create disparity maps.
 %
 
  
@@ -139,7 +139,7 @@ A polygonal geometric model of the scanned data is constructed via marching cube
 \noindent Models constructed from evidence grids give a good representation of the gross shape of the underwater system. However, due to challenges in the sonar data acquisition process, these models omit fine geometric details which are important to archaeologists studying the site. See Figure~\ref{fig:wellNoFine} for an example of a well model constructed from sonar data alone. In contrast, Figure~\ref{fig:disparity} shows a photograph of the well wall from inside, where it is clear that fine level details such as rocks and crevices are poorly modeled by the sonar reconstruction.
 
 %The first step towards building fine details into a planar mesh is extracting those details from the original surface. We used stereo vision. 
-Fine details were captured in stereo image pairs, which were used to create disparity maps and record the color data of the surface.
+Fine details were captured in stereo images, which were used to create disparity maps and record the color data of the surface.
 %Due to hardware constraints, our stereo setup is only accurate for determining the distance of objects up to two meters away from the cameras.
 %This constraint was not an issue for our purposes, as the ROV was held roughly  from the wall when capturing images.
 %EN already said this above
@@ -221,7 +221,7 @@ Calibration is required to create a tuned mapping from a grayscale pixel value t
 \label{subsec:projectiveTexturing}
 \noindent To add fine details to the general mesh created from sonar data, $M_s$, we map the location of the disparity map data onto the global coordinates of the general mesh. 
 %Ideally, localization of the ROV's position could be computed and then used to correspond the coordinates of the general mesh and the displacements. 
-%With our current hardware, ROV localization is only computed for fixed scans and the ROV's position with respect to the map is unknown for each stereo pair capture. Future work includes using additional hardware such as a Smart Tether to assist in localization, but f
+%With our current hardware, ROV localization is only computed for fixed scans and the ROV's position with respect to the map is unknown for each stereo images capture. Future work includes using additional hardware such as a Smart Tether to assist in localization, but f
 For our preliminary results, we use projective texturing with a user's input to manually position and align disparity map and image projections. In general, the onboard camera captures an image of an organic feature in a cistern, and our implementation allows the user to position a projector which casts the image from the same relative position onto the general mesh for displacement. Projective texturing is utilized because of its ability to properly simulate the onboard camera as a point particle with the camera's view frustum modeled as six implicit plane equations (i.e. modeling the camera field of view). Our implementation allows the projection of multiple textures and disparities, building a more detailed colored model as more images and disparities are incorporated.
 
 The combination of projective texturing and stereoscopic imaging enables our system to selectively displace vertices according to the color of a texture-mapped disparity map. These vertices are displaced along the vector leading from their original 3D position in the mesh to the projector (or virtual camera). For projective texturing, we used graphics libraries, OpenGL, and OpenGL Shading Language (GLSL), with GLSL used to selectively alter rendered vertex position (vertex shader) and color (fragment shader) directly on the GPU.
