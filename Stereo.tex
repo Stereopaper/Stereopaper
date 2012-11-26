@@ -51,16 +51,16 @@ Harvey Mudd College, Claremont, CA 91711, USA}
 \maketitle              % typeset the title of the contribution
 
 \begin{abstract}
-The study of underwater structures, such as wells, cisterns, and water storage systems, can be of historical and scientific significance for archeologists. However, access to and study of such sites is often dangerous or infeasible for humans. Underwater micro-ROVs, such as the VideoRay Pro III GTO, can reach and navigate these locations safely while minimizing harm to the site. Prior work has successfully reconstructed geometric models of such underwater structures with the use of sonar measurements. Although effective, sonar has a limited resolution and omits many fine geometric details. In this paper, we present a preliminary solution towards the reconstruction of fine details of organic underwater shapes using stereo vision. These fine details can then be integrated into 3D models reconstructed from sonar to create a more visually accurate model. We present initial results, error measurements, and detailed methodology for future data acquisition.
+The study of underwater structures, such as wells, cisterns, and water storage systems, can be of historical and scientific significance for archeologists. However, access to and study of such sites is often dangerous or infeasible for humans. Underwater micro-ROVs, such as the VideoRay Pro III GTO, can reach and navigate these locations safely while minimizing harm to the site. Prior work has successfully reconstructed geometric models of such underwater structures with the use of sonar measurements. Although effective, sonar has a limited resolution and omits many fine geometric details. In this paper, we present a preliminary solution towards the reconstruction of fine details of organic underwater shapes using stereo vision. These fine details can be integrated into 3D models reconstructed from sonar to create a more visually accurate model. We present initial results, error measurements, and detailed methodology for future data acquisition.
 \keywords{stereoscopic vision, surface reconstruction, projective texture mapping, underwater mapping}
 \end{abstract}
 %
 \section{Introduction}
-\noindent Recent research in the field of mobile robotics has demonstrated the creation of 3D maps of settings otherwise inaccessible to humans, such as narrow tunnels and marine caves~\cite{ICEX11,McVicker}. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms, e.g.~\cite{Williams2000,harbor,Fairfield2006}, allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors. Such maps, or evidence grids, can then be treated as implicit volumes and then used to construct a geometric model of the scanned regions using marching cubes~\cite{Lorensen}. An example of a geometric model of a well used for water storage can be seen in Figure~\ref{fig:wellNoFine}. Unfortunately, equipment limitations, sensor noise, and probabilistic uncertainty in the data acquisition process cause these models to suffer from a loss of fine geometric details. This loss of detail is a problem for end-users, who wish to study these models or use them for educational purposes. In this paper we present a preliminary solution towards the reintroduction of fine details into surface reconstructions via the use of two cameras to capture stereo images of underwater surfaces.  The stereo images are processed to produce disparity maps which contain the fine geometric detail of the original surface which can be used to enhance the final geometric model.
+\noindent Recent research in the field of mobile robotics has demonstrated the creation of 3D maps of settings otherwise inaccessible to humans, such as narrow tunnels and marine caves~\cite{ICEX11,McVicker}. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms, e.g.~\cite{Williams2000,harbor,Fairfield2006}, allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors. Such maps, or evidence grids, can then be treated as implicit volumes and used to construct a geometric model of the scanned regions using marching cubes~\cite{Lorensen}. An example of a geometric model of a well used for water storage can be seen in Figure~\ref{fig:wellNoFine}. Unfortunately, equipment limitations, sensor noise, and probabilistic uncertainty in the data acquisition process cause these models to suffer from a loss of fine geometric details. This loss of detail is a problem for end-users, who wish to study the models or use them for educational purposes. In this paper we present a preliminary solution towards the reintroduction of fine details into surface reconstructions via the use of two cameras to capture stereo images (side by side left and right images) of underwater surfaces.  The stereo images are processed to produce disparity maps which contain the fine geometric detail of the original surface and can be used to enhance the final geometric model.
 
 This project is a part of a larger ongoing project, with the broad goal of mapping and modeling ancient water storage systems, i.e. cisterns, wells and water galleries located in most dwellings on the islands of Malta, Gozo, and Sicily with a micro Remotely Operated Vehicle (ROV)~\cite{White10,ICEX11,McVicker}.  
 %This paper documents the first use of stereo images for fine level geometry reconstruction. 
-The data used in this paper was gathered through a series of underwater deployments in which multiple sonar scans were gathered and fused into a rough map via a SLAM algorithm.  Stereo images were simultaneously captured and later processed to create disparity maps and then fine level geometry. 
+The data used in this paper was gathered through a series of underwater deployments in which multiple sonar scans were gathered and fused into a rough map via a SLAM algorithm.  Stereo images were simultaneously captured and later processed to create disparity maps and fine level geometry. 
 %In order to annex this fine geometry to the general models, both the color data and disparity information from the disparity maps are projected onto the geometric model generated from the sonar data via projective texturing. Finally, the geometry contained within the frustums of the projectors in the model is displaced in accordance with the projected disparity maps, preserving the fine details omitted in earlier stages of reconstruction. 
 
 
@@ -97,7 +97,7 @@ During deployment, the navigator repeatedly rests the ROV on the cistern floor a
 A more complete overview of the sonar data acquisition process can be found in~\cite{ClarkVast}. 
 %This collection of sonar scan planes is then used to build a general 3D model~\cite{ICEX11}.
 
-While the sonar scans are being collected, the ROV captures stereo image pairs of the cistern walls. These images are collected using two GoPro HD Hero2 cameras mounted to the front of the ROV, which are synchronized through the 3D Hero System waterproof housing and connector cable. The default domed lenses of the 3D Hero housing distort images taken underwater, so flat lenses were installed to minimize complexity during data processing. Etach camera is set to capture an image every second. To collect stereo pairs the ROV is maneuvered around the edges of the cistern, pausing every few feet. The ROV is positioned roughly 0.25m to 0.50m from the wall. The images captured at each location are used to create disparity maps.
+While the sonar scans are being collected, the ROV captures stereo image pairs of the cistern walls. These images are collected using two GoPro HD Hero2 cameras mounted to the front of the ROV, which are synchronized through the 3D Hero System waterproof housing and connector cable. The default domed lenses of the 3D Hero housing distort images taken underwater, so flat lenses were installed to minimize complexity during data processing. Each camera is set to capture one image per second. To collect stereo pairs the ROV is maneuvered around the edges of the cistern, pausing every few feet. The ROV is positioned roughly 0.25m to 0.50m from the wall. The images captured each one second interval are used to create disparity maps.
 %
 
  
@@ -109,7 +109,7 @@ While the sonar scans are being collected, the ROV captures stereo image pairs o
 		\subfigure[Well top view]{\label{welltop}\epsfig{file = pics/cisternTop.png, width = 3.5cm}}
 		\quad %space between images
 		\subfigure[Well side view]{\label{wellside}\epsfig{file = pics/cisternWall.png, width = 3.5cm}}
-		\caption{On the left a photograph of the hardware setup, including a VideoRay Pro III GTO micro ROV, two vertically aligned GoPro Hero2 cameras, and a Tritech SeaSprite sonar sensor.  Middle and right show sonar generated well geometry.}
+		\caption{On the left a photograph of the hardware setup, including a VideoRay Pro III GTO micro ROV, two vertically aligned GoPro Hero2 cameras, and a Tritech SeaSprite sonar sensor.  Middle and right display sonar generated well geometry.}
 		\label{fig:wellNoFine}
 		  \label{fig:ROV}
 \end{figure}
@@ -117,10 +117,10 @@ While the sonar scans are being collected, the ROV captures stereo image pairs o
  %
  \vspace{-25pt}
 \paragraph{\textbf{Hardware Calibration:}}
-To facilitate the virtual reconstruction of the world it was necessary to calibrate the GoPro cameras.
-Both the aspect ratio and the Vertical Field of View (VFOV) need to be calculated to accurately re-project the captured images and disparity maps in the virtual reconstruction.
-The cameras were calibrated using the following equations and stereo images of a checkered plane submerged in a pool.  These two values used to specify the behavior of projectors, discussed in Section~\ref{subsec:projectiveTexturing}.:
+To facilitate the virtual reconstruction of the world it is necessary to calibrate the algorithm with respect to the GoPro cameras.
+Both the aspect ratio and the Vertical Field of View (VFOV) must be calculated to accurately re-project the captured images and disparity maps in the virtual reconstruction. These two values are used to specify the behavior of projectors, discussed in Section~\ref{subsec:projectiveTexturing}. The VFOV and aspect ratio were calculated using the following equations and stereo images of a checkered plane submerged in a pool. 
 \begin{align}
+\label{eq:VFOV}
 \text{aspect ratio} &= \frac{\text{plane width}}{\text{plane height}} \\
 \text{VFOV} &= 2\tan^{-1}\left({\frac{\text{plane height}}{2 \times \text{depth}}}\right)
 \end{align}
@@ -129,28 +129,28 @@ The cameras were calibrated using the following equations and stereo images of a
 \vspace{-10pt}
 \paragraph{\textbf{Gross sonar model reconstruction:}}
 \label{sec:reconstruction}
-\noindent Prior work is focused on reconstructing general geometric models from evidence maps representing Mediterranean water storage systems (cisterns, wells and water galleries) (See ~\cite{ICEX11,McVicker} for details). As a pre-process to the algorithms presented here for fine level geometry modeling, the cisterns are mapped using sonar data, which is fused into an evidence  grid
-%two dimensional grid of cells with a likelihood $p_{i,j} \in [0,1]$ of being occupied~\cite{Thrun2005,White10}. This single 2D layer is extruded into a 3D evidence grid and treated as volume data. A 
-and a polygonal geometric model of the scanned data is constructed via marching cubes, where any cell with liklihood $p_{i,j}$ greater than a threshold value is considered an occupied cell and associated with a wall in the model.
+\noindent Prior work is focused on reconstructing general geometric models from evidence grids representing Mediterranean water storage systems (cisterns, wells, and water galleries) (See~\cite{ICEX11,McVicker} for details). As a pre-process to the algorithms presented here for fine level geometry modeling, the cisterns are mapped using sonar data, which is fused into an evidence grid.
+%two dimensional grid of cells with a likelihood $p_{i,j} \in [0,1]$ of being occupied~\cite{Thrun2005,White10}. This single 2D layer is extruded into a 3D evidence grid and treated as volume data. 
+A polygonal geometric model of the scanned data is constructed via marching cubes, where any cell with a calculated occupancy likelihood greater than a threshold value is considered an occupied cell and associated with a wall in the model.
 %We refer the reader to~\cite{ICEX11,McVicker} for more details.
 
 \section{Constructing a more accurate geometric model}
 \label{sec:detail}
-\noindent Models constructed from evidence grids give a good representation of the gross shape of the underwater system. However, due to challenges in the sonar data acquisition process, these models omit fine geometric details which are important to archaeologists studying the site. See Figure~\ref{fig:wellNoFine} for an example of a well model constructed from sonar data alone. In contrast, Figure~\ref{fig:disparity} shows a photograph of the well wall from inside, where it is clear that fine level details such as rocks and fine structures are poorly modeled by the sonar reconstruction.
+\noindent Models constructed from evidence grids give a good representation of the gross shape of the underwater system. However, due to challenges in the sonar data acquisition process, these models omit fine geometric details which are important to archaeologists studying the site. See Figure~\ref{fig:wellNoFine} for an example of a well model constructed from sonar data alone. In contrast, Figure~\ref{fig:disparity} shows a photograph of the well wall from inside, where it is clear that fine level details such as rocks and crevices are poorly modeled by the sonar reconstruction.
 
 %The first step towards building fine details into a planar mesh is extracting those details from the original surface. We used stereo vision. 
-Fine details were captured in stereo image pairs (left and right images of the same surface), which were used to create disparity maps and record the color data of the surface.
+Fine details were captured in stereo image pairs, which were used to create disparity maps and record the color data of the surface.
 %Due to hardware constraints, our stereo setup is only accurate for determining the distance of objects up to two meters away from the cameras.
 %This constraint was not an issue for our purposes, as the ROV was held roughly  from the wall when capturing images.
 %EN already said this above
-These fine details were integrated back into the existing geometric model by deforming the sonar mesh in accordance with the data stored in the disparity maps, and texturing one of the original images back onto the surface.
+These fine details can be integrated back into the existing geometric model by deforming the sonar mesh in accordance with the data stored in the disparity maps, and texturing one of the original images back onto the surface.
 
 
 There are two challenges at this stage in the process. The first is accurately localizing the ROV with respect to the general model to correctly project the disparity maps onto the model surface. The second is mapping captured depth information onto the existing model.
 We do not include a computational solution to the first challenge in the current implementation. 
 Instead, the preliminary results presented here are from a cylindrical well with rotational symmetry.
 
-The second challenge is resolved by using the pixel intensity data stored in the grayscale disparity map to deform the associated vertices, with light patches pulling vertices away from the existing wall, and dark patches pushing those vertices in.
+The second challenge is resolved by using the pixel intensity data stored in the grayscale disparity map to deform the associated vertices, with light patches pulling vertices from the model wall towards a simulated projector, and dark patches pushing vertices away.
 Color is projected onto the deformed model from one of the original images. Repeating this procedure for each section of wall produces a finely detailed 3D model of the cistern.
 %
 
@@ -158,11 +158,11 @@ Color is projected onto the deformed model from one of the original images. Repe
 \vspace{-10pt}
 \subsection{Disparity Map Generation}
 \label{disparityMapGeneration}
-\noindent A number of currently existing stereo vision algorithms compare the features of two images to determine the distance between the feature and the camera. However, few of these algorithms are robust enough to handle compressed underwater images of poorly lit rock walls with shallow features. Rocks and bricks, two common features found on cistern walls, have highly repetitive patterns and colors, making feature recognition difficult. In addition, the images captured within the cisterns contain poor lighting and shallow depressions (in comparison to images with large color or depth contrast). After exploring several options, the stereo mapping algorithm described by Zitnick and Kanade in~\cite{stereo:zitKan} was used.
+\noindent A number of currently existing stereo vision algorithms compare the features of two images to determine the distance between the feature and the camera. However, few of these algorithms are robust enough to handle compressed underwater images of poorly lit rock walls with shallow features. Rocks and bricks, two common features found on cistern walls, have highly repetitive patterns and colors, making feature recognition difficult. In addition, the images captured within the cisterns contain poor lighting and shallow depressions (in comparison to images with high color or depth contrast). After exploring several options, the stereo mapping algorithm described by Zitnick and Kanade in~\cite{stereo:zitKan} was used.
 
 Most stereo-matching algorithms, including~\cite{stereo:zitKan}, rely on unique features between images to aid in pixel mapping. Specifically, the algorithm proposed in~\cite{stereo:zitKan} uses a scanning, sliding comparison window to build an initial disparity map. To mitigate the dull landscape, we choose a large initial comparison window with a radius of five pixels. A large window gives a more reliable matching between rock faces because it encompasses more features per pixel. The resulting smoothing effect to the disparity map is acceptable in the given environment.
 
-Lighting was an obstacle to creating good disparity maps. The explored water systems have only a little natural light entering through narrow tunnels, so the imaged surfaces were lit almost exclusively by the ROV's onboard lights.  For which, the ROV had to be within a meter of the walls in order to illuminate features properly. Each camera computes its own exposure time based on the amount of light it received. Some well illuminated features are closer to one camera than the other, producing discrepancies in exposure times between left and right images, (see Figure~\ref{fig:disparity} for an example of this contrast in lighting). We attempted to use the work in \cite{stereo:nalGast} to fix this problem by shifting the image into the HSL color space. This method failed in the presence of water due to a lack of variance in color in the images.
+Lighting was an obstacle to creating good disparity maps. The explored water systems have only a small amount of natural light entering through narrow tunnels, so the imaged surfaces were lit almost exclusively by the ROV's onboard lights. Each camera computes its own exposure time based on the amount of light it received. Because For the ROV was positioned within a meter of the walls in order to illuminate features properly, some well illuminated features are closer to one camera than the other, producing discrepancies in exposure times between left and right images, (see Figure~\ref{fig:disparity} for an example of this contrast in lighting). We attempted to use the work in \cite{stereo:nalGast} to fix this problem by shifting the image into the HSL color space. This method failed in the presence of water due to a lack of variance in color in the images.
 
 Another underwater challenge is the presence of dirt particles in the images since the ROV's positioning thrusters often agitate sediment in the water systems. However, the particles are usually small enough to be detected as occlusions and removed from the final disparity map.
 \begin{figure}[!h]
@@ -178,13 +178,13 @@ Another underwater challenge is the presence of dirt particles in the images sin
 %
 \vspace{-25pt}
 \paragraph{\textbf{Image Correction:}}
-Regrettably, the GoPro cameras used were limited to recording images in the lossy .jpeg format only, while most stereo mapping algorithms require pixel level accuracy. To solve this issue we smoothed and shrunk the high resolution .jpeg images taken by the GoPros to produce smaller left and right images that were comparable at the pixel level. 
+Regrettably, the GoPro cameras used are limited to recording images in the lossy .jpeg format, while most stereo mapping algorithms require pixel level accuracy. To solve this issue the high resolution .jpeg images are smoothed and shrunken to produce smaller left and right images that were comparable at the pixel level.
 %For smoothing, a simple Gaussian was ineffective because it blurred the edges of the rocks or bricks, removing valuable features from an already feature-scarce image. Instead, a
-An image smoothing tool, Photoshop's ``surface smooth'', was used, which preserved edges while still blurring similar color regions. Next a shrinking step was performed on the image to further reduce artifacts (e.g. from 3200x2400 to 512x384 pixels).
-The final size was large enough to preserve the details in the image, while still providing a significant reduction to artifacts.
+An image smoothing tool, Photoshop's ``surface smooth'', is used, which preserved edges while still blurring similarly colored regions. Next, a shrinking step is performed on the image to further reduce artifacts (e.g. from 3200x2400 to 512x384 pixels).
+The final size is large enough to preserve the details in the image, while still providing a significant reduction to artifacts.
 %Through experimentation, we discovered that the best image detail to process time ratio was obtained by reducing the images by one sixth.   
 %Shrinking was performed after smoothing to preserve the maximum amount of detail in the image.
-We explored accounting for illumination fade-off, or vignetting, across our image sets, similar to the work in~\cite{stereo:Roberson}, however, due to our close proximity to walls and narrow field of view, effect was minimal.
+We explored accounting for illumination fade-off, or vignetting, across our image sets, similar to the work in~\cite{stereo:Roberson}. However, due to the close proximity to walls and narrow field of view, the effect was minimal.
 
 %\paragraph{Disparity Mapping}
 
@@ -214,19 +214,19 @@ We explored accounting for illumination fade-off, or vignetting, across our imag
 
 %Using these methods, the computed disparity maps are then used to provide depth values to displace the general geometry created from the sonar data. Figure~\ref{fig:disparity} illustrates a disparity map generated using our implementation.
 \vspace{-8pt}
-\paragraph{\textbf{Calibration:}}
-Calibration is required to create a tuned mapping from a grayscale pixel value to the appropriate vertex offset (distance from the camera to the object) in the virtual reconstruction. To accomplish this, stereo images were taken at right angles to a patterned surface at a number of measured distances. The stereo images were disparity mapped, and the average disparities at the center of each image, as well as the measured distances from camera to object, were used to determine an exponential relationship between disparity value and physical depth, $D(C_r)$, which is used later in Section~\ref{subsec:displacements}.
+\paragraph{\textbf{Software Calibration:}}
+Calibration is required to create a tuned mapping from a grayscale pixel value to the appropriate vertex offset (distance from the camera to the object) in the virtual reconstruction. To accomplish this, stereo images were of a patterned surface were captured at a number of measured distances. The stereo images were disparity mapped, and the average disparities at the center of each image, as well as the measured distances from camera to object, were used to determine an exponential relationship between disparity value and physical depth, $D(C_r)$, which is used later in Section~\ref{subsec:displacements}.
 
 \subsection{Projective Texturing}
 \label{subsec:projectiveTexturing}
-\noindent In order to add fine details to the general mesh created from sonar data, $M_s$, we map the location of the disparity map data onto the global coordinates of the general mesh. 
+\noindent To add fine details to the general mesh created from sonar data, $M_s$, we map the location of the disparity map data onto the global coordinates of the general mesh. 
 %Ideally, localization of the ROV's position could be computed and then used to correspond the coordinates of the general mesh and the displacements. 
 %With our current hardware, ROV localization is only computed for fixed scans and the ROV's position with respect to the map is unknown for each stereo pair capture. Future work includes using additional hardware such as a Smart Tether to assist in localization, but f
-For our preliminary results, we use projective texturing with a user's input to manually align disparity map and image projections. In general, the onboard camera captures an image of an organic feature in a cistern, and our implementation allows the user to position a projector which casts the image from the same relative position onto the general mesh for displacement. Projective texturing is utilized because of its ability to properly simulate the onboard camera as a point particle with the camera's view frustum modeled as six implicit plane equations (i.e. modeling the camera field of view). Our implementation allows the projection of multiple textures and disparities, building a more detailed colored model as more images and disparities are incorporated.
+For our preliminary results, we use projective texturing with a user's input to manually position and align disparity map and image projections. In general, the onboard camera captures an image of an organic feature in a cistern, and our implementation allows the user to position a projector which casts the image from the same relative position onto the general mesh for displacement. Projective texturing is utilized because of its ability to properly simulate the onboard camera as a point particle with the camera's view frustum modeled as six implicit plane equations (i.e. modeling the camera field of view). Our implementation allows the projection of multiple textures and disparities, building a more detailed colored model as more images and disparities are incorporated.
 
 The combination of projective texturing and stereoscopic imaging enables our system to selectively displace vertices according to the color of a texture-mapped disparity map. These vertices are displaced along the vector leading from their original 3D position in the mesh to the projector (or virtual camera). For projective texturing, we used graphics libraries, OpenGL, and OpenGL Shading Language (GLSL), with GLSL used to selectively alter rendered vertex position (vertex shader) and color (fragment shader) directly on the GPU.
 
-A projector is simulated by establishing plane equations for a view frustum based on the position and orientation of the ROV's onboard camera when the projected images were captured in a cistern. We define $J = \{j_{1},\dots,j_{N}\}$ to be the set of projectors casting textures onto the gross surface reconstruction. Each projector, $j_{n} = \{j_{n}^{pos}, j_{n}^{look}\}$, is uniquely defined by its position in 3D space, and a look vector orthonormal to the projector's viewport (Figure~\ref{fig:frustum}). All projectors have a pre-calibrated VFOV mimicking the compound VFOV produced by the GoPro camera and waterproof housing lenses, determined in Section~\ref{sec:data}. The ROV is not equipped with roll thrusters, allowing us to ignore the possibility of a tilted camera frustum (i.e. the projector's right facing vector will always lie in the horizontal plane). Implicit plane equations modeling the projector view frustums in the form $Ax + By + Cz + D = 0$ are resolved using the clip space approach.
+A projector is simulated by establishing plane equations for a view frustum based on the position and orientation of the ROV's onboard camera when the projected images were captured in a cistern. We define $J = \{j_{1},\dots,j_{N}\}$ to be the set of projectors casting textures onto the gross surface reconstruction. Each projector, $j_{n} = \{j_{n}^{pos}, j_{n}^{look}\}$, is uniquely defined by its position in 3D space, and a look vector orthonormal to the projector's viewport (Figure~\ref{fig:frustum}). All projectors have a pre-calibrated VFOV mimicking the compound VFOV produced by the GoPro camera and waterproof housing lenses, determined by Equation~\eqref{eq:VFOV}. The ROV is not equipped with roll thrusters, allowing us to ignore the possibility of a tilted camera frustum (i.e. the projector's right facing vector will always lie in the horizontal plane). Implicit plane equations modeling the projector view frustums in the form $Ax + By + Cz + D = 0$ are resolved using the clip space approach.
 %, where $\langle A, B, C\rangle$ is the plane's normal vector and  $(x, y, z)$ is a point on the plane. 
 where, plane equations are computed in homogenous space using the composite $4x4$ modelview projection matrix of the projector, $mvp_n$. 
 %See~\cite{vfc} for more information on the projective texturing implementation.
@@ -241,7 +241,7 @@ Each vertex, $p_{m}$, is defined by its position in 3D space. The full set of ve
 		\quad %space between images
 		\subfigure[Color Projection]{\label{fig:result1}\epsfig{file = pics/finalNoDisplacementNoDisparity2.png, width = 3.5cm}}
 		}
-   \caption{The figure on the left shows the vertices intersected by the frustum of the projector are added to $P^*$.  On the right is a resulting projection of only color data }
+   \caption{The left figure shows the vertices intersected by the frustum of the projector, which are added to $P^*$. On the right is a resulting projection of color data only. }
  \end{figure}
 %
 \vspace{-25pt}
@@ -250,11 +250,11 @@ Each vertex, $p_{m}$, is defined by its position in 3D space. The full set of ve
 
 \subsection{Per-Vertex Displacements}
 \label{subsec:displacements}
-\noindent A GLSL vertex and fragment shader are used to displace and texture vertices. The vertex shader receives all of the vertices in the mesh, $P$, with vertices lying in the frustum of one or more projectors, $P^*$, marked. The vertex shader also receives a modelview projection matrix ($mvp_n$) for the camera and each projector, projector positions, and texture primitives for the disparity maps from the CPU. The vertex shader displaces vertices one at a time in accordance with the color of the disparity map with respect to the texture-mapped coordinates. Vertices belonging to $P^{*}$ have their position updated. Vertices lying in the frustum of two or more projectors have their displacement vectors blended.
+\noindent A GLSL vertex and fragment shader are used to displace and texture vertices. The vertex shader receives all of the vertices in the mesh ($P$) with vertices lying in the frustum of one or more projectors ($P^*$) marked. The vertex shader also receives a modelview projection matrix ($mvp_n$) for the camera and each projector, projector positions, and texture primitives for the disparity maps from the CPU. The vertex shader displaces vertices one at a time in accordance with the color of the disparity map with respect to the texture-mapped coordinates. Vertices belonging to $P^{*}$ have their position updated. Vertices lying in the frustum of two or more projectors have their displacement vectors blended.
 
 Since the vertex shader is run individually per vertex, it does not have easy access to neighboring vertices. Thus in order to correctly compute normal vectors of the displaced mesh for diffuse shading, during the first render only, the updated position of each vertex must be sent back to the CPU where normals are recomputed for the displaced mesh. Updated normals as well as the displaced mesh are then sent to a fragment shader. 
 
-The fragment shader receives $P$ and $P^{*}$, as well as the camera image texture primitives and the updated normals. The fragment shader maps the camera images onto the vertices in the frustum of each projector. Again, vertices lying in the frustum of two or more projectors have their colors blended. Once an RGB color value has been computed for the vertex, diffuse shading is added to the model using the updated normals.
+The fragment shader receives $P$ and $P^{*}$, as well as the camera image texture primitives and the updated normals. The fragment shader maps the color data from the camera images onto the vertices in the frustum of each projector. Again, vertices lying in the frustum of two or more projectors have their colors blended. Once an RGB color value has been computed for the vertex, diffuse shading is added to the model using the updated normals.
 
 \paragraph{\textbf{Vertex Displacement:}}
 Vertices belonging to $P^{*}$ are displaced along the vector $\vec{b} = j_{n} - p_{m}$ a distance based on the RGB color value, $\vec{C} = \langle C_{r}, C_{b}, C_{g} \rangle$, of the disparity map at the corresponding texture-mapped coordinates, $t_m$. The texture-mapped coordinates of $p_m$, and thus, $\vec{C}$ can be calculated per-vertex using the modelview projection matrix of the projector by
@@ -262,7 +262,7 @@ Vertices belonging to $P^{*}$ are displaced along the vector $\vec{b} = j_{n} - 
 t_{m} &= p_{m} mvp_{n} \\
 \vec{C} &= \langle t_{m\_red}, t_{m\_blue}, t_{m\_green} \rangle
 \end{align}
-The disparity map is greyscaled such that the disparity value is stored within each of the three members of $\vec{C}$, so only $C_r$ is required for distance computations. The disparity map contains disparity information rather than distance to the wall, so $C_r$ is passed into an exponential equation obtained during calibration, $D(C_r)$, to resolve the true distance to the wall. The world space coordinates of $M_s$ are computed such that one unit in world space is equal to one meter in the cistern, so the value returned from passing $C_r \in [0, 1]$ into the distance function is the true wall distance in meters. With this in mind, vertex displacement proceeds as follows:
+The disparity map is grayscaled in Section~\ref{disparityMapGeneration} such that the disparity value is stored within each of the three members of $\vec{C}$, so only $C_r$ is required for displacement computations. The disparity map contains disparity information rather than distance to the wall, so $C_r$ is passed into an exponential equation obtained during calibration in Section~\ref{disparityMapGeneration}, $D(C_r)$, to resolve the true distance to the wall. The world space coordinates of $M_s$ are generated such that one unit in world space is equal to one meter in the cistern, so the value returned from passing $C_r \in [0, 1]$ into the distance function is the true wall distance in meters. With this in mind, vertex displacement proceeds as follows:
 \begin{equation}
 p_{m}' = \left \{ 
 \begin{array}{ll}
@@ -273,7 +273,7 @@ p_{m} & \text{otherwise}
 \end{equation}
 where $p_{m}'$ is the displaced vertex position. For the results in this paper, we use the calibrated distance function
 \begin{equation}
-D(C_r) = 0.2179\ln{\left(\frac{C_r}{1.547}\right)}
+D(C_r) = -0.2179\ln{\left(\frac{C_r}{1.547}\right)}
 \label{eq:calibration}
 \end{equation}
 % \paragraph{\textbf{Projection Blending:}}
@@ -311,9 +311,9 @@ D(C_r) = 0.2179\ln{\left(\frac{C_r}{1.547}\right)}
 \section{Results}
 \label{sec:results}
 
-\noindent We demonstrate our complete cistern mapping system from a deployment in a rock-walled well in a courtyard in the church, Convento dei Cappuccini, in Council of Carini (near Palermo, Sicily).
+\noindent We demonstrate our complete cistern mapping system from a deployment in a rock-walled well in a courtyard an the church, Convento dei Cappuccini, in Council of Carini (near Palermo, Sicily).
 A general the 3D model shown in Figure~\ref{fig:wellNoFine} was constructed using sonar data from a deployment. The general model is a good representation of the gross shape of the well, but lacks the geometric details of the rocky walls.
-Stereo pairs of the inside of the well were captured during deployment for use in generating disparity maps.
+Stereo images of the inside of the well were captured during deployment for use in generating disparity maps.
 The disparity maps combined with the surface images were mapped into the well geometry to produce the detailed mesh in Figure~\ref{fig:resultFull}.
 
 \vspace{-10pt}
@@ -340,7 +340,7 @@ The disparity maps combined with the surface images were mapped into the well ge
 
 %\vspace{-10pt}
 
-The Cal Poly pool and an angled wooden block were used to validate the accuracy of the displacement algorithm by comparing the measured physical distance from camera to object to $D(C_r)$ determined by the color of a generated disparity map. The block was placed such that it extended from the pool wall at a 45$^{\circ}$ angle, and eight measurements could be taken along its length. Two stereo pairs were captured to gather a total of sixteen data points. The distance from the camera to the pool wall was measured at 0.534$\pm$0.025m for the first disparity map, and 0.520$\pm$0.025m for the second. Physical distance was calculated from the camera to wall distance and measured distances between tick marks along the wooden block. The error measurements report that the calibration function $D(C_R)$ from Eq.~\eqref{eq:calibration} can be used to generate displacements accurate to $\pm$0.0325m for camera to object distances between 0.254 and 0.565 meters.
+The Cal Poly pool and an angled wooden block were used to validate the accuracy of the displacement algorithm by comparing the measured physical distance from camera to object to $D(C_r)$ which was determined by the depth data stored in a generated disparity map. The block was placed such that it extended from the pool wall at a 45$^{\circ}$ angle, and eight measurements could be taken along its length. Two stereo image pairs were captured to gather a total of sixteen data points. The distance from the camera to the pool wall was measured at 0.534$\pm$0.025m for the first disparity map, and 0.520$\pm$0.025m for the second. Physical distance was calculated from the camera to wall distance and measured distances between tick marks along the wooden block. The error measurements report that the calibration function $D(C_r)$ from Equation~\eqref{eq:calibration} can be used to generate displacements accurate to $\pm$0.0325m for camera to object distances between 0.254 and 0.565 meters.
 \vspace{-8pt}
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
