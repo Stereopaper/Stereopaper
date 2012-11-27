@@ -84,7 +84,7 @@ This paper outlines our data acquisition and displacement map computation techni
 For this project the most relevant  research in underwater robot Simultaneous Localization and Mapping (SLAM) is found in~\cite{Williams2000,harbor,Fairfield2005,Fairfield2006}.
 
 In addition, this work relies on well known algorithms from computer graphics, such as surface extraction from volume data using marching cubes~\cite{Lorensen}, projective texturing and texture mapping, and the use of vertex shaders to displace vertices on the GPU. Work in~\cite{Fairfield:2010} likewise uses marching cubes to create a geometric model of underwater structures, but uses a far more complex ROV with extensive sensors.
-Stereo vision based SLAM algorithms have been used to generate 3D maps of underwater settings~\cite{stereo:Negahdaripour,stereo:Roberson,stereo:Aqua}; however, we are using the stereo images to enhance models created from sonar data.  Finally, this research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:scharsteinSzeliski}.
+Stereo vision based SLAM algorithms have been used to generate 3D maps of underwater settings~\cite{Mahon:2011,stereo:Roberson,stereo:Aqua}; however, we are using the stereo images to enhance models created from sonar data.  Finally, this research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:scharsteinSzeliski}.
 In particular, this work uses the method of~\cite{stereo:zitKan} to generate disparity maps from underwater stereo image pairs.
 %The work of~\cite{stereo:nalGast} was also explored to compensate for lighting differences, but was found to be ineffective for our setup. 
 \vspace{-11pt}
@@ -480,6 +480,11 @@ Scharstein, Daniel and Szeliski, Richard (1998).
 Negahdaripour, S. and Madjidi, H. (2003)
 \newblock Stereovision Imaging on Submersible Platforms for 3-D Mapping of Benthic Habitats and Sea-Floor Structures
 \newblock In {\em IEEE Journal of Oceanic Engineering}.
+
+\bibitem{Mahon:2011}
+Mahon, Pizarro, Johnson-Robertson, Friedman, Williams, Henderson. (2011).
+\newblock Reconstructing Pavlopetri: Mapping the World's Oldest Submerged Town using Stereo-vision.
+\newblock In {\em International Conference on Robotics and Automation}.
 
 \bibitem{stereo:Aqua}
 Georgiades, C., German, A., Hogue, A., Liu, H., Prahacs, C., Ripsman, A., Sim, R., Torres, L.-A., Zhang, P., Buehler, M., Dudek, G., Jenkin, M., Milios, E. (2004)
