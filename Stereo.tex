@@ -84,7 +84,7 @@ This paper outlines our data acquisition and displacement map computation techni
 For this project the most relevant  research in underwater robot Simultaneous Localization and Mapping (SLAM) is found in~\cite{Williams2000,harbor,Fairfield2005,Fairfield2006}.
 
 In addition, this work relies on well known algorithms from computer graphics, such as surface extraction from volume data using marching cubes~\cite{Lorensen}, projective texturing and texture mapping, and the use of vertex shaders to displace vertices on the GPU. Work in~\cite{Fairfield:2010} likewise uses marching cubes to create a geometric model of underwater structures, but uses a far more complex ROV with extensive sensors.
-Stereo vision based SLAM algorithms have been used to generate 3D maps of underwater settings~\cite{Mahon:2011,stereo:Roberson,stereo:Aqua}; however, we are using the stereo images to enhance models created from sonar data.  Finally, this research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:scharsteinSzeliski}.
+Stereo vision based SLAM algorithms have been used to generate 3D maps of underwater settings~\cite{stereo:Negahdaripour,stereo:Roberson,stereo:Aqua}; however, we are using the stereo images to enhance models created from sonar data.  Finally, this research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:scharsteinSzeliski}.
 In particular, this work uses the method of~\cite{stereo:zitKan} to generate disparity maps from underwater stereo image pairs.
 %The work of~\cite{stereo:nalGast} was also explored to compensate for lighting differences, but was found to be ineffective for our setup. 
 \vspace{-11pt}
@@ -340,7 +340,9 @@ The disparity maps combined with the surface images were mapped into the well ge
 
 %\vspace{-10pt}
 
-A pool and an angled wooden block were used to validate the accuracy of the displacement algorithm by comparing the measured physical distance from camera to object to $D(C_r)$ which was determined by the depth data stored in a generated disparity map. The block was placed against the pool wall to protrude at a 45$^{\circ}$ angle, and eight measurements could be taken along its length. Two stereo image pairs were captured to gather a total of sixteen data points. The distance from the camera to the pool wall was measured at 0.534$\pm$0.025m for the first disparity map, and 0.520$\pm$0.025m for the second. Physical distance was calculated from the camera to wall distance and measured distances between tick marks along the wooden block. The error measurements report that the calibration function $D(C_r)$ from Equation~\eqref{eq:calibration} can be used to generate displacements accurate to $\pm$0.0325m for camera to object distances between 0.254 and 0.565 meters.
+A pool and an angled wooden block were used to validate the accuracy of the displacement algorithm by comparing the measured physical distance from camera to object to $D(C_r)$ which was determined by the depth data stored in a generated disparity map. The block was placed against the pool wall to protrude at a 45$^{\circ}$ angle, and eight measurements could be taken along its length. Two stereo images were captured to gather a total of sixteen data points. The distance from the camera to the pool wall was measured at 0.534$\pm$0.025m for the first disparity map, and 0.520$\pm$0.025m for the second. Physical distance was calculated from the camera to wall distance and measured distances between tick marks along the wooden block. The error measurements report that the calibration function $D(C_r)$ from Equation~\eqref{eq:calibration} can be used to generate displacements accurate to $\pm$0.0325m for camera to object distances between 0.254 and 0.565 meters.  
+The majority of our stereo images were captured within the 0.5 to 0.25 meter range.  Thus this work is competative with that done in ~\cite{stereo:Negahdaripour} which had a maximum depth range error of 20\% over a larger range of 0.5m to 6.5m.  
+
 \vspace{-8pt}
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
@@ -464,11 +466,6 @@ Zitnick, L. and Kanade, T. (1999).
 \newblock A cooperative algorithm for stereo matching and occlusion detection.
   \newblock In {\em ieee PAMI}
 
-\bibitem{Mahon:2011}
-Mahon, Pizarro, Johnson-Robertson, Friedman, Williams, Henderson. (2011).
-\newblock Reconstructing Pavlopetri: Mapping the World's Oldest Submerged Town using Stereo-vision.
-\newblock In {\em International Conference on Robotics and Automation}.
-
 \bibitem{stereo:Roberson}
 Johnson-Roberson, Matthew and Pizarro, Oscar and Williams, Stefan B. and Mahon, Ian (2010).
 \newblock Generation and visualization of large-scale three-dimensional reconstructions from underwater robotic surveys
@@ -478,6 +475,11 @@ Johnson-Roberson, Matthew and Pizarro, Oscar and Williams, Stefan B. and Mahon, 
 Scharstein, Daniel and Szeliski, Richard (1998).
 \newblock Stereo Matching with Nonlinear Diffusion
 \newblock In {\em International Journal of Computer Vision}.
+
+\bibitem{stereo:Negahdaripour}
+Negahdaripour, S. and Madjidi, H. (2003)
+\newblock Stereovision Imaging on Submersible Platforms for 3-D Mapping of Benthic Habitats and Sea-Floor Structures
+\newblock In {\em IEEE Journal of Oceanic Engineering}.
 
 \bibitem{stereo:Aqua}
 Georgiades, C., German, A., Hogue, A., Liu, H., Prahacs, C., Ripsman, A., Sim, R., Torres, L.-A., Zhang, P., Buehler, M., Dudek, G., Jenkin, M., Milios, E. (2004)
