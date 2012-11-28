@@ -56,7 +56,7 @@ The study of underwater structures, such as wells, cisterns, and water storage s
 \end{abstract}
 %
 \section{Introduction}
-\noindent Recent research in the field of mobile robotics has demonstrated the creation of 3D maps of settings otherwise inaccessible to humans, such as narrow tunnels and marine caves~\cite{ICEX11,McVicker}. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms, e.g.~\cite{Williams2000,harbor,Fairfield2006}, allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors. Such maps, or evidence grids, can then be treated as implicit volumes and used to construct a geometric model of the scanned regions using marching cubes~\cite{Lorensen}. An example of a geometric model of a well used for water storage can be seen in Figure~\ref{fig:wellNoFine}. Unfortunately, equipment limitations, sensor noise, and probabilistic uncertainty in the data acquisition process cause these models to suffer from a loss of fine geometric details. This loss of detail is a problem for end-users, who wish to study the models or use them for educational purposes. In this paper we present a preliminary solution towards the reintroduction of fine details into surface reconstructions via the use of two cameras to capture stereo images (side by side left and right images) of underwater surfaces.  The stereo images are processed to produce disparity maps which contain the fine geometric detail of the original surface and can be used to enhance the final geometric model.
+\noindent Recent research in the field of mobile robotics has demonstrated the creation of 3D maps of settings otherwise inaccessible to humans, such as narrow tunnels and marine caves~\cite{ICEX11,McVicker}. Progress made in Simultaneous Localization and Mapping (SLAM) algorithms, e.g.~\cite{Williams2000,harbor,Fairfield2006}, allow robots to localize themselves and create these maps using input from sonar, infrared, and other scanning sensors. Such maps, or evidence grids, can then be treated as implicit volumes and used to construct a geometric model of the scanned regions using marching cubes~\cite{Lorensen}. An example of a geometric model of a well used for water storage can be seen in Figure~\ref{fig:wellNoFine}. Unfortunately, equipment limitations, sensor noise, and probabilistic uncertainty in the data acquisition process cause these models to suffer from a loss of fine geometric details. This loss of detail is a problem for end-users, who wish to study the models or use them for educational purposes. In this paper we present a preliminary solution towards the reintroduction of fine details into surface reconstructions via the use of two cameras to capture stereo images (side by side left and right images) of underwater surfaces. The stereo images are processed to produce disparity maps which contain the fine geometric detail of the original surface and can be used to enhance the sonar generated model by providing a higher resolution.
 
 This project is a part of a larger ongoing project, with the broad goal of mapping and modeling ancient water storage systems, i.e. cisterns, wells and water galleries located in most dwellings on the islands of Malta, Gozo, and Sicily with a micro Remotely Operated Vehicle (ROV)~\cite{White10,ICEX11,McVicker}.  
 %This paper documents the first use of stereo images for fine level geometry reconstruction. 
@@ -83,7 +83,7 @@ This paper outlines our data acquisition and displacement map computation techni
 \noindent This project relies on data acquired from algorithms for mapping with underwater robots~\cite{opizarro-2009a,Fairfield2006,Clark2008b}. For a good survey of the core techniques capable of fusing data from multiple sensors, see~\cite{Thrun2005}.
 For this project the most relevant  research in underwater robot Simultaneous Localization and Mapping (SLAM) is found in~\cite{Williams2000,harbor,Fairfield2005,Fairfield2006}.
 
-In addition, this work relies on well known algorithms from computer graphics, such as surface extraction from volume data using marching cubes~\cite{Lorensen}, projective texturing and texture mapping, and the use of vertex shaders to displace vertices on the GPU. Work in~\cite{Fairfield:2010} likewise uses marching cubes to create a geometric model of underwater structures, but uses a far more complex ROV with extensive sensors.
+In addition, this work relies on well-known algorithms from computer graphics, such as surface extraction from volume data using marching cubes~\cite{Lorensen}, projective texturing and texture mapping, and the use of vertex shaders to displace vertices on the GPU. Work in~\cite{Fairfield:2010} likewise uses marching cubes to create a geometric model of underwater structures, but uses a far more complex ROV with extensive sensors.
 Stereo vision based SLAM algorithms have been used to generate 3D maps of underwater settings~\cite{Mahon:2011,stereo:Roberson,stereo:Aqua}; however, we are using the stereo images to enhance models created from sonar data.  Finally, this research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:scharsteinSzeliski}.
 In particular, this work uses the method of~\cite{stereo:zitKan} to generate disparity maps from underwater stereo image pairs.
 %The work of~\cite{stereo:nalGast} was also explored to compensate for lighting differences, but was found to be ineffective for our setup. 
@@ -146,8 +146,7 @@ Fine details were captured in stereo images, which were used to create disparity
 These fine details can be integrated back into the existing geometric model by deforming the sonar mesh in accordance with the data stored in the disparity maps, and texturing one of the original images back onto the surface.
 
 
-There are two challenges at this stage in the process. The first is accurately localizing the ROV with respect to the general model to correctly project the disparity maps onto the model surface. The second is mapping captured depth information onto the existing model.
-We do not include a computational solution to the first challenge in the current implementation. 
+There are two challenges at this stage in the process. The first is accurately localizing the ROV with respect to the general model to correctly project the disparity maps onto the model surface. The second is mapping captured depth information onto the existing model. We do not include a computational solution to the first challenge in the current implementation. 
 Instead, the preliminary results presented here are from a cylindrical well with rotational symmetry.
 
 The second challenge is resolved by using the pixel intensity data stored in the grayscale disparity map to deform the associated vertices, with light patches pulling vertices from the model wall towards a simulated projector, and dark patches pushing vertices away.
@@ -302,12 +301,7 @@ D(C_r) = -0.2179\ln{\left(\frac{C_r}{1.547}\right)}
 %\end{equation}
 
 %There are other, more complex, methods that could be used to weigh certain projections higher than others, for example by considering distance to the wall and viewing angle, but this simple averaging scheme has worked in practice. 
-\begin{figure*}[!t]
-	\centering
-		\epsfig{file = pics/400kComposite.png, width = 6cm}
-		\caption{View of depth and color data mapped onto part of the general mesh. The fine details added by the vertex displacements and recalculated lighting create a better appearance. Image includes inset close-up view.}
-		\label{fig:resultFull}
-\end{figure*}
+
 \section{Results}
 \label{sec:results}
 
@@ -316,32 +310,20 @@ A general the 3D model shown in Figure~\ref{fig:wellNoFine} was constructed usin
 Stereo images of the inside of the well were captured during deployment for use in generating disparity maps.
 The disparity maps combined with the surface images were mapped into the well geometry to produce the detailed mesh in Figure~\ref{fig:resultFull}.
 
-\vspace{-10pt}
-\paragraph{\textbf{Validation}} Our implementation of the Zitnick and Kanade algorithm was validated against the University of Tsukuba's Multiview Image Database~\cite{stereo:zitKan}.  Using the aforementioned image filtering and parameter settings our implementation was also able to produce depth maps from underwater stereo images.  For example, the image in Figure~\ref{fig:disparity} was generated using an initial support region of size (11,11,5), and an iterative local support region of size (13,13,5). Note that the left and right stereo images have drastically different lighting.
-%
-%\begin{figure*}[!b]
-%   \vspace{-0.2cm}
-%   \centering{
-%      \epsfig{file = pics/400kComposite.png, width = .9\textwidth}}
-%   \caption{View of depth and color data mapped onto part of the general mesh. The fine details added by the vertex displacements and recalculated lighting create a better appearance. Image includes inset close-up view.}
-%  \label{fig:resultFull}
-%\end{figure*}
-%
-%
-%\begin{figure}[!h]
-%	\vspace{-0.2cm}
-%	\centering
-%		\epsfig{file = pics/NoDisplaceColorDisparity.png, width = 8cm}
-%	\caption{Images and disparity maps reprojected as they were captured inside the well with no vertex displacements.}
-%	\label{fig:result2}
-%\end{figure}
-%
-%
+\paragraph{\textbf{Validation}} Our implementation of the Zitnick and Kanade algorithm was validated against the University of Tsukuba's Multiview Image Database~\cite{stereo:zitKan}. Using the aforementioned image filtering and parameter settings our implementation was also able to produce depth maps from underwater stereo images.  For example, the image in Figure~\ref{fig:disparity} was generated using an initial support region of size (11,11,5), and an iterative local support region of size (13,13,5). Note that the left and right stereo images have drastically different lighting.
 
-%\vspace{-10pt}
-
-A pool and an angled wooden block were used to validate the accuracy of the displacement algorithm by comparing the measured physical distance from camera to object to $D(C_r)$ which was determined by the depth data stored in a generated disparity map. The block was placed against the pool wall to protrude at a 45$^{\circ}$ angle, and eight measurements could be taken along its length. Two stereo images were captured to gather a total of sixteen data points. The distance from the camera to the pool wall was measured at 0.534$\pm$0.025m for the first disparity map, and 0.520$\pm$0.025m for the second. Physical distance was calculated from the camera to wall distance and measured distances between tick marks along the wooden block. The error measurements report that the calibration function $D(C_r)$ from Equation~\eqref{eq:calibration} can be used to generate displacements accurate to $\pm$0.0325m for camera to object distances between 0.254 and 0.565 meters.  
-The majority of our stereo images were captured within the 0.5 to 0.25 meter range.  Thus this work is competative with that done in ~\cite{stereo:Negahdaripour} which had a maximum depth range error of 20\% over a larger range of 0.5m to 6.5m.  
+\begin{figure*}[!t]
+	\vspace{-0.2cm}
+		\centering{
+			\subfigure[Final Results]{\label{fig:result}\epsfig{file = pics/400kComposite.png, width = 0.6\textwidth}}
+			\quad %space between images
+			\subfigure[Error Measurement]{\label{fig:errorMeasure}\epsfig{file = pics/Error.png, width = 0.315\textwidth}}
+			}
+		\caption{To the left, a view of depth and color data mapped onto part of the general mesh. The fine details added by the vertex displacements and recalculated lighting create a better appearance. Image includes inset close-up view. To the right, the left camera view of the setup used to measure error in disparity map data, as well its the corresponding disparity map.}
+		\label{fig:resultFull}
+\end{figure*}
+%
+A pool and an angled wooden block were used to validate the accuracy of the displacement algorithm by comparing the measured physical distance from camera to object to $D(C_r)$ which was determined by the depth data stored in a generated disparity map. The block was placed against the pool wall to protrude at a 45$^{\circ}$ angle, and eight measurements could be taken along its length (Figure~\ref{fig:errorMeasure}). Two stereo images were captured to gather a total of sixteen data points. The distance from the camera to the pool wall was measured at 0.534$\pm$0.025m for the first disparity map, and 0.520$\pm$0.025m for the second. Physical distance was calculated from the camera to wall distance and measured distances between tick marks along the wooden block. The error measurements report that the calibration function $D(C_r)$ from Equation~\eqref{eq:calibration} can be used to generate displacements accurate to $\pm$0.0325m for camera to object distances between 0.254 and 0.565 meters correlating to a 7.02\% error. The majority of our stereo images were captured within the 0.25 to 0.50 meter range. Thus this work is similar with that in~\cite{stereo:Negahdaripour} which had a maximum depth range error of 20\% over a larger range of 0.5m to 6.5m.
 
 \vspace{-8pt}
 \section{Conclusion and Future Work}
