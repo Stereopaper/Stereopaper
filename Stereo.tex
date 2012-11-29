@@ -128,7 +128,7 @@ Both the aspect ratio and the Vertical Field of View (VFOV) of the GoPro cameras
 \begin{align}
 \label{eq:VFOV}
 %\text{aspect ratio} &= \frac{\text{plane width}}{\text{plane height}} \\
-\text{VFOV} &= 2\tan^{-1}\left({\frac{\text{$plane\_height$}}{2 \times \text{depth}}}\right)
+\text{$VFOV$} &= 2\tan^{-1}\left({\frac{\text{$plane\_height$}}{2 \times \text{$depth$}}}\right)
 \end{align}
 
 
@@ -169,7 +169,7 @@ Most stereo-matching algorithms, including~\cite{stereo:zitKan}, rely on unique 
 
 Lighting was an obstacle to creating good disparity maps. The explored water systems have only a small amount of natural light entering through narrow tunnels, so the imaged surfaces were lit almost exclusively by the ROV's onboard lights. Each camera computes its own exposure time based on the amount of light received. Because the ROV is positioned within a meter of the walls to illuminate features properly, some well illuminated features are closer to one camera than the other, producing discrepancies in exposure times between left and right images, (see Figure~\ref{fig:disparity} for an example of this contrast in lighting). We attempted to use the work in \cite{stereo:nalGast} to fix this problem by shifting the image into the HSL color space. This method failed in the presence of water due to a lack of variance in color in the images.
 
-Another underwater challenge is the presence of dirt particles in the images since the ROV's positioning thrusters often agitate sediment in the water systems. However, the particles are usually small enough to be detected as occlusions and removed from the final disparity map.
+%Another underwater challenge is the presence of dirt particles in the images since the ROV's positioning thrusters often agitate sediment in the water systems. However, the particles are usually small enough to be detected as occlusions and removed from the final disparity map.
 \begin{figure}[!h]
 	\centering
 		\subfigure[Left image]{\label{camleft}\epsfig{file = pics/372L.jpg, width = 0.3\textwidth}}
@@ -218,10 +218,11 @@ We explored accounting for illumination fade-off, or vignetting, across our imag
 %After the disparity maps were generated, a number of them had obvious errors - small regions of all white and all black. These erroneous regions are fixed by flooring and capping the intensity of the pixels. Pixels that are unreasonably dark simply have their intensity increased to a reasonable minimum correlating to roughly one meter from the camera, while groups of pixels that are too bright are replaced by a linear smoothing of the surrounding pixel values. 
 
 %Using these methods, the computed disparity maps are then used to provide depth values to displace the general geometry created from the sonar data. Figure~\ref{fig:disparity} illustrates a disparity map generated using our implementation.
-\vspace{-8pt}
+
 \paragraph{\textbf{Software Calibration:}}
 A calibration step is required to create a tuned mapping from a grayscale pixel value to the appropriate vertex offset (distance from the camera to the object) in the virtual reconstruction. To accomplish this, stereo images of a patterned surface were captured at a number of measured distances. The stereo images were disparity mapped, and the average disparities at the center of each image, as well as the measured distances from camera to object, were used to determine an exponential relationship between disparity value and physical depth, $D(C_r)$, which is used later in Section~\ref{subsec:displacements}.
 
+\vspace{-8pt}
 \subsection{Projective Texturing}
 \label{subsec:projectiveTexturing}
 \noindent To add fine details to the general mesh created from sonar data, $M_s$, we map the location of the disparity map data onto the global coordinates of the general mesh. 
@@ -249,10 +250,11 @@ Each vertex, $p_{m}$, is defined by its position in 3D space. The full set of ve
    \caption{The left figure shows the vertices intersected by the frustum of the projector, which are added to $P^*$. On the right is a resulting view of projected color data only. }
  \end{figure}
 %
-\vspace{-25pt}
+
 %EN: not needed
 %The implemented projective texturing method naturally produces a second projection facing in the direction negative to $j_{n}^{look}$. To remove the unwanted projections, a simple check was added to the vertex shader which ensures that the texture mapped vertex position has a positive $q$ component.
 
+%\vspace{-25pt}
 \subsection{Per-Vertex Displacements}
 \label{subsec:displacements}
 \noindent A GLSL vertex and fragment shader are used to displace and texture vertices. The vertex shader receives all of the vertices in the mesh ($P$) with vertices lying in the frustum of one or more projectors ($P^*$) marked. The vertex shader also receives a modelview projection matrix ($mvp_n$) for the camera and each projector, projector positions, and texture primitives for the disparity maps from the CPU. The vertex shader displaces vertices one at a time in accordance with the color of the disparity map with respect to the texture-mapped coordinates. Vertices belonging to $P^{*}$ have their position updated. Vertices lying in the frustum of two or more projectors have their displacement vectors blended.
