@@ -84,8 +84,13 @@ This paper outlines our data acquisition and disparity map generation techniques
 For this project the most relevant  research in underwater robot Simultaneous Localization and Mapping (SLAM) is found in~\cite{Williams2000,harbor,Fairfield2005,Fairfield2006}.
 
 In addition, this work relies on well-known algorithms from computer graphics, such as surface extraction from volume data using marching cubes~\cite{Lorensen}, projective texturing and texture mapping, and the use of vertex shaders to displace vertices on the GPU. Work in~\cite{Fairfield:2010} likewise uses marching cubes to create a geometric model of underwater structures, but uses a far more complex ROV with extensive sensors.
-Stereo vision based SLAM algorithms have been used to generate 3D maps of underwater settings~\cite{Mahon:2011,stereo:Roberson,stereo:Aqua}. However, we are using stereo images to enhance models created from sonar data.  Finally, this research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:scharsteinSzeliski}.
-In particular, this work uses the method of~\cite{stereo:zitKan} to generate disparity maps from underwater stereo image pairs.
+
+Related work in underwater imaging and robotics includes 3D sonar scans projectively textured with image data~\cite{Bingham:2010,stereo:Negahdaripour}, and 3D maps of underwater settings generated using vision-only SLAM~\cite{Mahon:2011,stereo:Roberson,stereo:Aqua}.    
+Similarly, we deformed and textured 3D sonar scans using stereo vision algorithms.  
+Our depth reconstruction from stereo images relied primarily on~\cite{stereo:zitKan} along with similar work in stereo mapping~\cite{stereo:scharsteinSzeliski}.  
+
+%Stereo vision based SLAM algorithms have been used to generate 3D maps of underwater settings~\cite{Mahon:2011,stereo:Roberson,stereo:Aqua}. Similarly, other work has been done to texture sonar scans with image data~\cite{Bingham:2010,stereo:Negahdaripour}However, we are using stereo images to enhance models created from sonar data.  Finally, this research relies on related work in the field of stereoscopic data acquisition and disparity map reconstruction~\cite{stereo:scharsteinSzeliski}.
+%In particular, this work uses the method of~\cite{stereo:zitKan} to generate disparity maps from underwater stereo image pairs.
 %The work of~\cite{stereo:nalGast} was also explored to compensate for lighting differences, but was found to be ineffective for our setup. 
 \vspace{-11pt}
 \section{Data Acquisition}
@@ -467,9 +472,16 @@ Mahon, Pizarro, Johnson-Robertson, Friedman, Williams, Henderson. (2011).
 \newblock Reconstructing Pavlopetri: Mapping the World's Oldest Submerged Town using Stereo-vision.
 \newblock In {\em International Conference on Robotics and Automation}.
 
+\bibitem{Bingham:2010}
+Bingham, Foley, Singh, Camilli, Delaporta, Eustice, Mallios, Mindell, Roman, Sakellariou. (2010) 
+\newblock Robotic tools for deep water archeology: Surveying an ancient shipwreck with an autonomous underwater vehicle
+\newblock In {\em Journal of Field Robotics}.
+
 \bibitem{stereo:Aqua}
 Georgiades, C., German, A., Hogue, A., Liu, H., Prahacs, C., Ripsman, A., Sim, R., Torres, L.-A., Zhang, P., Buehler, M., Dudek, G., Jenkin, M., Milios, E. (2004)
 \newblock AQUA: An Aquatic Walking Robot 
 \newblock In {\em IEEE/RSJ}
 \end{thebibliography}
 \end{document}
+
+
