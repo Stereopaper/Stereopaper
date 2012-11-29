@@ -29,24 +29,24 @@
 %                                     also used for the TOC unless
 %                                     \toctitle is used
 %
-\author{Timothy M. Peters\inst{1}\thanks{These authors contributed equally to this work.} \and Erik A. Nelson\inst{1}$^{\star}$ \and \\
-Tyler Vitti\inst{1} \and Timothy Gambin\inst{2} \and 
-Christopher M. Clark\inst{3} \and Zo\"{e} J. Wood\inst{1}\thanks{This work is supported by the National Science Foundation under Grant No.
-0966608.}}
+%\author{Timothy M. Peters\inst{1}\thanks{These authors contributed equally to this work.} \and Erik A. Nelson\inst{1}$^{\star}$ \and \\
+%Tyler Vitti\inst{1} \and Timothy Gambin\inst{2} \and 
+%Christopher M. Clark\inst{3} \and Zo\"{e} J. Wood\inst{1}\thanks{This work is supported by the National Science Foundation under Grant No.
+%0966608.}}
 %
 %
-\authorrunning{Peters and Nelson, et al.} % abbreviated author list
+%\authorrunning{Peters and Nelson, et al.} % abbreviated author list
 %
 %%%% list of authors for the TOC (use if author list has to be modified)
-\tocauthor{Timothy M. Peters, Erik A. Nelson, Tyler Vitti, Timothy Gambin, Christopher M. Clark, and Zo\"{e} J. Wood}
+%\tocauthor{Timothy M. Peters, Erik A. Nelson, Tyler Vitti, Timothy Gambin, Christopher M. Clark, and Zo\"{e} J. Wood}
 %
 %
 %
-\institute{California Polytechnic State University, San Luis Obispo CA 93410, USA
-\and
-University of Malta, Msida MSD 2080, Malta
-\and
-Harvey Mudd College, Claremont, CA 91711, USA}
+%\institute{California Polytechnic State University, San Luis Obispo CA 93410, USA
+%\and
+%University of Malta, Msida MSD 2080, Malta
+%\and
+%Harvey Mudd College, Claremont, CA 91711, USA}
 %
 \maketitle              % typeset the title of the contribution
 
@@ -81,7 +81,9 @@ This paper outlines our data acquisition and disparity map generation techniques
 \section{Related Work}
 \label{sec:related_work}
 \noindent This project relies on data acquired from algorithms for mapping with underwater robots~\cite{opizarro-2009a,Fairfield2006,Clark2008b}. For a good survey of the core techniques capable of fusing data from multiple sensors, see~\cite{Thrun2005}.
-For this project the most relevant  research in underwater robot Simultaneous Localization and Mapping (SLAM) is found in~\cite{Williams2000,harbor,Fairfield2005,Fairfield2006}.
+For this project the most relevant  research in underwater robot Simultaneous Localization and Mapping (SLAM) is found in~\cite%{Williams2000,harbor,Fairfield2005,Fairfield2006}.
+{Williams2000,harbor,Fairfield2006}.
+%ZJW comment - lets only site one Fairfield given space
 
 In addition, this work relies on well-known algorithms from computer graphics, such as surface extraction from volume data using marching cubes~\cite{Lorensen}, projective texturing and texture mapping, and the use of vertex shaders to displace vertices on the GPU. Work in~\cite{Fairfield:2010} likewise uses marching cubes to create a geometric model of underwater structures, but uses a far more complex ROV with extensive sensors.
 
@@ -122,11 +124,11 @@ While the sonar scans are being collected, the ROV captures stereo images of the
  %
  \vspace{-25pt}
 \paragraph{\textbf{Hardware Calibration:}}
-Both the aspect ratio and the Vertical Field of View (VFOV) of the GoPro cameras must be calculated to accurately re-project the captured images and disparity maps in the virtual reconstruction. These two values are used to specify the behavior of projectors, discussed in Section~\ref{subsec:projectiveTexturing}. The VFOV and aspect ratio were calculated using the following equations and stereo images of a checkered plane submerged in a pool. 
+Both the aspect ratio and the Vertical Field of View (VFOV) of the GoPro cameras must be calculated to accurately re-project the captured images and disparity maps in the virtual reconstruction. These two values are used to specify the behavior of projectors, discussed in Section~\ref{subsec:projectiveTexturing}. The VFOV and aspect ratio were calculated using stereo images of a checkered plane submerged in a pool, with $aspect\_ratio = plane\_width/plane\_height$.
 \begin{align}
 \label{eq:VFOV}
-\text{aspect ratio} &= \frac{\text{plane width}}{\text{plane height}} \\
-\text{VFOV} &= 2\tan^{-1}\left({\frac{\text{plane height}}{2 \times \text{depth}}}\right)
+%\text{aspect ratio} &= \frac{\text{plane width}}{\text{plane height}} \\
+\text{VFOV} &= 2\tan^{-1}\left({\frac{\text{$plane\_height$}}{2 \times \text{depth}}}\right)
 \end{align}
 
 
@@ -260,11 +262,11 @@ Since the vertex shader is run individually per vertex, it does not have easy ac
 The fragment shader receives $P$ and $P^{*}$, as well as the camera image texture primitives and the updated normals. The fragment shader maps the color data from the camera images onto the vertices in the frustum of each projector. Again, vertices lying in the frustum of two or more projectors have their colors blended. Once an RGB color value has been computed for the vertex, diffuse shading is added to the model using the updated normals.
 
 \paragraph{\textbf{Vertex Displacement:}}
-Vertices belonging to $P^{*}$ are displaced along the vector $\vec{b} = j_{n} - p_{m}$ a distance based on the RGB color value, $\vec{C} = \langle C_{r}, C_{g}, C_{b} \rangle$, of the disparity map at the corresponding texture-mapped coordinates, $t_m$. The texture-mapped coordinates of $p_m$, and thus, $\vec{C}$ can be calculated per-vertex using the modelview projection matrix of the projector by
-\begin{align}
-t_{m} &= p_{m} mvp_{n} \\
-\vec{C} &= \langle t_{m}^{red}, t_{m}^{green}, t_{m}^{blue} \rangle
-\end{align}
+Vertices belonging to $P^{*}$ are displaced along the vector $\vec{b} = j_{n} - p_{m}$ a distance based on the RGB color value, $\vec{C} = \langle C_{r}, C_{g}, C_{b} \rangle$, of the disparity map at the corresponding texture-mapped coordinates, $t_m$. The texture-mapped coordinates of $p_m$, and thus, $\vec{C}$ can be calculated per-vertex using the modelview projection matrix of the projector by $t_{m} = p_{m} mvp_{n}$ and $\vec{C} = \langle t_{m}^{red}, t_{m}^{green}, t_{m}^{blue}  \rangle$.
+%\begin{align}
+%t_{m} &= p_{m} mvp_{n} \\
+%\vec{C} &= \langle t_{m}^{red}, t_{m}^{green}, t_{m}^{blue} \rangle
+%\end{align}
 The disparity map is grayscaled in Section~\ref{disparityMapGeneration} such that the same disparity value is stored within each of the three members of $\vec{C}$, so only $C_r$ is required for displacement computations. The disparity map contains disparity information rather than distance to the wall, so $C_r$ is passed into an exponential equation obtained during calibration in Section~\ref{disparityMapGeneration} ($D(C_r)$) to resolve the true distance to the wall. The world space coordinates of $M_s$ are generated such that one unit  in the model is equal to one meter in the real cistern, so the value returned from passing $C_r \in [0, 1]$ into the distance function is the true wall distance in meters. With this in mind, vertex displacement proceeds as follows:
 \begin{equation}
 p_{m}' = \left \{ 
@@ -306,6 +308,8 @@ D(C_r) = -0.2179\ln{\left(\frac{C_r}{1.547}\right)}
 
 %There are other, more complex, methods that could be used to weigh certain projections higher than others, for example by considering distance to the wall and viewing angle, but this simple averaging scheme has worked in practice. 
 
+
+
 \section{Results}
 \label{sec:results}
 
@@ -323,7 +327,7 @@ The disparity maps combined with the surface images were texture-mapped into the
 			\quad %space between images
 			\subfigure[Error Measurement]{\label{fig:errorMeasure}\epsfig{file = pics/Error.png, width = 0.315\textwidth}}
 			}
-		\caption{To the left, a view of depth and color data texture-mapped onto part of the general mesh. The fine details added by the vertex displacements and recalculated lighting create a better appearance. Image includes inset close-up view. To the right, the left camera view of the setup used to measure error in disparity map data, as well its the corresponding disparity map.}
+		\caption{To the left, a view of depth and color data texture-mapped onto part of the general mesh. The fine details added by the vertex displacements and recalculated lighting create a better appearance. Image includes inset close-up view. To the right, a photo of the setup used to measure error, as well its the corresponding disparity map.}
 		\label{fig:resultFull}
 \end{figure*}
 %
@@ -336,19 +340,15 @@ A pool and an angled wooden block were used to validate the accuracy of the disp
 %A general model is acquired from sonar data and mapping~\cite{ICEX11,McVicker,McVicker2}, and we present the addition of fine level details using stereo image data.  
 This work is motivated by the desire to better map underwater caverns and cisterns using robotic tools.  We have presented our methodology and hardware for data acquisition, disparity map generation, and incorporation of that disparity data via projective texturing displacements.  We have shown results of a partial reconstruction of a well in Carini, Sicily.
 
-Future enhancements include: the use of higher quality cameras, inclusion of color and more powerful lighting, addition of Smart Tether for better localization, and enhancement of memory management to process more textures and disparity maps at once.
-For future missions, we have learned that since the clearest pictures were taken before the ROV had uplifted sediment from the cistern floor, the ROV should capture all images of the cistern wall before landing. 
+Future enhancements include: the use of higher quality cameras, inclusion of color and more powerful lighting, addition of Smart Tether for better localization, and enhancement of memory management. % to process more textures and disparity maps at once.
+For future missions, the ROV should capture all images of the cistern wall before landing to avoid uplighting sentiment. 
 %In addition, GoPro cameras were a simple, cost-effective, solution to acquire underwater stereo images.
 %Better cameras would reduce compression artifacts, and ideally images could be captured synchronously.
 %Alternatively, better lighting, including blue lights, would allow pixel values to be compared in the HSL color space.
 %It would be useful to explore the integration of this algorithm with SLAM to allow a robot to autonomously image each surface. 
-Finally, we would like to explore algorithms from texture synthesis and apply learning to a small subset of disparity images in order to generalize the small detailed geometry without having to acquire disparity maps of the entire wall.% (since complete data coverage is a challenge).
+Finally, we would like to apply learning to a small subset of disparity images in order to generalize the small detailed geometry without having to acquire disparity maps of the entire wall.% (since complete data coverage is a challenge).
 
-%Data collection in future deployments should be performed during a dry weather, as flowing rainwater dirtied the water and reduced image quality for the current data. 
-
-%Unfortunately, that would require a far more complex setup that what we had available at the time of writing.
 \vspace{-8pt}
-%ZJW: Please add some suggestion for actual data collection methods as well - re: lighting, positioning ROV, etc.
 \begin{thebibliography}{9}
 \bibitem{Clark2008b}
 Clark, C.~M., Olstad, C., Buhagiar, K., and Gambin, T. (2008).
@@ -361,11 +361,10 @@ Fairfield, N., Kantor, G., Jonak, D., and Wettergreen, D. (2010).
 \newblock Autonomous exploration and mapping of flooded sinkholes.
 \newblock {\em Int. J. Rob. Res.}, 29(6):748--774.
 
-\bibitem{Fairfield2005}
-Fairfield, N., Kantor, G., and Wettergreen, D. (2005)).
-\newblock Three dimensional evidence grids for {SLAM} in complex underwater
-  environments.
-\newblock In {\em Proceedings of UUST.}
+%\bibitem{Fairfield2005}
+%Fairfield, N., Kantor, G., and Wettergreen, D. (2005)).
+%\newblock Three dimensional evidence grids for {SLAM} in complex underwater environments.
+%\newblock In {\em Proceedings of UUST.}
 
 \bibitem{Fairfield2006}
 Fairfield, N., Kantor, G., and Wettergreen, D. (2006)).
